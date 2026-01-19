@@ -1,0 +1,730 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier de Grammaire : Les Marqueurs de Relation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A90E2; /* Bleu vif */
+            --secondary: #50E3C2; /* Turquoise */
+            --accent: #FF6B6B; /* Corail/Rouge doux */
+            --text-color: #2D3436;
+            --bg-color: #F0F4F8;
+            --card-bg: #FFFFFF;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+        }
+
+
+        body {
+            font-family: 'Nunito', sans-serif; /* Police ronde et lisible */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#dfe6e9 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-bottom: 5px solid var(--primary);
+        }
+
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+
+        .subtitle {
+            color: #636e72;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+
+        .instructions-card {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 15px rgba(108, 92, 231, 0.2);
+        }
+        
+        .instructions-card strong {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+
+        /* Styles des textes */
+        .text-block {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px; /* Espace interne généreux */
+            margin-bottom: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            border-left: 8px solid var(--secondary);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+
+        .text-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.07);
+        }
+
+
+        .text-block p {
+            font-size: 1.15rem;
+            line-height: 2.8; /* Interligne très large pour les synonymes */
+            margin-bottom: 1.5rem;
+        }
+
+
+        h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-top: 0;
+            border-bottom: 2px dashed #dfe6e9;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+
+        /* Vocabulaire Interactif */
+        .vocab {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #d63031;
+            font-weight: 700;
+            border-bottom: 2px dotted #d63031;
+            margin: 0 4px;
+            transition: all 0.2s;
+        }
+
+
+        .vocab:hover {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+
+
+        /* Le synonyme au-dessus */
+        .vocab::before {
+            content: attr(data-synonym);
+            display: block;
+            position: absolute;
+            top: -1.8em; /* Remonté pour éviter chevauchement */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75em;
+            color: #636e72;
+            white-space: nowrap;
+            font-weight: 600;
+            background: rgba(255,255,255,0.9);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+
+
+        /* Phylactère (Bulle de définition) */
+        .definition-box {
+            display: none;
+            position: absolute;
+            bottom: 160%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2d3436;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            width: 280px;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            line-height: 1.4;
+        }
+
+
+        .definition-box::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #2d3436 transparent transparent transparent;
+        }
+
+
+        .vocab.active .definition-box {
+            display: block;
+            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        /* Wrapper pour les selects et bulles */
+        .select-wrapper {
+            display: inline-block;
+            position: relative;
+            vertical-align: top;
+        }
+
+
+        /* Selects */
+        select {
+            appearance: none;
+            background-color: #f1f2f6;
+            border: 2px solid #dfe6e9;
+            padding: 8px 15px;
+            border-radius: 25px; /* Boutons ronds */
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+
+        select.correct {
+            background-color: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+
+        select.incorrect {
+            background-color: #fadbd8;
+            border-color: var(--accent);
+            color: #721c24;
+        }
+
+
+        /* Phylactère de Feedback (Réponse) */
+        .feedback-bubble {
+            display: none; /* Caché par défaut */
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            background-color: #fff;
+            border: 2px solid;
+            min-width: 250px;
+            max-width: 300px;
+            
+            /* Positioning relative to wrapper */
+            z-index: 50;
+        }
+        
+        .feedback-bubble.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+
+        .feedback-bubble.success {
+            border-color: var(--success);
+            background-color: #e8f8f5;
+            color: #0e6251;
+        }
+
+
+        .feedback-bubble.error {
+            border-color: var(--accent);
+            background-color: #fdedec;
+            color: #922b21;
+        }
+
+
+        .feedback-title {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+
+        /* Animations */
+        @keyframes bounceIn {
+            from { opacity: 0; transform: translate(-50%, 10px) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        @media (max-width: 600px) {
+            .text-block { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+            .feedback-bubble { min-width: 200px; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <header>
+        <h1>🌟 Maîtres des Marqueurs</h1>
+        <div class="subtitle">1re secondaire • Texte Descriptif</div>
+    </header>
+
+
+    <div class="instructions-card">
+        <strong>🚀 Mission :</strong>
+        1. Clique sur les mots <span style="color:#ffeaa7; text-decoration: underline;">oranges</span> pour découvrir leur sens.<br>
+        2. Choisis le bon connecteur pour lier les idées.<br>
+        3. Lis l'explication qui apparaît pour comprendre la logique !
+    </div>
+
+
+    <!-- SUJET 1 : ANIMAL -->
+    <div class="text-block" style="border-left-color: #FF9FF3;">
+        <h2>🐾 Sujet 1 : Le Tardigrade</h2>
+        <p>
+            Le tardigrade, ou « ourson d'eau », est un animal microscopique qui défie la science par ses capacités de survie.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'ouverture/ordre', 'Ici, on introduit le premier aspect (sa résistance). Il faut un marqueur qui commence l\'énumération.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Tout d'abord</option>
+                    <option value="explication">Car</option>
+                    <option value="exemple">Par exemple</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            cette créature possède une 
+            <span class="vocab" data-synonym="robustesse" onclick="toggleDef(this)">
+                résilience
+                <span class="definition-box">Capacité physique à résister aux chocs et à récupérer rapidement.</span>
+            </span> 
+            biologique sans égale. Il peut entrer en « cryptobiose », arrêtant presque totalement son métabolisme.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'explication', 'Marqueur d\'explication', 'On explique COMMENT il fait pour résister (en se desséchant). On apporte une précision sur le phénomène.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Ensuite</option>
+                    <option value="explication">En effet</option>
+                    <option value="temps">Soudain</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            lorsque l'eau manque, il se dessèche volontairement pour devenir une graine indestructible.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'addition/ordre', 'On passe à un deuxième aspect (la résistance aux environnements). Il faut un marqueur qui ajoute une nouvelle idée principale.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="explication">C'est-à-dire</option>
+                    <option value="exemple">Tel que</option>
+                    <option value="ordre">Ensuite</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            sa résistance aux environnements hostiles est 
+            <span class="vocab" data-synonym="stupéfiante" onclick="toggleDef(this)">
+                phénoménale
+                <span class="definition-box">Qui surprend par son caractère exceptionnel ou extraordinaire.</span>
+            </span>.
+            Il survit là où tout autre vie périrait.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'exemple', 'Marqueur d\'illustration', 'On donne des preuves concrètes (vide spatial, pression). Il faut introduire ces exemples.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Finalement</option>
+                    <option value="exemple">Ainsi</option>
+                    <option value="opposition">Mais</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            des expériences ont prouvé qu'il peut endurer le vide spatial et des pressions écrasantes.
+        </p>
+    </div>
+
+
+    <!-- SUJET 2 : LIEU -->
+    <div class="text-block" style="border-left-color: #54a0ff;">
+        <h2>🏛️ Sujet 2 : La Bibliothèque d'Alexandrie</h2>
+        <p>
+            Fondée en Égypte antique, la Bibliothèque d'Alexandrie demeure le symbole universel du savoir perdu.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'ouverture', 'On débute la description par le premier aspect (la concentration de connaissances).')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Premièrement</option>
+                    <option value="explication">Parce que</option>
+                    <option value="exemple">Comme</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle représentait une concentration de connaissances unique. Les souverains voulaient tous les livres du monde, preuve d'une 
+            <span class="vocab" data-synonym="savoir immense" onclick="toggleDef(this)">
+                érudition
+                <span class="definition-box">Connaissance approfondie et étendue, souvent obtenue par l'étude de textes.</span>
+            </span>
+            vorace.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'explication', 'Marqueur d\'explication', 'On explique le fonctionnement : comment faisaient-ils pour avoir tous les livres ? En obligeant les navires à les donner.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Puis</option>
+                    <option value="explication">C'est-à-dire que</option>
+                    <option value="exemple">Notamment</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>
+            chaque navire entrant au port devait céder ses manuscrits pour qu'ils soient copiés.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'addition', 'Marqueur d\'addition', 'On ajoute un nouvel aspect triste (sa destruction). Ce n\'est pas une cause, mais un nouveau point.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="addition">Par ailleurs</option>
+                    <option value="cause">À cause de</option>
+                    <option value="exemple">Par exemple</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            sa destruction progressive est une perte 
+            <span class="vocab" data-synonym="définitive" onclick="toggleDef(this)">
+                irrémédiable
+                <span class="definition-box">Qu'on ne peut pas réparer, soigner ou corriger. C'est perdu pour toujours.</span>
+            </span>.
+            De nombreux textes ont disparu dans les flammes.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'exemple', 'Marqueur d\'illustration', 'On cite des exemples précis d\'auteurs perdus (Sophocle, Euripide).')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Enfin</option>
+                    <option value="exemple">Notamment</option>
+                    <option value="explication">Car</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            des œuvres complètes d'auteurs célèbres ne nous sont jamais parvenues.
+        </p>
+    </div>
+
+
+    <!-- SUJET 3 : PERSONNE -->
+    <div class="text-block" style="border-left-color: #00d2d3;">
+        <h2>👩‍🔬 Sujet 3 : Marie Curie</h2>
+        <p>
+            Marie Curie est une figure scientifique légendaire, connue pour avoir révolutionné notre compréhension de la radioactivité.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'ouverture', 'On commence la description de sa carrière ou de ses qualités. Il faut un début.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="cause">Puisque</option>
+                    <option value="ordre">D'abord</option>
+                    <option value="exemple">Ainsi</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle se distingue par une 
+            <span class="vocab" data-synonym="persévérance" onclick="toggleDef(this)">
+                opiniâtreté
+                <span class="definition-box">Persévérance tenace, volonté inflexible de ne pas abandonner.</span>
+            </span>
+            exceptionnelle dans ses recherches. Travaillant dans un hangar mal chauffé, elle a manipulé des tonnes de minerai.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'consequence', 'Marqueur de conséquence', 'Ses efforts ont mené à un résultat : la découverte de deux éléments. C\'est la suite logique.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="consequence">Par conséquent</option>
+                    <option value="ordre">Premièrement</option>
+                    <option value="explication">Car</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle a réussi à isoler deux nouveaux éléments chimiques : le polonium et le radium.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'addition', 'Marqueur d\'addition', 'On ajoute un fait important : elle est la seule à avoir deux Nobel. C\'est un aspect supplémentaire.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="addition">De plus</option>
+                    <option value="explication">C'est-à-dire</option>
+                    <option value="exemple">Comme</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle demeure la seule personne à avoir reçu deux prix Nobel dans deux domaines scientifiques différents. Cependant, ces travaux comportaient une 
+            <span class="vocab" data-synonym="dangerosité" onclick="toggleDef(this)">
+                nocivité
+                <span class="definition-box">Caractère de ce qui est dangereux, toxique ou nuisible pour la santé.</span>
+            </span>
+            cachée.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'explication', 'Marqueur d\'explication/Preuve', 'On explique pourquoi c\'était dangereux : l\'exposition aux radiations.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Finalement</option>
+                    <option value="explication">En effet</option>
+                    <option value="exemple">Tel que</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            l'exposition prolongée aux radiations a fini par causer sa mort, faisant d'elle une martyre de la science.
+        </p>
+    </div>
+
+
+    <!-- SUJET 4 : CRÉATURE MYTHIQUE -->
+    <div class="text-block" style="border-left-color: #ff6b6b;">
+        <h2>🐙 Sujet 4 : Le Kraken</h2>
+        <p>
+            Issu des légendes scandinaves, le Kraken est un monstre marin gigantesque qui hantait les cauchemars des marins d'autrefois.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'ouverture', 'On commence la description par son apparence physique.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Tout d'abord</option>
+                    <option value="cause">Grâce à</option>
+                    <option value="opposition">Mais</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            il est décrit comme une créature 
+            <span class="vocab" data-synonym="gigantesque" onclick="toggleDef(this)">
+                colossale
+                <span class="definition-box">D'une taille immense, gigantesque, comme un colosse.</span>
+            </span>
+            capable d'engloutir des navires entiers. Ses tentacules immenses pouvaient soi-disant atteindre le sommet des mâts.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'explication', 'Marqueur d\'explication', 'On précise l\'idée précédente : on explique que c\'était facile de le confondre avec une île.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Ensuite</option>
+                    <option value="explication">Autrement dit</option>
+                    <option value="exemple">Par exemple</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            il était si grand qu'on le confondait souvent avec une île flottante lorsqu'il dormait à la surface.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'opposition', 'Marqueur d\'opposition/Concession', 'On oppose le mythe à la réalité scientifique découverte plus tard.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="opposition">Pourtant</option>
+                    <option value="exemple">Ainsi</option>
+                    <option value="addition">Également</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            cette légende repose probablement sur des observations réelles de calmars géants. Bien que moins grands que dans les mythes, ces animaux restent 
+            <span class="vocab" data-synonym="effrayants" onclick="toggleDef(this)">
+                redoutables
+                <span class="definition-box">Qui inspire une grande peur ou une grande crainte.</span>
+            </span>.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'exemple', 'Marqueur d\'illustration', 'On donne un exemple concret d\'observation scientifique.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Premièrement</option>
+                    <option value="exemple">Par exemple</option>
+                    <option value="cause">Puisque</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            des spécimens de plus de 13 mètres ont été retrouvés échoués sur des plages, alimentant ainsi le mythe.
+        </p>
+    </div>
+
+
+    <!-- SUJET 5 : OBJET / TECHNOLOGIE -->
+    <div class="text-block" style="border-left-color: #feca57;">
+        <h2>🤖 Sujet 5 : L'Intelligence Artificielle</h2>
+        <p>
+            L'intelligence artificielle (IA) est une technologie moderne qui simule l'intelligence humaine pour réaliser des tâches complexes.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'ordre', 'Marqueur d\'ouverture', 'On introduit le premier aspect : son utilité pratique.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Premièrement</option>
+                    <option value="explication">Car</option>
+                    <option value="exemple">Comme</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle permet d'automatiser des processus répétitifs avec une efficacité 
+            <span class="vocab" data-synonym="imbattable" onclick="toggleDef(this)">
+                inégalée
+                <span class="definition-box">Qu'on ne peut pas égaler, qui est supérieur à tout le reste.</span>
+            </span>.
+            Les ordinateurs peuvent traiter des milliards de données en quelques secondes.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'exemple', 'Marqueur d\'illustration', 'On donne des exemples d\'utilisation (médecine, finance).')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">Ensuite</option>
+                    <option value="exemple">Notamment</option>
+                    <option value="explication">C'est-à-dire</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            elle est utilisée en médecine pour détecter des maladies sur des radiographies plus vite qu'un médecin.
+        </p>
+        <p>
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'opposition', 'Marqueur d\'opposition', 'On introduit une nuance négative ou un problème (les risques).')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="addition">De plus</option>
+                    <option value="opposition">Toutefois</option>
+                    <option value="exemple">Ainsi</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            son développement soulève des questions importantes sur notre avenir. On craint parfois que la machine ne dépasse l'humain.
+            <span class="select-wrapper">
+                <select onchange="checkAnswer(this, 'consequence', 'Marqueur de conséquence/Conclusion', 'Comme il y a des risques, la conséquence est qu\'il faut des règles.')">
+                    <option value="">--- Choisir ---</option>
+                    <option value="ordre">D'abord</option>
+                    <option value="consequence">C'est pourquoi</option>
+                    <option value="exemple">Par exemple</option>
+                </select>
+                <span class="feedback-bubble"></span>
+            </span>,
+            il est 
+            <span class="vocab" data-synonym="indispensable" onclick="toggleDef(this)">
+                impératif
+                <span class="definition-box">Qui est absolument nécessaire, obligatoire. On ne peut pas s'en passer.</span>
+            </span>
+            de mettre en place des règles éthiques strictes pour encadrer son utilisation.
+        </p>
+    </div>
+
+
+</div>
+
+
+<script>
+    // Gestionnaire pour les définitions
+    function toggleDef(element) {
+        // Ferme toutes les autres définitions d'abord
+        const allVocabs = document.querySelectorAll('.vocab');
+        allVocabs.forEach(vocab => {
+            if (vocab !== element) {
+                vocab.classList.remove('active');
+            }
+        });
+
+
+        // Bascule l'état de l'élément cliqué
+        element.classList.toggle('active');
+    }
+
+
+    // Fermer les définitions si on clique ailleurs
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.vocab')) {
+            const allVocabs = document.querySelectorAll('.vocab');
+            allVocabs.forEach(vocab => {
+                vocab.classList.remove('active');
+            });
+        }
+    });
+
+
+    /**
+     * Vérifie la réponse
+     * @param {HTMLSelectElement} select - L'élément select
+     * @param {string} expectedType - La valeur correcte (ex: 'ordre')
+     * @param {string} typeLabel - Le nom grammatical (ex: 'Marqueur d'addition')
+     * @param {string} explanation - L'explication pédagogique
+     */
+    function checkAnswer(select, expectedType, typeLabel, explanation) {
+        // Trouve le wrapper parent pour sécuriser la recherche
+        const wrapper = select.closest('.select-wrapper');
+        if (!wrapper) return;
+
+
+        // Trouve la bulle à l'intérieur du wrapper
+        const bubble = wrapper.querySelector('.feedback-bubble');
+        if (!bubble) return;
+        
+        // Enlève les classes précédentes
+        select.classList.remove('correct', 'incorrect');
+        bubble.classList.remove('show', 'success', 'error');
+
+
+        if (select.value === "") {
+            bubble.style.display = 'none';
+            return;
+        }
+
+
+        let isCorrect = (select.value === expectedType);
+
+
+        // Affichage de la bulle
+        bubble.style.display = 'block';
+        
+        // Petit délai pour l'animation CSS
+        setTimeout(() => {
+            bubble.classList.add('show');
+            
+            if (isCorrect) {
+                select.classList.add('correct');
+                bubble.classList.add('success');
+                bubble.innerHTML = `
+                    <span class="feedback-title">✅ Excellent !</span>
+                    <strong>${typeLabel}</strong><br>
+                    ${explanation}
+                `;
+            } else {
+                select.classList.add('incorrect');
+                bubble.classList.add('error');
+                bubble.innerHTML = `
+                    <span class="feedback-title">❌ Oups !</span>
+                    Ce marqueur ne semble pas convenir au contexte logique.<br>
+                    <em>Relis la phrase pour voir le lien entre les idées.</em>
+                `;
+            }
+        }, 10);
+    }
+</script>
+
+
+</body>
+</html>
