@@ -1,0 +1,1203 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier Expert : Le Pronom</title>
+    <!-- Font Awesome pour les icônes -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- IMPORTS DE POLICES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto:wght@400;500;700;900&display=swap');
+
+
+        /* --- VARIABLES DE COULEURS (Thème Expert - Rouge/Indigo) --- */
+        :root {
+            --bg-color: #f8fafc;
+            --primary-color: #dc2626; /* Rouge pour le niveau expert */
+            --primary-hover: #b91c1c;
+            --accent-color: #fbbf24; /* Or */
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+            --border-color: #e2e8f0;
+        }
+
+
+        /* --- RESET & BASE --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+
+        .handwritten {
+            font-family: 'Patrick Hand', cursive;
+        }
+
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        .app-container {
+            background-color: var(--white);
+            width: 100%;
+            max-width: 1100px;
+            min-height: 700px;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
+
+
+        /* --- HEADER --- */
+        header {
+            background-color: #1e293b; /* Slate 800 */
+            color: var(--white);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+
+        .expert-icon {
+            background-color: var(--primary-color);
+            color: white;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid #fecaca;
+        }
+
+
+        .app-title {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            letter-spacing: 0.025em;
+            line-height: 1.2;
+        }
+
+
+        .app-subtitle {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
+
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+
+        .stat-badge {
+            background-color: #334155;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid #475569;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+
+        .score-box {
+            background-color: #0f172a;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+
+        .score-animate {
+            transform: scale(1.3);
+            color: var(--accent-color);
+            transition: transform 0.2s;
+        }
+
+
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--white);
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+        }
+
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+        }
+
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+
+        /* --- PROGRESS DOTS --- */
+        .dots-container {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+
+        .dot {
+            width: 0.6rem;
+            height: 0.6rem;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            transition: all 0.3s;
+        }
+
+
+        .dot.active {
+            background-color: var(--primary-color);
+            width: 1.5rem;
+            border-radius: 1rem;
+        }
+        
+        .dot.passed {
+            background-color: #fca5a5;
+        }
+
+
+        /* --- TYPOGRAPHY & CARDS --- */
+        h2.slide-title {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+
+        .card-box {
+            background-color: var(--white);
+            padding: 2rem 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 900px;
+        }
+
+
+        .instruction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .instruction-neutral { background-color: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+        .instruction-success { background-color: var(--success-bg); color: var(--success-text); border-color: #86efac; }
+
+
+        /* --- EXERCICE : IDENTIFICATION --- */
+        .sentence-display {
+            font-size: 2rem;
+            line-height: 2;
+            color: #334155;
+            text-align: center;
+        }
+
+
+        .word-span {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0 0.1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+
+        .word-span:hover {
+            background-color: #f1f5f9;
+            transform: scale(1.05);
+            border-color: #cbd5e1;
+        }
+
+
+        .word-span.found {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border-color: #22c55e;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+
+        /* --- TOOLTIPS --- */
+        .tooltip {
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            white-space: nowrap;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+        }
+
+
+        .tooltip.show { opacity: 1; animation: popIn 0.3s; }
+        .tooltip.green { background-color: #16a34a; }
+        .tooltip.green::after { border-color: #16a34a transparent transparent transparent; }
+        .tooltip.red { background-color: #ef4444; }
+        .tooltip.red::after { border-color: #ef4444 transparent transparent transparent; }
+
+
+        /* --- EXERCICE : ANTECEDENT --- */
+        .antecedent-word {
+            border-bottom: 2px dashed #94a3b8;
+            border-radius: 4px;
+            padding: 2px 4px;
+            cursor: pointer;
+        }
+        .antecedent-word:hover { background-color: #dbeafe; }
+        .antecedent-word.correct { background-color: var(--success-bg); color: var(--success-text); border-color: #166534; }
+        .antecedent-word.wrong { background-color: var(--error-bg); text-decoration: line-through; border-color: #ef4444; }
+
+
+        .feedback-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            animation: fadeIn 0.5s;
+        }
+        .feedback-success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #86efac; }
+        .feedback-error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid #fecaca; }
+
+
+        /* --- EXERCICE : SUBSTITUTION --- */
+        .sub-input-group {
+            font-size: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 2;
+        }
+
+
+        select.custom-select {
+            font-size: 1.25rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid #c7d2fe;
+            border-radius: 0.5rem;
+            color: #1e40af;
+            background-color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        select.custom-select:focus { outline: none; border-color: var(--primary-color); }
+        select.custom-select.correct { border-color: #22c55e; background-color: #f0fdf4; color: #15803d; }
+        select.custom-select.wrong { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn {
+            0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+
+
+        .fade-in { animation: fadeIn 0.5s ease-in; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            h2.slide-title { font-size: 1.75rem; }
+            .sentence-display { font-size: 1.25rem; text-align: left; }
+            .card-box { padding: 1.5rem; }
+            .header-stats { gap: 0.5rem; font-size: 0.8rem; }
+            .expert-icon { width: 2.5rem; height: 2.5rem; font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="app-container">
+        
+        <!-- HEADER -->
+        <header>
+            <div class="header-title-group">
+                <div class="expert-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h1 class="app-title handwritten">Défi Expert</h1>
+                    <p class="app-subtitle">Niveau Avancé : Le Pronom</p>
+                </div>
+            </div>
+
+
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <i class="fas fa-layer-group" style="color: #cbd5e1; margin-right: 0.5rem;"></i>
+                    <span id="progress-text">1 / 15</span>
+                </div>
+                
+                <div class="score-box">
+                    <i class="fas fa-star" style="color: #facc15;"></i>
+                    <span id="score-display">0</span>
+                    <span style="font-size: 0.9rem; color: #94a3b8; font-weight: normal;">/ <span id="max-score">0</span></span>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- MAIN CONTENT -->
+        <main id="app-content">
+            <!-- Contenu injecté par JS -->
+        </main>
+
+
+        <!-- FOOTER -->
+        <footer>
+            <button id="btn-prev" class="btn btn-secondary" style="visibility: hidden;">
+                <i class="fas fa-arrow-left"></i> Précédent
+            </button>
+            
+            <div class="dots-container" id="dots-container"></div>
+
+
+            <button id="btn-next" class="btn btn-primary">
+                Suivant <i class="fas fa-arrow-right"></i>
+            </button>
+        </footer>
+
+
+    </div>
+
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script>
+        // --- DONNÉES DU JEU (Phrases Expert + Structure Robuste) ---
+        let slides = [
+            // Slide 0: Intro
+            {
+                type: 'intro',
+                title: "Le Défi Expert",
+                content: `
+                    <div style="text-align: center;">
+                        <div style="font-size: 5rem; color: #dc2626; margin-bottom: 1rem; animation: bounce 2s infinite;">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <p style="font-size: 1.5rem; margin-bottom: 1rem; font-weight: 500;">
+                            Prêt pour le niveau supérieur ?
+                        </p>
+                        <p style="color: #64748b; font-size: 1.2rem; margin-bottom: 2rem;">
+                            Attention aux pièges ! Ce module contient des phrases complexes avec des homophones (les/les, leur/leur).
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <div style="background: #fee2e2; padding: 1rem; border-radius: 0.5rem; color: #991b1b; font-weight: bold;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i> Confusion
+                            </div>
+                            <div style="background: #dbeafe; padding: 1rem; border-radius: 0.5rem; color: #1e40af; font-weight: bold;">
+                                <i class="fas fa-random" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i> Accords
+                            </div>
+                            <div style="background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; color: #6b21a8; font-weight: bold;">
+                                <i class="fas fa-pen-fancy" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i> Syntaxe
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // --- IDENTIFICATION ---
+            {
+                type: 'info',
+                title: "Niveau 1 : Le Radar Expert",
+                content: "<p style='text-align: center; font-size: 1.25rem;'>Distingue le pronom du déterminant !<br>Clique sur <strong>TOUS</strong> les pronoms.</p>"
+            },
+            // Identif 1 : Les spectateurs (Confusion LE/LA)
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Les", class: "Déterminant"},
+                    {text: "spectateurs", class: "Nom"},
+                    {text: "observent", class: "Verbe"},
+                    {text: "les", class: "Déterminant"},
+                    {text: "acrobates", class: "Nom"},
+                    {text: "et", class: "Conjonction"},
+                    {text: "les", class: "Pronom", type: "Pronom personnel (CD)"},
+                    {text: "applaudissent", class: "Verbe"},
+                    {text: "dès", class: "Préposition"},
+                    {text: "qu'", class: "Conjonction"},
+                    {text: "ils", class: "Pronom", type: "Pronom personnel"},
+                    {text: "terminent", class: "Verbe"},
+                    {text: "leur", class: "Déterminant"},
+                    {text: "numéro", class: "Nom"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Identif 2 : Voisins (Confusion LEUR)
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Si", class: "Conjonction"},
+                    {text: "tu", class: "Pronom", type: "Pronom personnel"},
+                    {text: "vois", class: "Verbe"},
+                    {text: "tes", class: "Déterminant"},
+                    {text: "voisins", class: "Nom"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "donne", class: "Verbe"},
+                    {text: "-", class: "Ponctuation"},
+                    {text: "leur", class: "Pronom", type: "Pronom personnel (CI)"},
+                    {text: "le", class: "Déterminant"},
+                    {text: "courrier", class: "Nom"},
+                    {text: "qui", class: "Pronom", type: "Pronom relatif"},
+                    {text: "traîne", class: "Verbe"},
+                    {text: "sur", class: "Préposition"},
+                    {text: "leur", class: "Déterminant"},
+                    {text: "galerie", class: "Nom"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Identif 3 : Certains/Celui (Indéfinis/Démonstratifs)
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Certains", class: "Pronom", type: "Pronom indéfini"},
+                    {text: "préfèrent", class: "Verbe"},
+                    {text: "ce", class: "Déterminant"},
+                    {text: "modèle", class: "Nom"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "mais", class: "Conjonction"},
+                    {text: "moi", class: "Pronom", type: "Pronom tonique"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "je", class: "Pronom", type: "Pronom personnel"},
+                    {text: "choisirais", class: "Verbe"},
+                    {text: "celui", class: "Pronom", type: "Pronom démonstratif"},
+                    {text: "dont", class: "Pronom", type: "Pronom relatif"},
+                    {text: "nous", class: "Pronom", type: "Pronom personnel"},
+                    {text: "avons", class: "Verbe"},
+                    {text: "parlé", class: "Verbe"},
+                    {text: "hier", class: "Adverbe"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Identif 4 : Chocolat (EN/LE neutre)
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Elle", class: "Pronom", type: "Pronom personnel"},
+                    {text: "voulait", class: "Verbe"},
+                    {text: "du", class: "Déterminant"},
+                    {text: "chocolat", class: "Nom"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "alors", class: "Conjonction"},
+                    {text: "j'", class: "Pronom", type: "Pronom personnel"},
+                    {text: "en", class: "Pronom", type: "Pronom personnel"},
+                    {text: "ai", class: "Verbe"},
+                    {text: "acheté", class: "Verbe"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "même", class: "Adverbe"},
+                    {text: "si", class: "Conjonction"},
+                    {text: "je", class: "Pronom", type: "Pronom personnel"},
+                    {text: "le", class: "Pronom", type: "Pronom neutre"},
+                    {text: "savais", class: "Verbe"},
+                    {text: "déjà", class: "Adverbe"},
+                    {text: "interdit", class: "Adjectif"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+
+
+            // --- ANTÉCÉDENT ---
+            {
+                type: 'info',
+                title: "Niveau 2 : Le Détective",
+                content: "<p style='text-align: center; font-size: 1.25rem;'>Attention aux pièges d'accord et de logique !<br>Trouve le mot remplacé par le pronom.</p>"
+            },
+            // Ant 1 : Ceux-ci (Actionnaires vs Conseillers)
+            {
+                type: 'antecedent',
+                context: "Les conseillers ont présenté les résultats financiers aux actionnaires.",
+                targetSentence: "Malheureusement, <strong>ceux-ci</strong> n'ont pas été satisfaits.",
+                words: [
+                    {text: "Les", correct: false},
+                    {text: "conseillers", correct: false, feedback: "Non. Ce sont les actionnaires qui sont insatisfaits."},
+                    {text: "ont", correct: false},
+                    {text: "présenté", correct: false},
+                    {text: "les", correct: false},
+                    {text: "résultats", correct: false, feedback: "Des résultats ne peuvent pas être 'satisfaits'."},
+                    {text: "financiers", correct: false},
+                    {text: "aux", correct: false},
+                    {text: "actionnaires", correct: true, feedback: "Exact ! 'Ceux-ci' reprend le nom le plus proche : les actionnaires."}
+                ],
+                pronoun: "ceux-ci"
+            },
+            // Ant 2 : La (Boîte vs Guitare)
+            {
+                type: 'antecedent',
+                context: "J'ai rangé ma vieille guitare dans une boîte en carton.",
+                targetSentence: "Je vais <strong>la</strong> jeter demain matin.",
+                words: [
+                    {text: "J'", correct: false},
+                    {text: "ai", correct: false},
+                    {text: "rangé", correct: false},
+                    {text: "ma", correct: false},
+                    {text: "vieille", correct: false},
+                    {text: "guitare", correct: false, feedback: "Piège ! On ne jette probablement pas la guitare, mais l'emballage..."},
+                    {text: "dans", correct: false},
+                    {text: "une", correct: false},
+                    {text: "boîte", correct: true, feedback: "Logique ! On jette la boîte, pas la guitare."},
+                    {text: "en", correct: false},
+                    {text: "carton", correct: false}
+                ],
+                pronoun: "la"
+            },
+            // Ant 3 : Il (Courage vs Pompiers)
+            {
+                type: 'antecedent',
+                context: "Le courage des pompiers a impressionné toute la foule.",
+                targetSentence: "<strong>Il</strong> restera gravé dans les mémoires.",
+                words: [
+                    {text: "Le", correct: false},
+                    {text: "courage", correct: true, feedback: "Oui ! C'est le courage qui reste gravé."},
+                    {text: "des", correct: false},
+                    {text: "pompiers", correct: false, feedback: "'Pompiers' est au pluriel, mais 'Il' est singulier !"},
+                    {text: "a", correct: false},
+                    {text: "impressionné", correct: false},
+                    {text: "toute", correct: false},
+                    {text: "la", correct: false},
+                    {text: "foule", correct: false, feedback: "'Foule' est féminin, 'Il' est masculin."}
+                ],
+                pronoun: "Il"
+            },
+
+
+            // --- SUBSTITUTION ---
+            {
+                type: 'info',
+                title: "Niveau 3 : Le Constructeur",
+                content: "<p style='text-align: center; font-size: 1.25rem;'>Remplacements complexes (Lui, Leur, En, Y).<br>Sois précis !</p>"
+            },
+            // Sub 1 : Architecte (Lui vs Le)
+            {
+                type: 'substitution',
+                sentence1: "L'architecte envoie les plans <strong>au client</strong>.",
+                sentence2Part1: "L'architecte ",
+                sentence2Part2: " envoie les plans.",
+                options: ["le", "lui", "y", "l'"],
+                correct: "lui",
+                feedback: "Correct ! On envoie À quelqu'un (complément indirect) -> lui."
+            },
+            // Sub 2 : Réfléchir (Y vs Lui)
+            {
+                type: 'substitution',
+                sentence1: "Tu dois réfléchir <strong>à ce problème</strong> sérieusement.",
+                sentence2Part1: "Tu dois ",
+                sentence2Part2: " réfléchir sérieusement.",
+                options: ["le", "lui", "y", "en"],
+                correct: "y",
+                feedback: "Exact ! Réfléchir 'à' quelque chose (inanimé) -> y."
+            },
+            // Sub 3 : Manger (En vs Les)
+            {
+                type: 'substitution',
+                sentence1: "Les enfants mangent <strong>des bonbons</strong>.",
+                sentence2Part1: "Les enfants ",
+                sentence2Part2: " mangent.",
+                options: ["les", "en", "ils", "le"],
+                correct: "en",
+                feedback: "Bien joué ! Quantité indéfinie (des bonbons) -> en."
+            },
+            // Sub 4 : Prêter (Leur vs Les)
+            {
+                type: 'substitution',
+                sentence1: "Ne prête pas ta voiture <strong>à tes amis</strong>.",
+                sentence2Part1: "Ne ",
+                sentence2Part2: " prête pas ta voiture.",
+                options: ["les", "leur", "y", "eux"],
+                correct: "leur",
+                feedback: "Oui ! Prêter à plusieurs personnes (à qui ?) -> leur."
+            },
+
+
+            // Fin
+            {
+                type: 'intro',
+                title: "Résultat Final",
+                content: `
+                    <div style="text-align: center;">
+                        <div id="final-score-icon" style="font-size: 5rem; color: #cbd5e1; margin-bottom: 1rem;">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <h2 style="font-size: 2.5rem; color: #1e293b; margin-bottom: 1rem;">Défi complété !</h2>
+                        <div style="background: white; border: 2px dashed #fca5a5; padding: 2rem; border-radius: 1rem; display: inline-block; margin-bottom: 1rem;">
+                            <p style="color: #64748b; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0.5rem;">Ton Score</p>
+                            <p style="font-size: 4rem; font-weight: 900; color: #dc2626; line-height: 1;" id="final-score-value">0/0</p>
+                        </div>
+                        <p id="final-message" style="font-size: 1.25rem; color: #334155; margin-bottom: 2rem;">
+                            <!-- Message JS -->
+                        </p>
+                        <button onclick="location.reload()" class="btn btn-primary" style="background-color: #1e293b;">
+                            <i class="fas fa-redo"></i> Recommencer le test
+                        </button>
+                    </div>
+                `
+            }
+        ];
+
+
+        let appState = {
+            currentSlide: 0,
+            score: 0,
+            maxScore: 0
+        };
+
+
+        // --- ÉLÉMENTS DOM ---
+        const mainContent = document.getElementById('app-content');
+        const btnNext = document.getElementById('btn-next');
+        const btnPrev = document.getElementById('btn-prev');
+        const dotsContainer = document.getElementById('dots-container');
+        const progressText = document.getElementById('progress-text');
+        const scoreDisplay = document.getElementById('score-display');
+        const maxScoreDisplay = document.getElementById('max-score');
+
+
+        // --- INITIALISATION ---
+        function initGame() {
+            let totalPoints = 0;
+            
+            // Calcul du Score Max
+            slides.forEach(slide => {
+                if (slide.type === 'identification') {
+                    // Points = nombre de pronoms
+                    slide.sentence.forEach(w => {
+                        if (w.class === 'Pronom') totalPoints++;
+                    });
+                } else if (slide.type === 'antecedent' || slide.type === 'substitution') {
+                    totalPoints++;
+                    slide.answered = false;
+                }
+            });
+
+
+            appState.maxScore = totalPoints;
+            maxScoreDisplay.innerText = totalPoints;
+            renderSlide();
+        }
+
+
+        // --- LOGIQUE CŒUR ---
+
+
+        function addScore(points) {
+            appState.score += points;
+            scoreDisplay.innerText = appState.score;
+            scoreDisplay.classList.add('score-animate');
+            setTimeout(() => scoreDisplay.classList.remove('score-animate'), 300);
+        }
+
+
+        function renderSlide() {
+            const slide = slides[appState.currentSlide];
+            
+            // Mise à jour UI
+            updateDots();
+            progressText.innerText = `${appState.currentSlide + 1} / ${slides.length}`;
+            
+            // Nettoyage et Fade In
+            mainContent.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'fade-in';
+            
+            // Routage type de slide
+            if (slide.type === 'intro' || slide.type === 'info') {
+                renderInfoSlide(slide, container);
+            } else if (slide.type === 'identification') {
+                renderIdentificationSlide(slide, container);
+            } else if (slide.type === 'antecedent') {
+                renderAntecedentSlide(slide, container);
+            } else if (slide.type === 'substitution') {
+                renderSubstitutionSlide(slide, container);
+            }
+
+
+            mainContent.appendChild(container);
+
+
+            // Gestion Boutons
+            btnPrev.style.visibility = appState.currentSlide === 0 ? 'hidden' : 'visible';
+            
+            if (appState.currentSlide === slides.length - 1) {
+                btnNext.style.display = 'none';
+                updateFinalScreen();
+            } else {
+                btnNext.style.display = 'inline-flex';
+            }
+        }
+
+
+        function updateFinalScreen() {
+            const ratio = appState.score / appState.maxScore;
+            const finalValue = document.getElementById('final-score-value');
+            const finalMsg = document.getElementById('final-message');
+            const icon = document.getElementById('final-score-icon');
+
+
+            if (finalValue) finalValue.innerText = `${appState.score}/${appState.maxScore}`;
+            
+            if (finalMsg) {
+                if (ratio >= 0.9) {
+                    finalMsg.innerHTML = "Incroyable ! Tu es un <span style='color:#dc2626; font-weight:bold;'>Expert du Pronom</span> !";
+                    icon.innerHTML = "<i class='fas fa-trophy' style='color:#fbbf24;'></i>";
+                } else if (ratio >= 0.7) {
+                    finalMsg.innerText = "Très bon travail ! Tu maîtrises bien les pièges.";
+                    icon.innerHTML = "<i class='fas fa-thumbs-up' style='color:#3b82f6;'></i>";
+                } else {
+                    finalMsg.innerText = "Continue tes efforts, ces phrases sont difficiles !";
+                    icon.innerHTML = "<i class='fas fa-book-reader' style='color:#6366f1;'></i>";
+                }
+            }
+        }
+
+
+        function renderInfoSlide(slide, container) {
+            container.innerHTML = `
+                <h2 class="slide-title handwritten">${slide.title || ''}</h2>
+                <div class="card-box">
+                    ${slide.content}
+                </div>
+            `;
+        }
+
+
+        function renderIdentificationSlide(slide, container) {
+            // Compte des pronoms
+            const totalPronouns = slide.sentence.filter(w => w.class === 'Pronom').length;
+            const foundCount = slide.sentence.filter(w => w.class === 'Pronom' && w.isFound).length;
+            const allFound = foundCount === totalPronouns;
+
+
+            // Badge Instruction
+            const instruction = document.createElement('div');
+            instruction.className = `instruction-badge ${allFound ? 'instruction-success' : 'instruction-neutral'}`;
+            
+            if (allFound) {
+                instruction.innerHTML = `<i class='fas fa-check-circle'></i> Terminé ! (${foundCount}/${totalPronouns})`;
+            } else {
+                instruction.innerHTML = `<i class='fas fa-search'></i> Trouve les pronoms : ${foundCount} / ${totalPronouns}`;
+            }
+            container.appendChild(instruction);
+
+
+            // Boite de phrase
+            const card = document.createElement('div');
+            card.className = "card-box";
+            
+            const sentenceDiv = document.createElement('div');
+            sentenceDiv.className = "sentence-display";
+
+
+            slide.sentence.forEach((wordObj, index) => {
+                const span = document.createElement('span');
+                span.textContent = wordObj.text;
+                span.className = "word-span";
+                
+                if (wordObj.isFound) span.classList.add('found');
+                
+                span.onclick = (e) => {
+                    if (wordObj.isFound) return;
+
+
+                    // Clean tooltips
+                    document.querySelectorAll('.tooltip').forEach(t => t.remove());
+
+
+                    const tooltip = document.createElement('div');
+                    const isPronoun = wordObj.class === "Pronom";
+                    
+                    tooltip.className = `tooltip ${isPronoun ? 'green' : 'red'}`;
+                    
+                    if (isPronoun) {
+                        tooltip.innerHTML = `<i class="fas fa-check"></i> ${wordObj.type}`;
+                        wordObj.isFound = true;
+                        span.classList.add('found');
+                        addScore(1);
+                        
+                        // Update badge
+                        const newFound = slide.sentence.filter(w => w.class === 'Pronom' && w.isFound).length;
+                        if (newFound === totalPronouns) {
+                            instruction.className = "instruction-badge instruction-success";
+                            instruction.innerHTML = `<i class='fas fa-check-circle'></i> Terminé ! (${newFound}/${totalPronouns})`;
+                        } else {
+                            instruction.innerHTML = `<i class='fas fa-search'></i> Trouve les pronoms : ${newFound} / ${totalPronouns}`;
+                        }
+                    } else {
+                        tooltip.innerHTML = `<i class="fas fa-times"></i> ${wordObj.class}`;
+                    }
+
+
+                    span.appendChild(tooltip);
+                    void tooltip.offsetWidth; // Force reflow
+                    tooltip.classList.add('show');
+                };
+
+
+                sentenceDiv.appendChild(span);
+                
+                // Espace conditionnel
+                if (index < slide.sentence.length - 1) {
+                    const currentTxt = wordObj.text;
+                    const nextTxt = slide.sentence[index+1].text;
+                    // Pas d'espace si le mot actuel finit par apostrophe ou si le prochain est une ponctuation collée
+                    if (!currentTxt.endsWith("'") && !['.', ',', ')', '-'].includes(nextTxt)) {
+                        sentenceDiv.appendChild(document.createTextNode(" "));
+                    }
+                }
+            });
+
+
+            card.appendChild(sentenceDiv);
+            container.appendChild(card);
+        }
+
+
+        function renderAntecedentSlide(slide, container) {
+            const instruction = document.createElement('div');
+            instruction.className = "instruction-badge instruction-neutral";
+            instruction.innerHTML = `<i class="fas fa-search"></i> <strong>${slide.pronoun}</strong> remplace quel mot ?`;
+            container.appendChild(instruction);
+
+
+            const card = document.createElement('div');
+            card.className = "card-box";
+            
+            // Visualisation réponse
+            if (slide.answered) {
+                card.style.borderLeft = `8px solid ${slide.wasCorrect ? '#4ade80' : '#f87171'}`;
+            }
+
+
+            // Phrase 1 (Interactive)
+            const sent1Div = document.createElement('div');
+            sent1Div.className = "sentence-display";
+            sent1Div.style.borderBottom = "1px solid #e2e8f0";
+            sent1Div.style.paddingBottom = "1.5rem";
+            sent1Div.style.marginBottom = "1.5rem";
+            
+            slide.words.forEach((w) => {
+                const span = document.createElement('span');
+                span.textContent = w.text;
+                span.className = "word-span antecedent-word";
+                
+                if (slide.answered) span.style.pointerEvents = "none";
+
+
+                span.onclick = function() {
+                    if (slide.answered) return;
+
+
+                    slide.answered = true;
+                    slide.wasCorrect = w.correct;
+
+
+                    const existingFeedback = document.getElementById('feedback-box');
+                    if(existingFeedback) existingFeedback.remove();
+
+
+                    const feedbackBox = document.createElement('div');
+                    feedbackBox.id = "feedback-box";
+                    
+                    if (w.correct) {
+                        span.classList.add('correct');
+                        addScore(1);
+                        feedbackBox.className = "feedback-box feedback-success";
+                        feedbackBox.innerHTML = `<i class="fas fa-check-circle"></i> ${w.feedback}`;
+                    } else {
+                        span.classList.add('wrong');
+                        feedbackBox.className = "feedback-box feedback-error";
+                        feedbackBox.innerHTML = `<i class="fas fa-times-circle"></i> ${w.feedback || "Incorrect."}`;
+                    }
+                    
+                    card.appendChild(feedbackBox);
+                };
+                
+                sent1Div.appendChild(span);
+                sent1Div.appendChild(document.createTextNode(" "));
+            });
+
+
+            // Phrase 2 (Contexte)
+            const sent2Div = document.createElement('div');
+            sent2Div.style.color = "#64748b";
+            sent2Div.style.fontSize = "1.5rem";
+            sent2Div.innerHTML = slide.targetSentence;
+
+
+            card.appendChild(sent1Div);
+            card.appendChild(sent2Div);
+            container.appendChild(card);
+        }
+
+
+        function renderSubstitutionSlide(slide, container) {
+            const card = document.createElement('div');
+            card.className = "card-box";
+            
+            if (slide.answered) {
+                card.style.borderLeft = `8px solid ${slide.wasCorrect ? '#4ade80' : '#f87171'}`;
+            }
+
+
+            // Original
+            const original = document.createElement('div');
+            original.style.backgroundColor = "#f3e8ff";
+            original.style.color = "#581c87";
+            original.style.padding = "1rem";
+            original.style.borderRadius = "0.5rem";
+            original.style.marginBottom = "2rem";
+            original.style.fontSize = "1.25rem";
+            original.innerHTML = slide.sentence1;
+            card.appendChild(original);
+
+
+            // Interaction
+            const interactionLine = document.createElement('div');
+            interactionLine.className = "sub-input-group";
+            
+            const part1 = document.createElement('span');
+            part1.textContent = slide.sentence2Part1;
+            
+            const select = document.createElement('select');
+            select.className = "custom-select";
+            if (slide.answered) select.disabled = true;
+
+
+            const defOpt = document.createElement('option');
+            defOpt.text = "...";
+            defOpt.value = "";
+            select.add(defOpt);
+
+
+            slide.options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.text = opt;
+                select.add(o);
+            });
+
+
+            const part2 = document.createElement('span');
+            part2.textContent = slide.sentence2Part2;
+
+
+            interactionLine.appendChild(part1);
+            interactionLine.appendChild(select);
+            interactionLine.appendChild(part2);
+            card.appendChild(interactionLine);
+
+
+            const feedbackDiv = document.createElement('div');
+            card.appendChild(feedbackDiv);
+
+
+            select.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (!val || slide.answered) return;
+
+
+                slide.answered = true;
+                
+                if (val === slide.correct) {
+                    addScore(1);
+                    slide.wasCorrect = true;
+                    select.classList.add('correct');
+                    feedbackDiv.className = "feedback-box feedback-success";
+                    feedbackDiv.innerHTML = `<i class="fas fa-check"></i> ${slide.feedback}`;
+                } else {
+                    slide.wasCorrect = false;
+                    select.classList.add('wrong');
+                    feedbackDiv.className = "feedback-box feedback-error";
+                    feedbackDiv.innerHTML = `<i class="fas fa-times"></i> Non. Réponse : "${slide.correct}".`;
+                }
+            });
+
+
+            container.appendChild(card);
+        }
+
+
+        function updateDots() {
+            dotsContainer.innerHTML = '';
+            slides.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (idx === appState.currentSlide) dot.classList.add('active');
+                else if (idx < appState.currentSlide) dot.classList.add('passed');
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+
+        // --- EVENTS ---
+        btnNext.addEventListener('click', () => {
+            if (appState.currentSlide < slides.length - 1) {
+                appState.currentSlide++;
+                renderSlide();
+            }
+        });
+
+
+        btnPrev.addEventListener('click', () => {
+            if (appState.currentSlide > 0) {
+                appState.currentSlide--;
+                renderSlide();
+            }
+        });
+
+
+        // --- DÉMARRAGE ---
+        initGame();
+
+
+    </script>
+</body>
+</html>
