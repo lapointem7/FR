@@ -1,378 +1,505 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activité : Structure du Texte Descriptif</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importation de polices ludiques et lisibles pour le scolaire -->
+    <!-- Polices Google (Seule dépendance externe, non critique si absente) -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- 1. RESET & BASE --- */
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #e0f2fe; /* Bleu ciel très pâle */
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+            background-color: #e0f2fe; /* Bleu ciel */
             background-image: radial-gradient(#bae6fd 1px, transparent 1px);
             background-size: 20px 20px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
+            margin-top: 0;
         }
 
-
-        h1, h2, h3, .font-titre {
-            font-family: 'Fredoka', sans-serif;
+        /* --- 2. LAYOUT & STRUCTURE --- */
+        .header {
+            background: white;
+            border-bottom: 4px solid #38bdf8;
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-
-
-        /* Style amélioré pour les mots difficiles */
-        .mot-difficile {
-            position: relative;
-            display: inline-block;
-            color: #0369a1;
-            font-weight: 700;
-            border-bottom: 3px dashed #38bdf8;
-            background-color: rgba(255, 255, 255, 0.6);
-            cursor: help;
-            padding: 0 4px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            margin: 0 2px;
+        
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-
-
-        .mot-difficile:hover, .mot-difficile.active {
-            background-color: #fef08a; /* Jaune clair */
-            border-bottom-color: #eab308;
-            transform: translateY(-2px);
+        .icon-box {
+            background: #e0f2fe;
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 1.5rem;
         }
-
-
-        /* Le synonyme flottant */
-        .synonyme {
-            display: block;
-            font-size: 0.7em;
+        .main-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #334155;
+            margin: 0;
+            line-height: 1.1;
+        }
+        .sub-title {
+            font-size: 0.85rem;
             color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: -4px;
-            pointer-events: none;
+            font-weight: bold;
+            margin: 0;
+        }
+        .timer-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 1px solid #fde68a;
+            white-space: nowrap;
         }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        /* Effet carte pour les sections */
+        /* Responsive : Desktop côte à côte, Mobile empilé */
+        @media (min-width: 900px) {
+            .container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            .section-lecture {
+                width: 58%;
+                position: sticky;
+                top: 100px; /* Colle le texte lors du scroll */
+            }
+            .section-activite {
+                width: 40%;
+            }
+        }
+
+        /* --- 3. COMPOSANTS --- */
         .card {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 2px solid #e0f2fe;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-
-        /* Styles de l'arbre structurel */
-        .tree-line-v {
-            width: 4px;
-            background-color: #cbd5e1;
-            margin: 0 auto;
-        }
-        .tree-line-h {
-            height: 4px;
-            background-color: #cbd5e1;
-            margin-bottom: 1rem;
-            border-radius: 4px;
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-
-        /* Inputs de l'élève */
-        .eleve-input {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 8px;
-            width: 100%;
-            text-align: center;
+        .btn-corrige {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
             transition: all 0.2s;
-            background-color: #f8fafc;
+        }
+        .btn-corrige:hover {
+            background: #f1f5f9;
+        }
+
+        /* --- 4. MOTS CLIQUABLES --- */
+        .mot-difficile {
+            display: inline-block;
+            color: #0284c7;
+            font-weight: 700;
+            border-bottom: 3px dashed #7dd3fc;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 0 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .mot-difficile:hover, .mot-difficile.active {
+            background-color: #fef08a;
+            border-bottom-color: #eab308;
+            transform: translateY(-2px);
+        }
+        .synonyme {
+            display: block;
+            font-size: 0.65em;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: -6px; /* Colle au mot */
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        /* --- 5. BOITE DE DEFINITION --- */
+        #def-panel {
+            background-color: #1e293b;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+        #def-title {
+            color: #7dd3fc;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        #def-text {
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            margin: 0;
+        }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 6. ARBRE INTERACTIF --- */
+        .input-group {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .input-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .eleve-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            text-align: center;
+            font-family: inherit;
+            font-weight: bold;
+            background: #f8fafc;
+            transition: 0.2s;
         }
         .eleve-input:focus {
             outline: none;
             border-color: #0ea5e9;
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
-        }
-
-
-        /* Scrollbar personnalisée */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
+            background: white;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
         }
         
-        /* Animation pour la boite de définition */
-        @keyframes popIn {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+        /* Styles spécifiques pour le sujet */
+        .input-sujet {
+            background-color: #e0e7ff;
+            border-color: #c7d2fe;
+            color: #312e81;
+            font-size: 1.1rem;
         }
-        .animate-pop {
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        
+        .correction {
+            color: #e11d48;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: #ffe4e6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px solid #fecdd3;
         }
+
+        /* Lignes de l'arbre */
+        .tree-container {
+            position: relative;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        .line-v {
+            width: 4px;
+            background: #94a3b8;
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+        .line-h-branch {
+            height: 20px;
+            width: 60%;
+            margin: 0 auto;
+            border-top: 4px solid #94a3b8;
+            border-left: 4px solid #94a3b8;
+            border-right: 4px solid #94a3b8;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 0;
+        }
+
+        /* Boites de détails */
+        .details-box {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+        .input-detail {
+            border: none;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 5px;
+            font-size: 0.85rem;
+            background: transparent;
+            margin-bottom: 5px;
+        }
+        .input-detail:focus {
+            border-bottom-color: #0ea5e9;
+        }
+
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body>
 
-
-    <!-- En-tête ludique -->
-    <header class="bg-white border-b-4 border-sky-400 py-3 px-6 shadow-sm z-20 flex-none">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="bg-sky-100 p-2 rounded-xl text-2xl">🦎</div>
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-700 leading-none">Détective du Texte</h1>
-                    <p class="text-sm text-slate-500 font-bold">Français 1re Secondaire • Le Texte Descriptif</p>
-                </div>
-            </div>
-            <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-full font-bold text-sm shadow-sm border border-amber-200 flex items-center gap-2">
-                <span>⏱️</span> 60 min
+    <!-- EN-TÊTE -->
+    <header class="header">
+        <div class="header-title-group">
+            <div class="icon-box">🦎</div>
+            <div>
+                <h1 class="main-title">Détective du Texte</h1>
+                <p class="sub-title">Français 1re Sec. • Le Texte Descriptif</p>
             </div>
         </div>
+        <div class="timer-badge">⏱️ 20 min</div>
     </header>
 
+    <!-- CONTENU -->
+    <div class="container">
+        
+        <!-- SECTION LECTURE (GAUCHE) -->
+        <div class="section-lecture">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Lecture</span>
+                    <div style="font-size: 2rem;">😊</div>
+                </div>
 
-    <!-- Contenu Principal -->
-    <main class="flex-grow flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto w-full h-full overflow-hidden">
+                <h2 style="color: #0c4a6e; margin-bottom: 1rem;">L'étrange habitant du lac</h2>
 
+                <div style="text-align: justify; font-size: 1.1rem;">
+                    <p style="margin-bottom: 1.5rem;">
+                        Parmi les créatures les plus fascinantes du règne animal, l'Axolotl occupe une place de choix. Ce petit amphibien, que l'on retrouve principalement au Mexique, ressemble à un monstre souriant sorti d'un dessin animé. Pour bien comprendre cet animal, il faut d'abord observer son 
+                        <span class="mot-difficile" data-mot="Physique" data-def="C'est l'apparence extérieure du corps d'un être vivant (ce à quoi il ressemble).">
+                            <span class="synonyme">apparence</span>physique
+                        </span>
+                        unique, puis s'intéresser à ses capacités biologiques exceptionnelles.
+                    </p>
 
-        <!-- COLONNE GAUCHE : TEXTE & IMAGE -->
-        <section class="lg:w-7/12 flex flex-col gap-4 h-full overflow-hidden">
+                    <p style="margin-bottom: 1.5rem;">
+                        D'un point de vue corporel, l'axolotl possède des caractéristiques distinctes. Tout d'abord, sa tête est large et ornée de 
+                        <span class="mot-difficile" data-mot="Branchies" data-def="Organes qui permettent aux animaux aquatiques (comme les poissons) de respirer sous l'eau.">
+                            <span class="synonyme">organes respiratoires</span>branchies
+                        </span>
+                        externes qui ressemblent à des plumes rosées de chaque côté de son cou. Ensuite, il possède une longue queue aplatie qui lui sert de propulseur pour nager avec agilité. Enfin, sa peau est lisse et peut varier du rose pâle au noir, en passant par le doré, selon les types.
+                    </p>
+
+                    <p>
+                        Au-delà de son allure, l'axolotl est célèbre pour ses capacités de survie hors du commun. Sa caractéristique la plus incroyable est sans doute sa capacité de 
+                        <span class="mot-difficile" data-mot="Régénération" data-def="Capacité naturelle à reconstruire ou faire repousser une partie du corps qui a été détruite.">
+                            <span class="synonyme">reconstitution</span>régénération
+                        </span>.
+                        En effet, si l'axolotl perd une patte ou même un morceau de son cœur, il peut le faire repousser en quelques semaines ! De plus, il possède une particularité appelée néoténie : il conserve ses traits de bébé (larve) toute sa vie.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION ACTIVITÉ (DROITE) -->
+        <div class="section-activite">
             
-            <!-- Carte du texte avec scroll -->
-            <div class="card p-8 flex-grow overflow-y-auto relative bg-white">
-                <!-- Décoration coin -->
-                <div class="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-bl-full -z-0"></div>
-                
-                <div class="relative z-10">
-                    <div class="flex items-start justify-between mb-6">
-                        <div>
-                            <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Lecture Interactive</span>
-                            <h2 class="text-3xl font-bold text-sky-900 mt-2">L'étrange habitant du lac</h2>
-                        </div>
-                        <!-- Placeholder pour l'image de l'axolotl -->
-                        <div class="w-24 h-24 bg-sky-200 rounded-full flex items-center justify-center text-4xl shadow-inner border-4 border-white">
-                            😊
-                        </div>
-                    </div>
-
-
-                    <div class="prose prose-lg text-slate-600 leading-relaxed text-justify">
-                        <p class="mb-6">
-                            Parmi les créatures les plus fascinantes du règne animal, l'Axolotl occupe une place de choix. Ce petit amphibien, que l'on retrouve principalement au Mexique, ressemble à un monstre souriant sorti d'un dessin animé. Pour bien comprendre cet animal, il faut d'abord observer son 
-                            <span class="mot-difficile" data-mot="Physique" data-def="C'est l'apparence extérieure du corps d'un être vivant (ce à quoi il ressemble).">
-                                <span class="synonyme">apparence</span>physique
-                            </span>
-                            unique, puis s'intéresser à ses capacités biologiques exceptionnelles.
-                        </p>
-
-
-                        <p class="mb-6">
-                            D'un point de vue corporel, l'axolotl possède des caractéristiques distinctes. Tout d'abord, sa tête est large et ornée de 
-                            <span class="mot-difficile" data-mot="Branchies" data-def="Ce sont les organes qui permettent aux animaux aquatiques (comme les poissons) de respirer sous l'eau.">
-                                <span class="synonyme">organes respiratoires</span>branchies
-                            </span>
-                            externes qui ressemblent à des plumes rosées de chaque côté de son cou. Ensuite, il possède une longue queue aplatie qui lui sert de propulseur pour nager avec agilité. Enfin, sa peau est lisse et peut varier du rose pâle au noir, en passant par le doré, selon les types.
-                        </p>
-
-
-                        <p class="mb-6">
-                            Au-delà de son allure, l'axolotl est célèbre pour ses capacités de survie hors du commun. Sa caractéristique la plus incroyable est sans doute sa capacité de 
-                            <span class="mot-difficile" data-mot="Régénération" data-def="C'est la capacité naturelle à reconstruire ou faire repousser une partie du corps qui a été détruite ou coupée.">
-                                <span class="synonyme">reconstitution</span>régénération
-                            </span>.
-                            En effet, si l'axolotl perd une patte ou même un morceau de son cœur, il peut le faire repousser en quelques semaines ! De plus, il possède une particularité appelée néoténie : il conserve ses traits de bébé (larve) toute sa vie, sans jamais devenir un adulte terrestre comme les autres salamandres.
-                        </p>
-                    </div>
-
-
-                    <!-- Instruction encadrée -->
-                    <div class="mt-8 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
-                        <h4 class="font-bold text-amber-800 flex items-center gap-2">
-                            <span>💡</span> Rappel de l'enseignant
-                        </h4>
-                        <p class="text-sm text-amber-900 mt-1">
-                            Tu te souviens de l'<strong>arbre de facteurs</strong> en mathématiques ? Le texte descriptif fonctionne pareil ! 
-                            Le <strong>Sujet</strong> est le nombre principal. Les <strong>Aspects</strong> sont les grands facteurs, et les <strong>Sous-aspects</strong> sont les petits détails.
-                        </p>
-                    </div>
+            <!-- Boîte de définition -->
+            <div id="def-panel" class="card" style="padding: 1rem;">
+                <div id="def-placeholder" style="opacity: 0.7;">
+                    <div style="font-size: 2rem;">👆</div>
+                    <p style="font-weight: bold; margin: 5px 0;">Clique sur un mot surligné</p>
                 </div>
-            </div>
-        </section>
-
-
-        <!-- COLONNE DROITE : OUTILS & EXERCICE -->
-        <aside class="lg:w-5/12 flex flex-col gap-4 h-full overflow-hidden">
-            
-            <!-- Zone Définition (Fixe) -->
-            <div id="def-panel" class="card bg-gradient-to-br from-indigo-600 to-sky-500 text-white p-6 min-h-[140px] flex flex-col justify-center items-center text-center shadow-lg transform transition-all flex-none">
-                <div id="def-placeholder" class="opacity-80">
-                    <div class="text-4xl mb-2">👆</div>
-                    <p class="font-bold">Clique sur un mot surligné</p>
-                    <p class="text-sm opacity-75">Sa définition apparaîtra ici</p>
-                </div>
-                <div id="def-content" class="hidden w-full">
-                    <h3 id="def-title" class="text-2xl font-bold mb-2 border-b border-white/30 pb-1 inline-block">Mot</h3>
-                    <p id="def-text" class="text-lg leading-snug font-medium">Définition...</p>
+                <div id="def-content" class="hidden">
+                    <h3 id="def-title">Mot</h3>
+                    <p id="def-text">Définition...</p>
                 </div>
             </div>
 
-
-            <!-- Zone Exercice (Scrollable) -->
-            <div class="card p-1 bg-white flex-grow flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-[18px]">
-                    <h3 class="font-bold text-gray-700 text-lg">🧩 Construis la structure</h3>
-                    <button onclick="toggleCorrection()" class="text-xs bg-white border border-gray-300 hover:bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full font-bold shadow-sm transition">
-                        👁️ Corrigé
-                    </button>
+            <!-- Arbre -->
+            <div class="card" style="padding: 0;">
+                <div class="card-header" style="background: #f8fafc; padding: 15px; margin: 0; border-bottom: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0; color: #334155; font-size: 1rem;">🧩 L'Arbre du texte</h3>
+                    <button onclick="toggleCorrection()" class="btn-corrige">Voir le corrigé</button>
                 </div>
 
+                <div class="tree-container">
+                    
+                    <!-- SUJET -->
+                    <div class="input-group">
+                        <span class="input-label">Introduction / Sujet</span>
+                        <input type="text" class="eleve-input input-sujet" placeholder="Le sujet ?" style="max-width: 200px;">
+                        <div class="correction hidden">L'Axolotl</div>
+                        <div class="line-v" style="height: 25px; margin-top: 5px;"></div>
+                    </div>
 
-                <div class="p-4 overflow-y-auto flex-grow bg-slate-50 relative">
-                    <!-- Fond grille mathématique subtil -->
-                    <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    <!-- PONT -->
+                    <div class="line-h-branch"></div>
 
-
-                    <div class="relative z-10 max-w-sm mx-auto pb-8">
-                        
-                        <!-- NIVEAU 1 : SUJET -->
-                        <div class="flex flex-col items-center mb-2">
-                            <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full mb-1 uppercase tracking-wider">Sujet (Le Tout)</span>
-                            <input type="text" placeholder="De quoi parle-t-on ?" class="eleve-input border-indigo-300 bg-indigo-50 font-bold text-lg text-indigo-900 shadow-sm focus:ring-indigo-200">
-                            <div class="text-rose-500 font-bold hidden correction mt-1 bg-white px-2 rounded shadow-sm border border-rose-100 text-sm">L'Axolotl</div>
+                    <!-- ASPECTS -->
+                    <div class="grid-2">
+                        <!-- ASPECT 1 -->
+                        <div style="text-align: center;">
+                            <div class="line-v" style="height: 10px;"></div>
+                            <span class="input-label">Aspect 1 (§1)</span>
+                            <input type="text" class="eleve-input" style="background: #f0f9ff; border-color: #bae6fd;" placeholder="Idée 1...">
+                            <div class="correction hidden">Physique</div>
                             
-                            <!-- Tronc -->
-                            <div class="h-8 w-1 bg-indigo-200 mt-2"></div>
-                        </div>
-
-
-                        <!-- Connecteur horizontal -->
-                        <div class="flex justify-center mb-2">
-                            <div class="w-[50%] border-t-4 border-indigo-200 rounded-t-lg h-4"></div>
-                        </div>
-
-
-                        <!-- NIVEAU 2 : ASPECTS -->
-                        <div class="grid grid-cols-2 gap-4">
+                            <div class="line-v" style="height: 20px; background: #7dd3fc;"></div>
                             
-                            <!-- BRANCHE GAUCHE -->
-                            <div class="flex flex-col items-center">
-                                <div class="h-4 w-1 bg-indigo-200 mb-1"></div>
-                                <span class="text-gray-400 text-[10px] font-bold uppercase mb-1">Aspect 1 (§1)</span>
-                                <input type="text" placeholder="Idée 1..." class="eleve-input border-sky-300 bg-sky-50 text-sm font-bold">
-                                <div class="text-rose-500 text-xs font-bold hidden correction mt-1 bg-white px-1 rounded border border-rose-100">Physique</div>
-                                
-                                <div class="h-6 w-0.5 bg-sky-200 my-1"></div>
-                                
-                                <!-- Détails -->
-                                <div class="w-full bg-white p-3 rounded-xl border border-sky-100 shadow-sm space-y-2">
-                                    <p class="text-[10px] text-center text-gray-400 font-bold">Sous-aspects</p>
-                                    <div>
-                                        <input type="text" class="w-full border-b border-gray-200 text-xs text-center py-1 focus:outline-none focus:border-sky-400" placeholder="Détail A">
-                                        <div class="text-rose-500 text-[10px] hidden correction text-center">Tête/Branchies</div>
-                                    </div>
-                                    <div>
-                                        <input type="text" class="w-full border-b border-gray-200 text-xs text-center py-1 focus:outline-none focus:border-sky-400" placeholder="Détail B">
-                                        <div class="text-rose-500 text-[10px] hidden correction text-center">Queue</div>
-                                    </div>
-                                    <div>
-                                        <input type="text" class="w-full border-b border-gray-200 text-xs text-center py-1 focus:outline-none focus:border-sky-400" placeholder="Détail C">
-                                        <div class="text-rose-500 text-[10px] hidden correction text-center">Peau</div>
-                                    </div>
-                                </div>
+                            <!-- DETAILS -->
+                            <div class="details-box" style="border-color: #bae6fd;">
+                                <span class="input-label" style="color: #0ea5e9;">Détails</span>
+                                <input type="text" class="eleve-input input-detail" placeholder="• Détail A">
+                                <div class="correction hidden">Tête/Branchies</div>
+                                <input type="text" class="eleve-input input-detail" placeholder="• Détail B">
+                                <div class="correction hidden">Queue</div>
+                                <input type="text" class="eleve-input input-detail" placeholder="• Détail C">
+                                <div class="correction hidden">Peau</div>
                             </div>
+                        </div>
 
-
-                            <!-- BRANCHE DROITE -->
-                            <div class="flex flex-col items-center">
-                                <div class="h-4 w-1 bg-indigo-200 mb-1"></div>
-                                <span class="text-gray-400 text-[10px] font-bold uppercase mb-1">Aspect 2 (§2)</span>
-                                <input type="text" placeholder="Idée 2..." class="eleve-input border-emerald-300 bg-emerald-50 text-sm font-bold">
-                                <div class="text-rose-500 text-xs font-bold hidden correction mt-1 bg-white px-1 rounded border border-rose-100">Capacités/Survie</div>
-                                
-                                <div class="h-6 w-0.5 bg-emerald-200 my-1"></div>
-                                
-                                <!-- Détails -->
-                                <div class="w-full bg-white p-3 rounded-xl border border-emerald-100 shadow-sm space-y-2">
-                                    <p class="text-[10px] text-center text-gray-400 font-bold">Sous-aspects</p>
-                                    <div>
-                                        <input type="text" class="w-full border-b border-gray-200 text-xs text-center py-1 focus:outline-none focus:border-emerald-400" placeholder="Détail A">
-                                        <div class="text-rose-500 text-[10px] hidden correction text-center">Régénération</div>
-                                    </div>
-                                    <div>
-                                        <input type="text" class="w-full border-b border-gray-200 text-xs text-center py-1 focus:outline-none focus:border-emerald-400" placeholder="Détail B">
-                                        <div class="text-rose-500 text-[10px] hidden correction text-center">Néoténie</div>
-                                    </div>
-                                </div>
+                        <!-- ASPECT 2 -->
+                        <div style="text-align: center;">
+                            <div class="line-v" style="height: 10px;"></div>
+                            <span class="input-label">Aspect 2 (§2)</span>
+                            <input type="text" class="eleve-input" style="background: #ecfdf5; border-color: #a7f3d0;" placeholder="Idée 2...">
+                            <div class="correction hidden">Capacités</div>
+                            
+                            <div class="line-v" style="height: 20px; background: #6ee7b7;"></div>
+                            
+                            <!-- DETAILS -->
+                            <div class="details-box" style="border-color: #a7f3d0;">
+                                <span class="input-label" style="color: #10b981;">Détails</span>
+                                <input type="text" class="eleve-input input-detail" placeholder="• Détail A">
+                                <div class="correction hidden">Régénération</div>
+                                <input type="text" class="eleve-input input-detail" placeholder="• Détail B">
+                                <div class="correction hidden">Néoténie</div>
                             </div>
-
-
                         </div>
                     </div>
+
                 </div>
             </div>
-        </aside>
+        </div>
 
-
-    </main>
-
+    </div>
 
     <script>
-        // Gestion robuste des clics
-        document.addEventListener('DOMContentLoaded', () => {
-            const mots = document.querySelectorAll('.mot-difficile');
-            const defPanel = document.getElementById('def-panel');
-            const placeholder = document.getElementById('def-placeholder');
-            const content = document.getElementById('def-content');
-            const titleEl = document.getElementById('def-title');
-            const textEl = document.getElementById('def-text');
+        // Gestion des définitions
+        const mots = document.querySelectorAll('.mot-difficile');
+        const defPanel = document.getElementById('def-panel');
+        const placeholder = document.getElementById('def-placeholder');
+        const content = document.getElementById('def-content');
+        const titleEl = document.getElementById('def-title');
+        const textEl = document.getElementById('def-text');
 
+        mots.forEach(mot => {
+            mot.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // Active visuals
+                mots.forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
 
-            mots.forEach(mot => {
-                mot.addEventListener('click', function() {
-                    // Récupérer les données
-                    const titre = this.getAttribute('data-mot');
-                    const definition = this.getAttribute('data-def');
+                // Update content
+                const titre = this.getAttribute('data-mot');
+                const definition = this.getAttribute('data-def');
 
+                placeholder.classList.add('hidden');
+                content.classList.remove('hidden');
+                
+                // Animation reset
+                content.classList.remove('fade-in');
+                void content.offsetWidth; 
+                content.classList.add('fade-in');
 
-                    // Gérer l'état visuel actif
-                    mots.forEach(m => m.classList.remove('active'));
-                    this.classList.add('active');
-
-
-                    // Afficher dans la boite
-                    placeholder.classList.add('hidden');
-                    content.classList.remove('hidden');
-                    
-                    // Animation "Pop"
-                    defPanel.classList.remove('animate-pop');
-                    void defPanel.offsetWidth; // Force reflow
-                    defPanel.classList.add('animate-pop');
-
-
-                    // Mettre à jour le texte
-                    titleEl.textContent = titre;
-                    textEl.textContent = definition;
-                });
+                titleEl.textContent = titre;
+                textEl.textContent = definition;
+                
+                // Feedback visuel sur le panneau
+                defPanel.style.backgroundColor = '#0f172a';
+                setTimeout(() => {
+                    defPanel.style.backgroundColor = '#1e293b';
+                }, 150);
             });
         });
 
-
+        // Gestion du corrigé
         function toggleCorrection() {
             const elements = document.querySelectorAll('.correction');
             elements.forEach(el => {
-                el.classList.toggle('hidden');
+                if(el.classList.contains('hidden')) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
             });
         }
     </script>
