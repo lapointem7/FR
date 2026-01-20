@@ -1,0 +1,758 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier de Révision : Le Pronom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto:wght@400;500;700&display=swap');
+
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+
+        .handwritten {
+            font-family: 'Patrick Hand', cursive;
+        }
+
+
+        .word-span {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            position: relative;
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+
+        .word-span:hover {
+            background-color: #e5e7eb;
+            transform: scale(1.05);
+        }
+
+
+        /* Tooltip (Phylactère) Styles */
+        .tooltip {
+            position: absolute;
+            bottom: 120%; /* Position above word */
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+        }
+
+
+        .tooltip.show {
+            opacity: 1;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        .tooltip.is-pronoun {
+            background-color: #10b981; /* Green-500 */
+        }
+        .tooltip.is-pronoun::after {
+            border-color: #10b981 transparent transparent transparent;
+        }
+
+
+        .tooltip.not-pronoun {
+            background-color: #ef4444; /* Red-500 */
+        }
+        .tooltip.not-pronoun::after {
+            border-color: #ef4444 transparent transparent transparent;
+        }
+
+
+        /* Antecedent Exercise Styles */
+        .antecedent-word {
+            cursor: pointer;
+            border-bottom: 2px dashed #9ca3af;
+        }
+        .antecedent-word:hover {
+            background-color: #dbeafe;
+        }
+        .antecedent-word.correct {
+            background-color: #86efac;
+            border-color: #166534;
+            color: #14532d;
+        }
+        .antecedent-word.wrong {
+            background-color: #fca5a5;
+            text-decoration: line-through;
+        }
+
+
+        @keyframes popIn {
+            0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+
+    <!-- Container -->
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden min-h-[600px] flex flex-col relative">
+        
+        <!-- Header -->
+        <header class="bg-indigo-600 text-white p-6 flex justify-between items-center shadow-md z-10">
+            <div class="flex items-center gap-4">
+                <div class="bg-white text-indigo-600 p-2 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-inner">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold handwritten tracking-wide">La Grammaire Interactive</h1>
+                    <p class="text-indigo-200 text-sm">Niveau : Secondaire 1 • Module : Le Pronom</p>
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <div class="bg-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold" id="progress-indicator">
+                    Étape <span id="current-step">1</span>/3
+                </div>
+            </div>
+        </header>
+
+
+        <!-- Content Area -->
+        <main id="app-content" class="flex-grow p-8 flex flex-col justify-center items-center relative">
+            <!-- Dynamic Content will be injected here via JS -->
+        </main>
+
+
+        <!-- Footer / Controls -->
+        <footer class="bg-gray-50 p-6 border-t border-gray-100 flex justify-between items-center">
+            <button id="btn-prev" class="px-6 py-2 rounded-lg text-gray-500 hover:bg-gray-200 transition disabled:opacity-30 disabled:cursor-not-allowed hidden">
+                <i class="fas fa-arrow-left mr-2"></i> Précédent
+            </button>
+            
+            <div class="flex gap-2" id="dots-container">
+                <!-- Dots generated by JS -->
+            </div>
+
+
+            <button id="btn-next" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2 rounded-lg shadow-lg transform transition active:scale-95 flex items-center">
+                Suivant <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </footer>
+    </div>
+
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- DATA ---
+
+
+        const appState = {
+            currentSlide: 0,
+            score: 0
+        };
+
+
+        const slides = [
+            // Slide 0: Intro
+            {
+                type: 'intro',
+                title: "Salut la gang !",
+                content: `
+                    <div class="text-center space-y-6 max-w-lg mx-auto">
+                        <div class="text-6xl text-indigo-500 mb-4 animate-bounce">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <p class="text-lg text-gray-700">
+                            Aujourd'hui, on révise une classe de mot très importante : <strong>le Pronom</strong>.
+                        </p>
+                        <p class="text-gray-600">
+                            Certains ont trouvé le dernier test difficile, alors on va prendre 20 minutes pour s'assurer que tout le monde est champion.
+                        </p>
+                        <div class="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500 text-left">
+                            <h3 class="font-bold text-indigo-700 mb-2">Au programme :</h3>
+                            <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                <li>Identifier les pronoms (Le radar à pronoms)</li>
+                                <li>Trouver l'antécédent (Le détective)</li>
+                                <li>Choisir le bon remplaçant (Le constructeur)</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 1: Identification Explanation
+            {
+                type: 'info',
+                title: "Mission 1 : Le Radar",
+                content: `
+                    <div class="text-center max-w-xl mx-auto">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Sais-tu les reconnaître ?</h3>
+                        <p class="text-lg mb-8 text-gray-600">
+                            Dans les prochaines phrases, <strong>clique sur les mots</strong>. 
+                            <br><br>
+                            Si le mot devient <span class="text-green-600 font-bold bg-green-100 px-2 py-1 rounded">vert</span>, c'est un pronom !
+                            <br>
+                            S'il devient <span class="text-red-500 font-bold bg-red-100 px-2 py-1 rounded">rouge</span>, c'est une autre classe de mot.
+                        </p>
+                        <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
+                            <i class="fas fa-lightbulb mr-2"></i> Rappel : Un pronom remplace souvent un nom ou désigne une personne.
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 2: Identif. Exercise 1
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Nous", class: "Pronom", type: "Pronom personnel"},
+                    {text: "allons", class: "Verbe"},
+                    {text: "à", class: "Préposition"},
+                    {text: "la", class: "Déterminant"},
+                    {text: "patinoire", class: "Nom commun"},
+                    {text: "ce", class: "Déterminant"},
+                    {text: "soir", class: "Nom commun"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Slide 3: Identif. Exercise 2
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Celle-ci", class: "Pronom", type: "Pronom démonstratif"},
+                    {text: "est", class: "Verbe"},
+                    {text: "ma", class: "Déterminant"},
+                    {text: "meilleure", class: "Adjectif"},
+                    {text: "amie", class: "Nom commun"},
+                    {text: ",", class: "Ponctuation"},
+                    {text: "elle", class: "Pronom", type: "Pronom personnel"},
+                    {text: "s'appelle", class: "Verbe"},
+                    {text: "Sophie", class: "Nom propre"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+             // Slide 4: Identif. Exercise 3
+             {
+                type: 'identification',
+                sentence: [
+                    {text: "C'", class: "Pronom", type: "Pronom démonstratif"},
+                    {text: "est", class: "Verbe"},
+                    {text: "le", class: "Déterminant"},
+                    {text: "livre", class: "Nom commun"},
+                    {text: "que", class: "Pronom", type: "Pronom relatif"},
+                    {text: "je", class: "Pronom", type: "Pronom personnel"},
+                    {text: "voulais", class: "Verbe"},
+                    {text: "lire", class: "Verbe"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Slide 5: Identif. Exercise 4
+            {
+                type: 'identification',
+                sentence: [
+                    {text: "Personne", class: "Pronom", type: "Pronom indéfini"},
+                    {text: "ne", class: "Adverbe"},
+                    {text: "sait", class: "Verbe"},
+                    {text: "où", class: "Pronom", type: "Pronom relatif/interrogatif"},
+                    {text: "il", class: "Pronom", type: "Pronom personnel"},
+                    {text: "se", class: "Pronom", type: "Pronom personnel"},
+                    {text: "cache", class: "Verbe"},
+                    {text: ".", class: "Ponctuation"}
+                ]
+            },
+            // Slide 6: Antecedent Intro
+            {
+                type: 'info',
+                title: "Mission 2 : L'Antécédent",
+                content: `
+                    <div class="text-center max-w-xl mx-auto">
+                        <div class="text-6xl text-blue-500 mb-6">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">À qui/quoi réfère le pronom ?</h3>
+                        <p class="text-lg text-gray-600 mb-6">
+                            L'antécédent, c'est le mot (ou le groupe de mots) que le pronom remplace pour éviter la répétition.
+                        </p>
+                        <div class="bg-blue-50 p-6 rounded-xl text-left border border-blue-100">
+                            <p class="mb-2"><strong>Exemple :</strong></p>
+                            <p class="mb-2"><span class="text-blue-700 font-bold">Maxime</span> mange une pomme. <span class="font-bold">Il</span> a faim.</p>
+                            <p class="text-sm text-gray-600">Ici, <span class="italic">Il</span> remplace <span class="italic">Maxime</span>.</p>
+                        </div>
+                        <p class="mt-6 font-semibold text-indigo-600">
+                            Dans les exercices suivants, clique sur l'antécédent du pronom en gras.
+                        </p>
+                    </div>
+                `
+            },
+            // Slide 7: Antecedent Ex 1
+            {
+                type: 'antecedent',
+                context: "Les joueurs de hockey sont prêts.",
+                targetSentence: "<strong>Ils</strong> embarquent sur la glace.",
+                words: [
+                    {text: "Les", correct: false},
+                    {text: "joueurs", correct: true, feedback: "Bravo ! 'Ils' est masculin pluriel, comme 'joueurs'."},
+                    {text: "de", correct: false},
+                    {text: "hockey", correct: false, feedback: "Attention : 'Ils' est au pluriel, 'hockey' est au singulier."},
+                    {text: "sont", correct: false},
+                    {text: "prêts", correct: false}
+                ],
+                pronoun: "Ils"
+            },
+            // Slide 8: Antecedent Ex 2
+            {
+                type: 'antecedent',
+                context: "J'ai acheté une nouvelle console de jeux.",
+                targetSentence: "Je <strong>la</strong> trouve très rapide.",
+                words: [
+                    {text: "J'", correct: false},
+                    {text: "ai", correct: false},
+                    {text: "acheté", correct: false},
+                    {text: "une", correct: false},
+                    {text: "nouvelle", correct: false},
+                    {text: "console", correct: true, feedback: "Exact ! 'La' remplace 'la console'."},
+                    {text: "de", correct: false},
+                    {text: "jeux", correct: false, feedback: "Non, on ne dit pas 'je trouve le jeux rapide'."}
+                ],
+                pronoun: "la"
+            },
+             // Slide 9: Antecedent Ex 3
+             {
+                type: 'antecedent',
+                context: "Les élèves ont fait leurs devoirs.",
+                targetSentence: "L'enseignant <strong>les</strong> félicite.",
+                words: [
+                    {text: "Les", correct: false},
+                    {text: "élèves", correct: true, feedback: "Oui ! L'enseignant félicite QUI ? Les élèves."},
+                    {text: "ont", correct: false},
+                    {text: "fait", correct: false},
+                    {text: "leurs", correct: false},
+                    {text: "devoirs", correct: false, feedback: "Le sens ne fonctionne pas. L'enseignant félicite les élèves, pas les cahiers !"}
+                ],
+                pronoun: "les"
+            },
+            // Slide 10: Substitution Intro
+            {
+                type: 'info',
+                title: "Mission 3 : La Substitution",
+                content: `
+                    <div class="text-center max-w-xl mx-auto">
+                         <div class="text-6xl text-purple-500 mb-6">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Choisis le bon pronom</h3>
+                        <p class="text-lg text-gray-600 mb-6">
+                            Dernière étape ! Tu dois choisir le pronom qui permet de remplacer les mots en gras sans changer le sens de la phrase.
+                        </p>
+                        <p class="text-sm bg-purple-50 p-3 rounded text-purple-800">
+                            Attention au genre (masculin/féminin) et au nombre (singulier/pluriel) !
+                        </p>
+                    </div>
+                `
+            },
+            // Slide 11: Sub Ex 1
+            {
+                type: 'substitution',
+                sentence1: "Je téléphone à <strong>ma mère</strong>.",
+                sentence2Part1: "Je ",
+                sentence2Part2: " téléphone.",
+                options: ["la", "lui", "le", "leur"],
+                correct: "lui",
+                feedback: "Excellent ! Pour un verbe de communication (téléphon à...), on utilise 'lui'."
+            },
+            // Slide 12: Sub Ex 2
+            {
+                type: 'substitution',
+                sentence1: "Nous regardons <strong>le match des Canadiens</strong>.",
+                sentence2Part1: "Nous ",
+                sentence2Part2: " regardons.",
+                options: ["lui", "y", "le", "les"],
+                correct: "le",
+                feedback: "Bravo ! 'Le match' est masculin singulier, donc on utilise 'le'."
+            },
+            // Slide 13: Sub Ex 3
+            {
+                type: 'substitution',
+                sentence1: "Sarah va <strong>au cinéma</strong>.",
+                sentence2Part1: "Sarah ",
+                sentence2Part2: " va.",
+                options: ["la", "le", "en", "y"],
+                correct: "y",
+                feedback: "Super ! Le pronom 'y' remplace souvent un lieu introduit par 'à' ou 'au'."
+            },
+            // Slide 14: Conclusion
+            {
+                type: 'intro',
+                title: "Révision terminée !",
+                content: `
+                    <div class="text-center space-y-6">
+                        <div class="text-yellow-400 text-6xl animate-pulse">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800">Beau travail !</h2>
+                        <p class="text-gray-600 max-w-md mx-auto">
+                            Tu as révisé l'identification, les antécédents et la substitution des pronoms. Si tu as bien compris ces exercices, tu es prêt pour la reprise !
+                        </p>
+                        <div class="mt-8">
+                            <button onclick="location.reload()" class="bg-indigo-100 text-indigo-700 px-6 py-3 rounded-lg font-bold hover:bg-indigo-200 transition">
+                                <i class="fas fa-redo mr-2"></i> Recommencer
+                            </button>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+
+        // --- DOM ELEMENTS ---
+        const mainContent = document.getElementById('app-content');
+        const btnNext = document.getElementById('btn-next');
+        const btnPrev = document.getElementById('btn-prev');
+        const dotsContainer = document.getElementById('dots-container');
+        const progressIndicator = document.getElementById('current-step');
+
+
+        // --- RENDER FUNCTIONS ---
+
+
+        function renderSlide() {
+            const slide = slides[appState.currentSlide];
+            
+            // Update UI State
+            updateDots();
+            progressIndicator.innerText = appState.currentSlide + 1;
+            
+            // Clear content with fade effect
+            mainContent.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'w-full fade-in';
+            
+            // Logic based on slide type
+            if (slide.type === 'intro' || slide.type === 'info') {
+                renderInfoSlide(slide, container);
+            } else if (slide.type === 'identification') {
+                renderIdentificationSlide(slide, container);
+            } else if (slide.type === 'antecedent') {
+                renderAntecedentSlide(slide, container);
+            } else if (slide.type === 'substitution') {
+                renderSubstitutionSlide(slide, container);
+            }
+
+
+            mainContent.appendChild(container);
+
+
+            // Button Logic
+            btnPrev.style.display = appState.currentSlide === 0 ? 'none' : 'block';
+            if (appState.currentSlide === slides.length - 1) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'flex';
+                // Disable next until interaction? For now, keep it open for flow, 
+                // but strictly typically we block until correct answer.
+                // Let's keep it open to avoid frustration, but encourage interaction.
+            }
+        }
+
+
+        function renderInfoSlide(slide, container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-8 handwritten">${slide.title || ''}</h2>
+                ${slide.content}
+            `;
+        }
+
+
+        function renderIdentificationSlide(slide, container) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex flex-col items-center justify-center space-y-8 mt-10";
+
+
+            const instruction = document.createElement('p');
+            instruction.className = "text-gray-500 italic mb-4";
+            instruction.innerHTML = "<i class='fas fa-mouse-pointer mr-2'></i>Clique sur chaque mot pour voir sa classe.";
+            wrapper.appendChild(instruction);
+
+
+            const sentenceDiv = document.createElement('div');
+            sentenceDiv.className = "text-2xl md:text-3xl leading-relaxed text-center font-medium text-gray-800 bg-white p-8 rounded-xl border border-gray-200 shadow-sm";
+
+
+            slide.sentence.forEach((wordObj, index) => {
+                const span = document.createElement('span');
+                span.textContent = wordObj.text;
+                span.className = "word-span relative";
+                
+                // Interaction Logic
+                span.onclick = (e) => {
+                    // Remove existing tooltips
+                    document.querySelectorAll('.tooltip').forEach(t => t.remove());
+
+
+                    const tooltip = document.createElement('div');
+                    const isPronoun = wordObj.class === "Pronom";
+                    
+                    tooltip.className = `tooltip ${isPronoun ? 'is-pronoun' : 'not-pronoun'}`;
+                    
+                    if (isPronoun) {
+                        tooltip.innerHTML = `<i class="fas fa-check-circle mr-1"></i> <strong>${wordObj.class}</strong><br><span class="text-xs opacity-90">${wordObj.type}</span>`;
+                    } else {
+                        tooltip.innerHTML = `<i class="fas fa-times-circle mr-1"></i> ${wordObj.class}`;
+                    }
+
+
+                    span.appendChild(tooltip);
+                    
+                    // Force reflow
+                    void tooltip.offsetWidth;
+                    tooltip.classList.add('show');
+                };
+
+
+                sentenceDiv.appendChild(span);
+                // Add space unless it's punctuation attached to previous
+                if (index < slide.sentence.length - 1) {
+                    sentenceDiv.appendChild(document.createTextNode(" "));
+                }
+            });
+
+
+            wrapper.appendChild(sentenceDiv);
+            container.appendChild(wrapper);
+        }
+
+
+        function renderAntecedentSlide(slide, container) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "max-w-2xl mx-auto mt-6 space-y-6";
+
+
+            const instruction = document.createElement('div');
+            instruction.className = "bg-blue-50 text-blue-800 p-4 rounded-lg flex items-start gap-3";
+            instruction.innerHTML = `
+                <i class="fas fa-info-circle mt-1"></i>
+                <p>Lis les deux phrases. Le pronom <strong>${slide.pronoun}</strong> remplace quel mot de la première phrase ? Clique sur le mot.</p>
+            `;
+            wrapper.appendChild(instruction);
+
+
+            // Sentence Container
+            const sentenceBox = document.createElement('div');
+            sentenceBox.className = "bg-white p-8 rounded-xl shadow-md border border-gray-200 text-xl md:text-2xl";
+
+
+            // Sentence 1 (Clickable)
+            const sent1Div = document.createElement('div');
+            sent1Div.className = "mb-4 leading-relaxed";
+            
+            slide.words.forEach((w, idx) => {
+                const span = document.createElement('span');
+                span.textContent = w.text;
+                span.className = "word-span antecedent-word rounded px-1 mx-1";
+                
+                span.onclick = function() {
+                    // Reset others
+                    sent1Div.querySelectorAll('.antecedent-word').forEach(el => {
+                        el.classList.remove('correct', 'wrong');
+                    });
+                    
+                    // Remove existing feedback box
+                    const existingFeedback = document.getElementById('feedback-box');
+                    if(existingFeedback) existingFeedback.remove();
+
+
+                    // Create Feedback
+                    const feedbackBox = document.createElement('div');
+                    feedbackBox.id = "feedback-box";
+                    feedbackBox.className = "mt-4 p-4 rounded-lg text-base font-bold flex items-center gap-3 animate-bounce-in";
+
+
+                    if (w.correct) {
+                        span.classList.add('correct');
+                        feedbackBox.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-200');
+                        feedbackBox.innerHTML = `<i class="fas fa-check-circle text-2xl"></i> <div>${w.feedback}</div>`;
+                    } else {
+                        span.classList.add('wrong');
+                        feedbackBox.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-200');
+                        feedbackBox.innerHTML = `<i class="fas fa-times-circle text-2xl"></i> <div>${w.feedback || "Essaie encore ! Ce n'est pas le bon mot."}</div>`;
+                    }
+                    
+                    sentenceBox.appendChild(feedbackBox);
+                };
+                
+                sent1Div.appendChild(span);
+                sent1Div.appendChild(document.createTextNode(" "));
+            });
+
+
+            // Sentence 2 (Static with bold)
+            const sent2Div = document.createElement('div');
+            sent2Div.className = "text-gray-600 mt-2 border-t pt-4";
+            sent2Div.innerHTML = slide.targetSentence;
+
+
+            sentenceBox.appendChild(sent1Div);
+            sentenceBox.appendChild(sent2Div);
+            wrapper.appendChild(sentenceBox);
+            container.appendChild(wrapper);
+        }
+
+
+        function renderSubstitutionSlide(slide, container) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "max-w-2xl mx-auto mt-10 space-y-6";
+
+
+            const instruction = document.createElement('h3');
+            instruction.className = "text-xl font-bold text-center text-gray-700";
+            instruction.textContent = "Remplace ce qui est en gras :";
+            wrapper.appendChild(instruction);
+
+
+            const card = document.createElement('div');
+            card.className = "bg-white p-8 rounded-xl shadow-lg border border-gray-200";
+
+
+            // Original Sentence
+            const original = document.createElement('p');
+            original.className = "text-xl mb-6 text-gray-500 border-b pb-4";
+            original.innerHTML = `Phrase 1 : ${slide.sentence1}`;
+            card.appendChild(original);
+
+
+            // Interaction Sentence
+            const interactionLine = document.createElement('div');
+            interactionLine.className = "text-2xl text-gray-800 flex flex-wrap items-center gap-2";
+            
+            const part1 = document.createElement('span');
+            part1.textContent = slide.sentence2Part1;
+            
+            const select = document.createElement('select');
+            select.className = "bg-indigo-50 border-2 border-indigo-200 rounded px-3 py-1 text-indigo-700 font-bold focus:outline-none focus:border-indigo-500 cursor-pointer";
+            
+            // Default option
+            const defOpt = document.createElement('option');
+            defOpt.text = "?";
+            defOpt.value = "";
+            select.add(defOpt);
+
+
+            slide.options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.text = opt;
+                select.add(o);
+            });
+
+
+            const part2 = document.createElement('span');
+            part2.textContent = slide.sentence2Part2;
+
+
+            interactionLine.appendChild(part1);
+            interactionLine.appendChild(select);
+            interactionLine.appendChild(part2);
+            card.appendChild(interactionLine);
+
+
+            // Feedback Area
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = "mt-6 hidden";
+            card.appendChild(feedbackDiv);
+
+
+            select.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (!val) return;
+
+
+                feedbackDiv.classList.remove('hidden');
+                
+                if (val === slide.correct) {
+                    select.classList.remove('border-red-500', 'bg-red-50');
+                    select.classList.add('border-green-500', 'bg-green-50');
+                    feedbackDiv.className = "mt-6 p-4 rounded bg-green-100 text-green-800 flex items-center gap-3";
+                    feedbackDiv.innerHTML = `<i class="fas fa-check text-xl"></i> ${slide.feedback}`;
+                } else {
+                    select.classList.remove('border-green-500', 'bg-green-50');
+                    select.classList.add('border-red-500', 'bg-red-50');
+                    feedbackDiv.className = "mt-6 p-4 rounded bg-red-100 text-red-800 flex items-center gap-3";
+                    feedbackDiv.innerHTML = `<i class="fas fa-times text-xl"></i> Ce n'est pas le bon pronom. Regarde le genre et le nombre.`;
+                }
+            });
+
+
+            wrapper.appendChild(card);
+            container.appendChild(wrapper);
+        }
+
+
+        function updateDots() {
+            dotsContainer.innerHTML = '';
+            slides.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === appState.currentSlide ? 'bg-indigo-600 w-4' : 'bg-gray-300'}`;
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+
+        // --- EVENTS ---
+
+
+        btnNext.addEventListener('click', () => {
+            if (appState.currentSlide < slides.length - 1) {
+                appState.currentSlide++;
+                renderSlide();
+            }
+        });
+
+
+        btnPrev.addEventListener('click', () => {
+            if (appState.currentSlide > 0) {
+                appState.currentSlide--;
+                renderSlide();
+            }
+        });
+
+
+        // --- INIT ---
+        renderSlide();
+
+
+    </script>
+</body>
+</html>
