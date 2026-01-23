@@ -1,0 +1,1211 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DÉFI GRAMMAIRE : Niveau Intermédiaire</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --accent-color: #e94560;
+            --success-color: #0f3460;
+            --success-text: #4cc9f0;
+            --error-color: #e94560;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --highlight: #fca311;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* HEADER */
+        header {
+            background-color: #0f3460;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .header-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+
+        .header-title i {
+            color: var(--highlight);
+            margin-right: 10px;
+        }
+
+
+        .stats-container {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+
+        .slide-container {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #2a2a4a;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* TYPOGRAPHY IN SLIDES */
+        h2 {
+            color: var(--highlight);
+            margin-top: 0;
+            border-bottom: 2px solid #2a2a4a;
+            padding-bottom: 15px;
+        }
+
+
+        .instruction {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+
+        .sentence-display {
+            font-family: 'Lora', serif;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin: 30px 0;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--highlight);
+        }
+
+
+        /* INTERACTIVE ELEMENTS */
+        .word-btn {
+            display: inline-block;
+            cursor: pointer;
+            padding: 2px 5px;
+            margin: 0 2px;
+            border-radius: 4px;
+            border-bottom: 2px solid transparent;
+        }
+
+
+        .word-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+
+        .word-btn.correct {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success-text);
+            border-bottom: 2px solid var(--success-text);
+        }
+
+
+        .word-btn.wrong {
+            background-color: rgba(233, 69, 96, 0.2);
+            color: var(--error-color);
+            border-bottom: 2px solid var(--error-color);
+            text-decoration: line-through;
+        }
+
+
+        /* GRID EXERCISE (Type -1) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+
+        .grid-item {
+            background: #2a2a4a;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+        }
+
+
+        .grid-item:hover {
+            transform: translateY(-2px);
+            background: #3a3a6a;
+        }
+
+
+        /* TOOLTIP / FEEDBACK */
+        .feedback-bubble {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+
+
+        .feedback-bubble.success {
+            display: block;
+            background: rgba(76, 201, 240, 0.1);
+            border: 1px solid var(--success-text);
+            color: var(--success-text);
+        }
+
+
+        .feedback-bubble.error {
+            display: block;
+            background: rgba(233, 69, 96, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+
+        /* REVISION CARD STYLE */
+        .revision-card {
+            background: #1f2f4f;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid var(--success-text);
+        }
+
+
+        .revision-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .revision-table th, .revision-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #3a3a6a;
+        }
+        .revision-table th {
+            color: var(--highlight);
+        }
+
+
+        /* DROPDOWN EXERCISE */
+        select.puzzle-select {
+            background: #2a2a4a;
+            color: white;
+            border: 1px solid #4a4a7a;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Lora', serif;
+        }
+
+
+        /* BUTTONS */
+        .nav-btn {
+            margin-top: auto;
+            align-self: flex-end;
+            background-color: var(--highlight);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none; /* Hidden by default */
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--highlight);
+        }
+
+
+        .check-btn {
+            background-color: var(--success-text);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        .hidden { display: none !important; }
+
+
+        /* SUMMARY TABLE */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+        .summary-table th {
+            text-align: left;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            color: var(--highlight);
+        }
+        .summary-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+
+        /* PROGRESS BAR */
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: #0f3460;
+            width: 100%;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--highlight);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header-title span { display: none; }
+            .slide-container { padding: 15px; min-height: 500px; }
+            .sentence-display { font-size: 1.1rem; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
+        }
+
+
+        .blink-red {
+            animation: blinkRed 0.5s 2;
+        }
+        @keyframes blinkRed {
+            0%, 100% { background-color: var(--card-bg); }
+            50% { background-color: rgba(233, 69, 96, 0.3); }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="header-title"><i class="fas fa-brain"></i> <span>DÉFI : </span>LA PRÉPOSITION</div>
+    <div class="stats-container">
+        <div class="stat-box" id="step-counter"><i class="fas fa-list-ol"></i> 1/25</div>
+        <div class="stat-box" id="score-counter"><i class="fas fa-star"></i> 0</div>
+        <div class="stat-box" id="timer-display"><i class="far fa-clock"></i> 00:00</div>
+    </div>
+</header>
+
+
+<main>
+    <div class="slide-container" id="game-area">
+        <!-- Content injected via JS -->
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+</main>
+
+
+<script>
+    /* --- DATA & CONTENT --- */
+    
+    const db = {
+        intro: {
+            title: "NIVEAU INTERMÉDIAIRE",
+            content: `
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-layer-group" style="font-size: 3rem; color: var(--highlight); margin-bottom: 20px;"></i>
+                    <p class="instruction" style="color: var(--text-main); opacity: 1;">
+                        Bienvenue dans le défi intermédiaire.
+                        <br><br>
+                        Fini les phrases simples "le chat est sur le lit". Nous allons travailler sur les nuances : les prépositions de temps, de cause, et surtout les pièges courants.
+                        <br><br>
+                        <strong>Votre objectif :</strong> Identifier le mot exact qui fait le lien, même s'il est composé de plusieurs mots (locution) !
+                    </p>
+                </div>
+            `,
+            type: "intro"
+        },
+        reviews: {
+            recognition: `
+                <h3><i class="fas fa-book-open"></i> Rappel : Les Pièges</h3>
+                <ul style="line-height: 1.6;">
+                    <li><strong>La locution prépositive :</strong> C'est une préposition en plusieurs mots.<br>
+                    Ex: <em>grâce à, au lieu de, le long de, à cause de.</em></li>
+                    <li><strong>Adverbe ou Préposition ?</strong><br>
+                    - "Il marche <strong>derrière</strong>." (Adverbe, car pas de complément).<br>
+                    - "Il marche <strong>derrière</strong> moi." (Préposition, car suivie de "moi").</li>
+                </ul>
+            `,
+            values: `
+                <h3><i class="fas fa-book-open"></i> Rappel : Les Nuances</h3>
+                <p>Certaines prépositions changent tout le sens de la phrase.</p>
+                <table class="revision-table">
+                    <tr><th>Nuance</th><th>Exemple</th></tr>
+                    <tr><td>Temps (Durée)</td><td>J'ai lu ce livre <strong>en</strong> une heure. (Temps pour le faire)</td></tr>
+                    <tr><td>Temps (Futur)</td><td>Je pars <strong>dans</strong> une heure. (Point de départ)</td></tr>
+                    <tr><td>Cause</td><td><strong>Grâce à</strong> (positif) vs <strong>À cause de</strong> (négatif)</td></tr>
+                </table>
+            `
+        },
+        slides: [
+            // --- SECTION 1: RECONNAISSANCE (GRID) ---
+            { type: "review", content: "recognition" },
+            {
+                type: "grid",
+                title: "Le Radar : Mots Fréquents",
+                instruction: "Identifiez les 4 prépositions (ou locutions) parmi ces mots.",
+                items: [
+                    { word: "Pourtant", isPrep: false, feedback: "Adverbe de liaison." },
+                    { word: "Malgré", isPrep: true, feedback: "Préposition (opposition)." },
+                    { word: "Soudain", isPrep: false, feedback: "Adverbe de temps." },
+                    { word: "Parmi", isPrep: true, feedback: "Préposition (choix/groupe)." },
+                    { word: "Demain", isPrep: false, feedback: "Adverbe de temps." },
+                    { word: "Durant", isPrep: true, feedback: "Préposition (temps)." },
+                    { word: "Car", isPrep: false, feedback: "Conjonction de coordination." },
+                    { word: "Sauf", isPrep: true, feedback: "Préposition (exception)." },
+                    { word: "Très", isPrep: false, feedback: "Adverbe d'intensité." }
+                ],
+                targetCount: 4
+            },
+            {
+                type: "grid",
+                title: "Le Radar : Les Locutions",
+                instruction: "Attention, certaines prépositions sont composées de plusieurs mots.",
+                items: [
+                    { word: "Grâce à", isPrep: true, feedback: "Locution prépositive." },
+                    { word: "Beaucoup", isPrep: false, feedback: "Adverbe de quantité." },
+                    { word: "Autour de", isPrep: true, feedback: "Locution prépositive." },
+                    { word: "Parce que", isPrep: false, feedback: "Conjonction (suivie d'une phrase)." },
+                    { word: "Près de", isPrep: true, feedback: "Locution prépositive." },
+                    { word: "Alors", isPrep: false, feedback: "Adverbe." },
+                    { word: "Afin de", isPrep: true, feedback: "Locution prépositive (but)." },
+                    { word: "Donc", isPrep: false, feedback: "Conjonction." }
+                ],
+                targetCount: 4
+            },
+
+
+            // --- SECTION 2: IDENTIFICATION EN CONTEXTE ---
+            {
+                type: "sentence",
+                title: "Analyse de Phrase (1)",
+                instruction: "Trouvez la locution prépositive. Attention, elle est en plusieurs mots !",
+                sentence: "Nous avons marché le long de la rivière.",
+                words: [
+                    { text: "Nous", type: "other", info: "Sujet" },
+                    { text: "avons", type: "other", info: "Auxiliaire" },
+                    { text: "marché", type: "other", info: "Participe passé" },
+                    { text: "le", type: "target", group: 1, info: "Locution : le long de" },
+                    { text: "long", type: "target", group: 1, info: "Locution : le long de" },
+                    { text: "de", type: "target", group: 1, info: "Locution : le long de" },
+                    { text: "la", type: "other", info: "Déterminant" },
+                    { text: "rivière.", type: "other", info: "Nom" }
+                ],
+                targets: [3, 4, 5],
+                targetGoal: 1
+            },
+            {
+                type: "sentence",
+                title: "Analyse de Phrase (2)",
+                instruction: "Cliquez sur les 2 prépositions. Attention aux locutions !",
+                sentence: "Il est parti sans son manteau en dépit du froid.",
+                words: [
+                    { text: "Il", type: "other", info: "Sujet" },
+                    { text: "est", type: "other", info: "Verbe" },
+                    { text: "parti", type: "other", info: "Participe passé" },
+                    { text: "sans", type: "target", info: "Préposition (privation)" },
+                    { text: "son", type: "other", info: "Déterminant" },
+                    { text: "manteau", type: "other", info: "Nom" },
+                    { text: "en", type: "target", group: 9, info: "Locution : en dépit de (du = de+le)" },
+                    { text: "dépit", type: "target", group: 9, info: "Locution : en dépit de (du = de+le)" },
+                    { text: "du", type: "target", group: 9, info: "Locution : en dépit de (du = de+le)" },
+                    { text: "froid.", type: "other", info: "Nom" }
+                ],
+                targets: [3, 6, 7, 8],
+                targetGoal: 2
+            },
+            {
+                type: "sentence",
+                title: "Analyse de Phrase (3)",
+                instruction: "Trouvez les locutions de 'cause' et de 'substitution'.",
+                sentence: "Il a réussi grâce à toi au lieu de se plaindre.",
+                words: [
+                    { text: "Il", type: "other", info: "Sujet" },
+                    { text: "a", type: "other", info: "Verbe" },
+                    { text: "réussi", type: "other", info: "Participe passé" },
+                    { text: "grâce", type: "target", group: 10, info: "Locution : grâce à (cause)" },
+                    { text: "à", type: "target", group: 10, info: "Locution : grâce à (cause)" },
+                    { text: "toi", type: "other", info: "Pronom" },
+                    { text: "au", type: "target", group: 11, info: "Locution : au lieu de (substitution)" },
+                    { text: "lieu", type: "target", group: 11, info: "Locution : au lieu de (substitution)" },
+                    { text: "de", type: "target", group: 11, info: "Locution : au lieu de (substitution)" },
+                    { text: "se", type: "other", info: "Pronom" },
+                    { text: "plaindre.", type: "other", info: "Verbe" }
+                ],
+                targets: [3, 4, 6, 7, 8],
+                targetGoal: 2
+            },
+            {
+                type: "sentence",
+                title: "Le Piège Adverbial",
+                instruction: "Repérez la locution prépositive. Ne cliquez pas sur l'adverbe !",
+                sentence: "Elle habite tout près, juste à côté de la gare.",
+                words: [
+                    { text: "Elle", type: "other", info: "Sujet" },
+                    { text: "habite", type: "other", info: "Verbe" },
+                    { text: "tout", type: "other", info: "Adverbe" },
+                    { text: "près,", type: "other", info: "Adverbe (car pas de complément après)" },
+                    { text: "juste", type: "other", info: "Adverbe" },
+                    { text: "à", type: "target", group: 2, info: "Locution : à côté de" },
+                    { text: "côté", type: "target", group: 2, info: "Locution : à côté de" },
+                    { text: "de", type: "target", group: 2, info: "Locution : à côté de" },
+                    { text: "la", type: "other", info: "Déterminant" },
+                    { text: "gare.", type: "other", info: "Nom" }
+                ],
+                targets: [5, 6, 7],
+                targetGoal: 1
+            },
+
+
+            // --- SECTION 3: ANALYSE DE VALEUR (QUIZ) ---
+            { type: "review", content: "values" },
+            {
+                type: "quiz",
+                title: "Nuance de Temps",
+                instruction: "Choisissez la bonne préposition pour le futur.",
+                content: "Le train partira ___ dix minutes.",
+                options: [
+                    { text: "En (dix minutes)", correct: false, feedback: "'En' indique la durée nécessaire pour faire une action." },
+                    { text: "Dans (dix minutes)", correct: true, feedback: "Correct ! 'Dans' indique le moment du départ dans le futur." },
+                    { text: "À (dix minutes)", correct: false, feedback: "Incorrect." },
+                    { text: "Pour (dix minutes)", correct: false, feedback: "'Pour' indique une durée prévue, pas le départ." }
+                ]
+            },
+            {
+                type: "quiz",
+                title: "Cause ou Moyen ?",
+                instruction: "Quelle est la valeur de 'par' ici ?",
+                content: "Il a réussi <strong>par</strong> son courage.",
+                options: [
+                    { text: "Le Moyen (l'outil)", correct: false, feedback: "Nuance : Le courage est ici la cause du succès." },
+                    { text: "La Cause (le motif)", correct: true, feedback: "Oui, c'est grâce à son courage." },
+                    { text: "Le Passage", correct: false, feedback: "Non." },
+                    { text: "L'Agent", correct: false, feedback: "Non (ce n'est pas une voix passive)." }
+                ]
+            },
+            {
+                type: "quiz",
+                title: "Voix Passive",
+                instruction: "Qui fait l'action ?",
+                content: "La souris est mangée <strong>par</strong> le chat.",
+                options: [
+                    { text: "Le Moyen", correct: false, feedback: "Non." },
+                    { text: "L'Agent", correct: true, feedback: "Exact ! C'est le chat qui fait l'action de manger." },
+                    { text: "La Cause", correct: false, feedback: "Non." },
+                    { text: "Le Lieu", correct: false, feedback: "Non." }
+                ]
+            },
+
+
+            // --- SECTION 4: SUBSTITUTION / CONSTRUCTION ---
+            {
+                type: "fill",
+                title: "Villes et Pays (Challenge)",
+                instruction: "Complétez avec 'au', 'en', 'aux'.",
+                parts: ["Je vais ", " select ", " Espagne, puis ", " select ", " Portugal et enfin ", " select ", " États-Unis."],
+                options: [
+                    [{val:"au", correct:false}, {val:"en", correct:true}, {val:"aux", correct:false}], // Espagne (fem)
+                    [{val:"au", correct:true}, {val:"en", correct:false}, {val:"à", correct:false}], // Portugal (masc)
+                    [{val:"au", correct:false}, {val:"en", correct:false}, {val:"aux", correct:true}] // États-Unis (pluriel)
+                ],
+                feedback: "Pays féminin = En. Pays masculin = Au. Pays pluriel = Aux."
+            },
+            {
+                type: "fill",
+                title: "Appartenance",
+                instruction: "La faute classique à éviter.",
+                parts: ["C'est le vélo ", " select ", " ma soeur, ce n'est pas le vélo ", " select ", " Jacques."],
+                options: [
+                    [{val:"à", correct:false}, {val:"de", correct:true}, {val:"pour", correct:false}],
+                    [{val:"à", correct:false}, {val:"de", correct:true}, {val:"avec", correct:false}]
+                ],
+                feedback: "L'appartenance s'exprime avec DE (La voiture de Paul). 'À' s'utilise après un verbe (Ce vélo est à Paul)."
+            },
+            {
+                type: "fill",
+                title: "Moyen de transport (Nuance)",
+                instruction: "On dit 'à' vélo ou 'en' vélo ?",
+                parts: ["Je préfère aller ", " select ", " vélo plutôt que ", " select ", " voiture."],
+                options: [
+                    [{val:"en", correct:false}, {val:"à", correct:true}, {val:"par", correct:false}], // À vélo (selon l'Académie, même si 'en' est toléré)
+                    [{val:"en", correct:true}, {val:"à", correct:false}, {val:"dans", correct:false}] // En voiture
+                ],
+                feedback: "L'Académie recommande 'à vélo', 'à moto' (sur la selle) mais 'en voiture', 'en train' (à l'intérieur)."
+            },
+             {
+                type: "quiz",
+                title: "Trouvez l'intrus",
+                instruction: "Une phrase est incorrecte grammaticalement.",
+                content: "Soyez attentifs aux prépositions.",
+                options: [
+                    { text: "Je vais au docteur.", correct: true, feedback: "Bravo ! On dit 'Chez le docteur' (personne)." },
+                    { text: "Je vais au marché.", correct: false, feedback: "C'est correct (lieu masculin)." },
+                    { text: "Je reviens du Japon.", correct: false, feedback: "C'est correct (provenance)." },
+                    { text: "Il parle à son voisin.", correct: false, feedback: "C'est correct." }
+                ]
+            }
+        ]
+    };
+
+
+    /* --- STATE MANAGEMENT --- */
+    
+    let state = {
+        currentSlide: 0,
+        score: 0,
+        maxScore: 0,
+        startTime: null,
+        endTime: null,
+        scoresByCategory: {
+            recognition: 0,
+            identification: 0,
+            analysis: 0,
+            substitution: 0
+        },
+        maxScoresByCategory: {
+            recognition: 0,
+            identification: 0,
+            analysis: 0,
+            substitution: 0
+        }
+    };
+
+
+    // Initialize Timer
+    setInterval(() => {
+        if(state.startTime && !state.endTime) {
+            const now = new Date();
+            const diff = Math.floor((now - state.startTime) / 1000);
+            const min = Math.floor(diff / 60).toString().padStart(2, '0');
+            const sec = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerHTML = `<i class="far fa-clock"></i> ${min}:${sec}`;
+        }
+    }, 1000);
+
+
+    function initGame() {
+        state.currentSlide = 0;
+        state.score = 0;
+        state.startTime = new Date();
+        state.endTime = null;
+        renderSlide();
+        updateHeader();
+    }
+
+
+    function updateHeader() {
+        document.getElementById('step-counter').innerHTML = `<i class="fas fa-list-ol"></i> ${state.currentSlide + 1}/${db.slides.length + 1}`; 
+        document.getElementById('score-counter').innerHTML = `<i class="fas fa-star"></i> ${state.score}`;
+        const pct = ((state.currentSlide) / db.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+    }
+
+
+    function addScore(points, category) {
+        state.score += points;
+        // Map slide type to category
+        let cat = 'recognition';
+        if(category === 'sentence') cat = 'identification';
+        if(category === 'quiz') cat = 'analysis';
+        if(category === 'fill') cat = 'substitution';
+        if(category === 'grid') cat = 'recognition';
+        
+        state.scoresByCategory[cat] += points;
+        updateHeader();
+    }
+
+
+    /* --- RENDER ENGINE --- */
+
+
+    function renderSlide() {
+        const container = document.getElementById('game-area');
+        container.innerHTML = '';
+        container.className = 'slide-container';
+
+
+        // Intro Slide
+        if(state.currentSlide === 0 && db.intro) {
+            renderContentSlide(db.intro);
+            db.intro = null; 
+            return;
+        }
+
+
+        const slideIndex = state.currentSlide - 1; 
+        if(slideIndex >= db.slides.length) {
+            renderSummary();
+            return;
+        }
+
+
+        const data = db.slides[slideIndex];
+        
+        switch(data.type) {
+            case 'review':
+                renderReview(db.reviews[data.content]);
+                break;
+            case 'grid':
+                renderGrid(data);
+                break;
+            case 'sentence':
+                renderSentence(data);
+                break;
+            case 'quiz':
+                renderQuiz(data);
+                break;
+            case 'fill':
+                renderFill(data);
+                break;
+        }
+    }
+
+
+    /* --- SLIDE TYPES --- */
+
+
+    function renderContentSlide(data) {
+        const div = document.createElement('div');
+        div.innerHTML = `<h2>${data.title}</h2>${data.content}`;
+        
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.style.display = 'block';
+        btn.innerText = "Relever le Défi";
+        btn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+        
+        div.appendChild(btn);
+        document.getElementById('game-area').appendChild(div);
+    }
+
+
+    function renderReview(htmlContent) {
+        const div = document.createElement('div');
+        div.innerHTML = htmlContent;
+        
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.style.display = 'block';
+        btn.innerText = "J'ai compris";
+        btn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+        
+        div.appendChild(btn);
+        document.getElementById('game-area').appendChild(div);
+    }
+
+
+    function renderGrid(data) {
+        state.maxScoresByCategory.recognition += data.targetCount;
+
+
+        let foundCount = 0;
+        const container = document.getElementById('game-area');
+        
+        const header = `
+            <h2>${data.title}</h2>
+            <p class="instruction">${data.instruction}</p>
+            <div style="text-align:right; margin-bottom:10px; color:var(--highlight);">Trouvés : <span id="grid-count">0</span>/${data.targetCount}</div>
+        `;
+        container.innerHTML = header;
+
+
+        const grid = document.createElement('div');
+        grid.className = 'grid-container';
+
+
+        const feedbackBox = document.createElement('div');
+        feedbackBox.id = 'feedback-box';
+        feedbackBox.className = 'feedback-bubble';
+
+
+        // Shuffle items
+        const shuffled = [...data.items].sort(() => 0.5 - Math.random());
+
+
+        shuffled.forEach(item => {
+            const btn = document.createElement('div');
+            btn.className = 'grid-item';
+            btn.innerText = item.word;
+            
+            btn.onclick = function() {
+                if(btn.classList.contains('clicked')) return;
+                btn.classList.add('clicked');
+
+
+                if(item.isPrep) {
+                    btn.style.background = 'var(--success-color)';
+                    btn.style.color = 'var(--success-text)';
+                    btn.style.border = '1px solid var(--success-text)';
+                    foundCount++;
+                    document.getElementById('grid-count').innerText = foundCount;
+                    addScore(1, 'grid');
+                    
+                    showFeedback(feedbackBox, "Correct ! " + item.feedback, true);
+
+
+                    if(foundCount === data.targetCount) {
+                        nextBtn.style.display = 'block';
+                    }
+                } else {
+                    btn.style.background = 'rgba(233, 69, 96, 0.2)';
+                    btn.style.color = 'var(--error-color)';
+                    btn.style.textDecoration = 'line-through';
+                    showFeedback(feedbackBox, "Erreur : " + item.feedback, false);
+                    document.querySelector('.slide-container').classList.add('blink-red');
+                    setTimeout(() => document.querySelector('.slide-container').classList.remove('blink-red'), 1000);
+                }
+            };
+            grid.appendChild(btn);
+        });
+
+
+        container.appendChild(grid);
+        container.appendChild(feedbackBox);
+
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn';
+        nextBtn.innerText = "Suivant";
+        nextBtn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+        container.appendChild(nextBtn);
+    }
+
+
+    function renderSentence(data) {
+        state.maxScoresByCategory.identification += data.targetGoal;
+        let found = 0;
+        
+        const container = document.getElementById('game-area');
+        container.innerHTML = `<h2>${data.title}</h2><p class="instruction">${data.instruction}</p>`;
+        
+        const sentenceDiv = document.createElement('div');
+        sentenceDiv.className = 'sentence-display';
+        
+        const feedbackBox = document.createElement('div');
+        feedbackBox.className = 'feedback-bubble';
+
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn';
+        nextBtn.innerText = "Suivant";
+        nextBtn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+
+
+        const wordButtons = []; // Store references for group selection
+
+
+        data.words.forEach((w, index) => {
+            const span = document.createElement('span');
+            span.innerText = w.text;
+            span.className = 'word-btn';
+            
+            // Assign custom data attribute for finding group members
+            span.dataset.index = index;
+            if (w.group) span.dataset.group = w.group;
+
+
+            wordButtons.push(span);
+
+
+            span.onclick = () => {
+                if(span.classList.contains('correct') || span.classList.contains('wrong')) return;
+
+
+                // LOGIC FOR GROUP SELECTION
+                let indicesToMark = [index];
+                if (w.group) {
+                    // Find all indices belonging to this group
+                    indicesToMark = data.words
+                        .map((word, idx) => word.group === w.group ? idx : -1)
+                        .filter(idx => idx !== -1);
+                }
+
+
+                // Check if already found (any of the group marked correct)
+                const alreadyFound = indicesToMark.some(idx => wordButtons[idx].classList.contains('correct'));
+                if (alreadyFound) return;
+
+
+                if(data.targets.includes(index)) {
+                    // CORRECT: Mark all in group
+                    indicesToMark.forEach(idx => {
+                        wordButtons[idx].classList.add('correct');
+                    });
+
+
+                    showFeedback(feedbackBox, `<strong>${w.info}</strong>`, true);
+                    
+                    addScore(1, 'sentence'); 
+                    found++;
+                    
+                    if(found >= data.targetGoal) {
+                        nextBtn.style.display = 'block';
+                        showFeedback(feedbackBox, "Excellent ! Cible trouvée.", true);
+                    }
+
+
+                } else {
+                    // WRONG
+                    span.classList.add('wrong');
+                    showFeedback(feedbackBox, `<strong>${w.text}</strong> : ${w.info}`, false);
+                    document.querySelector('.slide-container').classList.add('blink-red');
+                    setTimeout(() => document.querySelector('.slide-container').classList.remove('blink-red'), 1000);
+                }
+            };
+            sentenceDiv.appendChild(span);
+            sentenceDiv.appendChild(document.createTextNode(" ")); 
+        });
+
+
+        container.appendChild(sentenceDiv);
+        container.appendChild(feedbackBox);
+        container.appendChild(nextBtn);
+    }
+
+
+    function renderQuiz(data) {
+        state.maxScoresByCategory.analysis += 1;
+        const container = document.getElementById('game-area');
+        container.innerHTML = `<h2>${data.title}</h2><p class="instruction">${data.instruction}</p>`;
+
+
+        const qBox = document.createElement('div');
+        qBox.className = 'sentence-display';
+        qBox.innerHTML = data.content;
+        container.appendChild(qBox);
+
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.style.display = 'flex';
+        optionsDiv.style.flexDirection = 'column';
+        optionsDiv.style.gap = '10px';
+
+
+        const feedbackBox = document.createElement('div');
+        feedbackBox.className = 'feedback-bubble';
+
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn';
+        nextBtn.innerText = "Continuer";
+        nextBtn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+
+
+        data.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.style.padding = '15px';
+            btn.style.textAlign = 'left';
+            btn.style.background = '#2a2a4a';
+            btn.style.color = 'white';
+            btn.style.border = '1px solid #4a4a7a';
+            btn.style.borderRadius = '8px';
+            btn.style.cursor = 'pointer';
+            btn.style.fontSize = '1rem';
+            btn.innerText = opt.text;
+
+
+            btn.onclick = () => {
+                Array.from(optionsDiv.children).forEach(b => b.disabled = true);
+                
+                if(opt.correct) {
+                    btn.style.background = 'var(--success-color)';
+                    btn.style.borderColor = 'var(--success-text)';
+                    showFeedback(feedbackBox, opt.feedback, true);
+                    addScore(1, 'quiz');
+                } else {
+                    btn.style.background = 'rgba(233, 69, 96, 0.2)';
+                    btn.style.borderColor = 'var(--error-color)';
+                    showFeedback(feedbackBox, opt.feedback, false);
+                }
+                nextBtn.style.display = 'block';
+            };
+            optionsDiv.appendChild(btn);
+        });
+
+
+        container.appendChild(optionsDiv);
+        container.appendChild(feedbackBox);
+        container.appendChild(nextBtn);
+    }
+
+
+    function renderFill(data) {
+        state.maxScoresByCategory.substitution += data.options.length; 
+        
+        const container = document.getElementById('game-area');
+        container.innerHTML = `<h2>${data.title}</h2><p class="instruction">${data.instruction}</p>`;
+
+
+        const sentenceDiv = document.createElement('div');
+        sentenceDiv.className = 'sentence-display';
+        sentenceDiv.style.lineHeight = "2.5";
+
+
+        const selects = [];
+
+
+        data.parts.forEach((part, i) => {
+            if(part === " select ") {
+                const sel = document.createElement('select');
+                sel.className = 'puzzle-select';
+                const optGroup = data.options[selects.length]; 
+                
+                const defaultOpt = document.createElement('option');
+                defaultOpt.text = "?";
+                sel.add(defaultOpt);
+
+
+                optGroup.forEach(o => {
+                    const el = document.createElement('option');
+                    el.text = o.val;
+                    el.value = o.correct;
+                    sel.add(el);
+                });
+                
+                sentenceDiv.appendChild(sel);
+                selects.push(sel);
+            } else {
+                sentenceDiv.appendChild(document.createTextNode(part));
+            }
+        });
+
+
+        container.appendChild(sentenceDiv);
+
+
+        const feedbackBox = document.createElement('div');
+        feedbackBox.className = 'feedback-bubble';
+
+
+        const validateBtn = document.createElement('button');
+        validateBtn.className = 'check-btn';
+        validateBtn.innerText = "Vérifier";
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn';
+        nextBtn.innerText = "Suivant";
+        nextBtn.onclick = () => {
+            state.currentSlide++;
+            renderSlide();
+        };
+
+
+        validateBtn.onclick = () => {
+            let allCorrect = true;
+            let currentScore = 0;
+
+
+            selects.forEach(sel => {
+                sel.disabled = true;
+                if(sel.value === "true") {
+                    sel.style.border = "2px solid var(--success-text)";
+                    sel.style.color = "var(--success-text)";
+                    currentScore++;
+                } else {
+                    sel.style.border = "2px solid var(--error-color)";
+                    sel.style.color = "var(--error-color)";
+                    allCorrect = false;
+                }
+            });
+
+
+            addScore(currentScore, 'fill');
+
+
+            if(allCorrect) {
+                showFeedback(feedbackBox, "Parfait ! " + data.feedback, true);
+            } else {
+                showFeedback(feedbackBox, "Attention. " + data.feedback, false);
+            }
+            validateBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+        };
+
+
+        container.appendChild(feedbackBox);
+        container.appendChild(validateBtn);
+        container.appendChild(nextBtn);
+    }
+
+
+    function showFeedback(el, msg, isSuccess) {
+        el.innerHTML = (isSuccess ? '<i class="fas fa-check-circle"></i> ' : '<i class="fas fa-times-circle"></i> ') + msg;
+        el.className = 'feedback-bubble ' + (isSuccess ? 'success' : 'error');
+    }
+
+
+    /* --- SUMMARY --- */
+
+
+    function renderSummary() {
+        state.endTime = new Date();
+        const diff = Math.floor((state.endTime - state.startTime) / 1000);
+        const min = Math.floor(diff / 60);
+        const sec = diff % 60;
+        
+        const totalMax = state.maxScoresByCategory.recognition + state.maxScoresByCategory.identification + state.maxScoresByCategory.analysis + state.maxScoresByCategory.substitution;
+        const percent = Math.round((state.score / totalMax) * 100) || 0;
+
+
+        let color = '#e94560'; 
+        let msg = "Entraînement nécessaire.";
+        if(percent >= 60) { color = '#fca311'; msg = "Bien joué ! Niveau intermédiaire maîtrisé."; } 
+        if(percent >= 80) { color = '#4cc9f0'; msg = "Excellent ! Prêt pour le niveau expert."; } 
+
+
+        const container = document.getElementById('game-area');
+        container.innerHTML = `
+            <div style="text-align:center;">
+                <h1 style="font-size: 3rem; color: ${color}; margin-bottom: 0;">${percent}%</h1>
+                <h3 style="margin-top:5px;">${msg}</h3>
+                
+                <div style="display:flex; justify-content:center; gap:30px; margin: 30px 0;">
+                    <div>
+                        <div style="font-size:0.9rem; color:var(--text-muted);">SCORE GLOBAL</div>
+                        <div style="font-size:1.5rem; font-weight:bold;">${state.score} / ${totalMax}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.9rem; color:var(--text-muted);">TEMPS TOTAL</div>
+                        <div style="font-size:1.5rem; font-weight:bold;">${min}m ${sec}s</div>
+                    </div>
+                </div>
+
+
+                <table class="summary-table">
+                    <tr><th>Section</th><th>Score</th></tr>
+                    <tr><td>Reconnaissance</td><td>${state.scoresByCategory.recognition} / ${state.maxScoresByCategory.recognition}</td></tr>
+                    <tr><td>Identification</td><td>${state.scoresByCategory.identification} / ${state.maxScoresByCategory.identification}</td></tr>
+                    <tr><td>Analyse de Valeur</td><td>${state.scoresByCategory.analysis} / ${state.maxScoresByCategory.analysis}</td></tr>
+                    <tr><td>Construction</td><td>${state.scoresByCategory.substitution} / ${state.maxScoresByCategory.substitution}</td></tr>
+                </table>
+
+
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:20px;">
+                    Fin de session : ${state.endTime.toLocaleTimeString()}
+                </p>
+
+
+                <button class="nav-btn" style="display:inline-block; margin-top:20px;" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Recommencer
+                </button>
+            </div>
+        `;
+        document.getElementById('progress-bar').style.width = '100%';
+        document.getElementById('progress-bar').style.backgroundColor = color;
+    }
+
+
+    // Start
+    initGame();
+
+
+</script>
+</body>
+</html>

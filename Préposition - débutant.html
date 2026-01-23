@@ -1,0 +1,1089 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier Grammaire : La Préposition</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Vibrante */
+            --primary: #4361ee;
+            --primary-dark: #3f37c9;
+            --secondary: #4CC9F0;
+            --accent: #F72585; /* Pink/Red pop */
+            
+            --type-recognition: #4895ef; /* Blue */
+            --type-radar: #7209b7; /* Purple */
+            --type-detective: #f72585; /* Pink */
+            --type-builder: #ff9e00; /* Orange */
+
+
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --text: #2b2d42;
+            --bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0,0,0,0.15);
+            --radius: 20px;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 200% 200%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* --- Header --- */
+        header {
+            background: white;
+            color: var(--primary);
+            padding: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            background: -webkit-linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            font-weight: 800;
+            font-size: 1rem;
+            background: #F0F3F8;
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: var(--primary-dark);
+        }
+
+
+        .stat-item i { margin-right: 6px; color: var(--accent); }
+
+
+        /* --- Main Container --- */
+        #app {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 850px;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-top: 8px solid var(--primary); /* Dynamic color via JS */
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+
+        /* --- Intro Slide --- */
+        .intro-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            height: 100%;
+        }
+        
+        .intro-icon {
+            font-size: 6rem;
+            background: -webkit-linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+            font-family: 'Nunito', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+
+        .btn:active { transform: scale(0.98); box-shadow: none; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(67, 97, 238, 0.6); }
+        
+        .btn-restart { 
+            background: linear-gradient(45deg, var(--success), #20a094); 
+            box-shadow: 0 4px 15px rgba(46, 196, 182, 0.4); 
+        }
+
+
+        /* --- Exercise Instructions --- */
+        .instruction-box {
+            background-color: #f8f9fa;
+            border-left: 6px solid var(--primary); /* Dynamic */
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+
+        .instruction-title {
+            font-weight: 900;
+            color: #8d99ae;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+        }
+
+
+        /* --- Type -1: Grid (Puzzle) --- */
+        .word-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+
+        .grid-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            color: var(--text);
+        }
+
+
+        .grid-item:hover { transform: translateY(-3px); border-color: var(--primary); color: var(--primary); }
+        
+        .grid-item.correct { 
+            background-color: var(--success); 
+            color: white; 
+            border-color: var(--success); 
+            pointer-events: none; 
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        
+        .grid-item.incorrect { 
+            background-color: var(--danger); 
+            color: white; 
+            border-color: var(--danger); 
+            animation: shake 0.4s; 
+        }
+
+
+        /* --- Type A & B: Text Analysis --- */
+        .sentence-container {
+            font-size: 1.6rem;
+            line-height: 2.2;
+            text-align: center;
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #e9ecef;
+        }
+
+
+        .interactive-word {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+
+        .interactive-word:hover { background-color: #e2eafc; border-bottom-color: var(--primary); transform: translateY(-2px); }
+        .interactive-word.found { background-color: var(--success); color: white; pointer-events: none; border-bottom-color: transparent; }
+        .interactive-word.wrong { background-color: var(--danger); color: white; animation: shake 0.4s; border-bottom-color: transparent; }
+        .interactive-word.disabled { pointer-events: none; opacity: 0.5; }
+
+
+        /* --- Type C: Substitution --- */
+        .substitution-container {
+            font-size: 1.6rem;
+            text-align: center;
+            margin: 30px 0;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
+        }
+
+
+        select {
+            font-size: 1.4rem;
+            padding: 8px 20px;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            color: var(--primary-dark);
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            margin: 0 8px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus { border-color: var(--primary); }
+
+
+        /* --- Feedback / Phylactère --- */
+        .phylactere {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: 700;
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.1rem;
+        }
+
+
+        .phylactere.show { display: flex; align-items: flex-start; }
+        
+        .phylactere.success { background-color: #d1fae5; color: #065f46; border-left: 5px solid var(--success); }
+        .phylactere.error { background-color: #ffe4e6; color: #881337; border-left: 5px solid var(--danger); }
+
+
+        .phylactere i { margin-right: 15px; font-size: 1.5rem; margin-top: 2px; }
+
+
+        /* --- Summary Page --- */
+        .summary-card { text-align: center; }
+        
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            font-family: 'Fredoka One', cursive;
+            margin: 25px auto;
+            border: 10px solid #e9ecef;
+            color: var(--text);
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+
+        .summary-item {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+            font-size: 1.1rem;
+        }
+
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin: 20px 0;
+        }
+        
+        .breakdown-table th { color: #8d99ae; font-size: 0.9rem; text-transform: uppercase; padding: 0 15px; text-align: left;}
+        .breakdown-table td {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #f1f1f1;
+        }
+        .breakdown-table tr td:first-child { border-radius: 10px 0 0 10px; font-weight: 700; border-left: 4px solid var(--secondary); }
+        .breakdown-table tr td:nth-child(2) { text-align: right; }
+        .breakdown-table tr td:last-child { border-radius: 0 10px 10px 0; text-align: right; font-weight: 800; color: var(--primary); width: 80px;}
+
+
+        /* --- Animations --- */
+        @keyframes pop { 50% { transform: scale(1.15); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* --- Footer Nav --- */
+        .footer-nav {
+            margin-top: auto;
+            padding-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.3rem; }
+            .card { padding: 1.5rem; border-top-width: 6px; }
+            .sentence-container { font-size: 1.3rem; line-height: 1.8; padding: 15px; }
+            .grid-item { padding: 12px 18px; font-size: 1.1rem; flex-grow: 1; text-align: center; }
+            .stats-bar { font-size: 0.85rem; padding: 6px 12px; width: 100%; justify-content: center; margin-top: 10px; }
+            .header-content { justify-content: center; flex-direction: column; }
+            .intro-icon { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <header>
+        <div class="header-content">
+            <h1><i class="fas fa-shapes"></i> Maître des Prépositions</h1>
+            <div class="stats-bar" id="statsBar" style="display:none;">
+                <div class="stat-item"><i class="fas fa-stopwatch"></i> <span id="timerDisplay">00:00</span></div>
+                <div class="stat-item"><i class="fas fa-list-ol"></i> <span id="progressDisplay">1/25</span></div>
+                <div class="stat-item"><i class="fas fa-star"></i> <span id="scoreDisplay">0</span> pts</div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="app">
+        <!-- Content injected by JS -->
+    </div>
+
+
+    <script>
+        // --- Data & Configuration ---
+
+
+        /* Color Codes for Categories:
+           Recognition = Blue (#4895ef)
+           Radar = Purple (#7209b7)
+           Detective = Pink (#f72585)
+           Builder = Orange (#ff9e00)
+        */
+
+
+        const exercises = [
+            // --- 1 to 5 ---
+            {
+                type: 'recognition', category: 'Reconnaissance', color: 'var(--type-recognition)', points: 3,
+                title: "Le Tri Sélectif", instruction: "Clique uniquement sur les 3 prépositions dans cette liste.",
+                words: [{text:"manger",type:"verbe"}, {text:"avec",type:"preposition"}, {text:"grand",type:"adjectif"}, {text:"sur",type:"preposition"}, {text:"demain",type:"adverbe"}, {text:"pour",type:"preposition"}, {text:"chat",type:"nom"}, {text:"vite",type:"adverbe"}],
+                targetCount: 3
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 2,
+                title: "Le Radar Simple", instruction: "Clique sur les 2 prépositions dans cette phrase.",
+                sentence: "Le chat dort sous la table de la cuisine.",
+                structure: [
+                    {text:"Le",type:"dét"}, {text:"chat",type:"nom"}, {text:"dort",type:"verbe"}, 
+                    {text:"sous",type:"preposition",isTarget:true,desc:"Indique le lieu."}, 
+                    {text:"la",type:"dét"}, {text:"table",type:"nom"}, 
+                    {text:"de",type:"preposition",isTarget:true,desc:"Indique l'appartenance."}, 
+                    {text:"la",type:"dét"}, {text:"cuisine.",type:"nom"}
+                ],
+                targetCount: 2
+            },
+            {
+                type: 'detective', category: 'Analyse', color: 'var(--type-detective)', points: 1,
+                title: "Le Sens Caché", instruction: "Quelle préposition indique la <strong>CAUSE</strong> ?",
+                sentence: [
+                    {text:"Il",role:"none"}, {text:"tremble",role:"none"}, 
+                    {text:"de",role:"target",correct:true,desc:"'De' introduit ici la cause (pourquoi il tremble)."}, 
+                    {text:"froid",role:"none"}, 
+                    {text:"dans",role:"decoy",correct:false,desc:"'Dans' indique le lieu."}, 
+                    {text:"la",role:"none"}, {text:"rue.",role:"none"}
+                ]
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Le Maçon", instruction: "Complète pour indiquer le <strong>Lieu</strong>.",
+                pre: "Le livre est posé ", post: " l'étagère.",
+                options: [{val:"x",text:"..."}, {val:"sur",text:"sur",correct:true,feedback:"Bravo ! Contact par dessus."}, {val:"à",text:"à",correct:false,feedback:"Trop vague ici."}, {val:"pour",text:"pour",correct:false,feedback:"Indique un but."}]
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 1,
+                title: "Le Piège Temporel", instruction: "Trouve l'unique préposition de temps.",
+                sentence: "Je viendrai après le déjeuner.",
+                structure: [
+                    {text:"Je",type:"pro"}, {text:"viendrai",type:"verbe"}, 
+                    {text:"après",type:"preposition",isTarget:true,desc:"Indique un moment dans le temps."}, 
+                    {text:"le",type:"dét"}, {text:"déjeuner.",type:"nom"}
+                ],
+                targetCount: 1
+            },
+
+
+            // --- 6 to 10 ---
+            {
+                type: 'recognition', category: 'Reconnaissance', color: 'var(--type-recognition)', points: 3,
+                title: "Mots Complexes", instruction: "Trouve les 3 prépositions (simples ou complexes).",
+                words: [{text:"mais",type:"conj"}, {text:"dans",type:"preposition"}, {text:"il",type:"pro"}, {text:"chez",type:"preposition"}, {text:"beauté",type:"nom"}, {text:"vers",type:"preposition"}, {text:"finir",type:"verbe"}, {text:"car",type:"conj"}],
+                targetCount: 3
+            },
+            {
+                type: 'detective', category: 'Analyse', color: 'var(--type-detective)', points: 1,
+                title: "Moyen de Transport", instruction: "Clique sur la préposition de <strong>MOYEN</strong>.",
+                sentence: [
+                    {text:"Je",role:"none"}, {text:"vais",role:"none"}, {text:"à",role:"decoy",correct:false,desc:"'À' indique ici la destination, pas le moyen."}, 
+                    {text:"l'école",role:"none"},
+                    {text:"en",role:"target",correct:true,desc:"'En' s'utilise pour le moyen de transport (en bus)."}, 
+                    {text:"bus.",role:"none"}
+                ]
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Pays et Villes", instruction: "Complète correctement.",
+                pre: "Elle habite ", post: " France, mais travaille à Paris.",
+                options: [{val:"x",text:"..."}, {val:"au",text:"au",correct:false,feedback:"France est féminin (La France)."}, {val:"en",text:"en",correct:true,feedback:"'En' devant un pays féminin."}, {val:"à",text:"à",correct:false,feedback:"'À' s'utilise pour les villes."}]
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 2,
+                title: "Ne pas confondre", instruction: "Trouve les 2 prépositions. Attention aux articles !",
+                sentence: "Il parle à son voisin à cause du bruit.",
+                structure: [
+                    {text:"Il",type:"pro"}, {text:"parle",type:"verbe"}, 
+                    {text:"à",type:"preposition",isTarget:true,desc:"Introduit le complément."}, 
+                    {text:"son",type:"dét"}, {text:"voisin",type:"nom"}, 
+                    {text:"à cause du",type:"preposition",isTarget:true,desc:"Locution prépositive (cause)."}, 
+                    {text:"bruit.",type:"nom"}
+                ],
+                targetCount: 2
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Chez ou Au ?", instruction: "Complète avec la bonne préposition pour une personne.",
+                pre: "Je vais ", post: " le coiffeur ce matin.",
+                options: [{val:"x",text:"..."}, {val:"au",text:"au",correct:false,feedback:"On va 'au' lieu, mais 'chez' une personne."}, {val:"chez",text:"chez",correct:true,feedback:"Correct ! On utilise 'chez' devant les noms de personnes ou de métiers."}, {val:"dans",text:"dans",correct:false,feedback:"Non."}]
+            },
+
+
+            // --- 11 to 15 ---
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "La Matière", instruction: "Quelle préposition introduit la matière ?",
+                pre: "C'est une table ", post: " bois.",
+                options: [{val:"x",text:"..."}, {val:"avec",text:"avec",correct:false,feedback:"Non."}, {val:"en",text:"en",correct:true,feedback:"'En' (ou 'de') introduit la matière."}, {val:"pour",text:"pour",correct:false,feedback:"Non."}]
+            },
+            {
+                type: 'recognition', category: 'Reconnaissance', color: 'var(--type-recognition)', points: 3,
+                title: "Chasse aux Intrus", instruction: "Trouve les 3 prépositions.",
+                words: [{text:"parmi",type:"preposition"}, {text:"demain",type:"adv"}, {text:"souvent",type:"adv"}, {text:"contre",type:"preposition"}, {text:"rouge",type:"adj"}, {text:"entre",type:"preposition"}, {text:"crier",type:"verbe"}, {text:"le",type:"dét"}],
+                targetCount: 3
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 1,
+                title: "Temps et Durée", instruction: "Trouve la préposition de temps.",
+                sentence: "Il habite ici depuis trois ans.",
+                structure: [
+                    {text:"Il",type:"pro"}, {text:"habite",type:"verbe"}, {text:"ici",type:"adv"}, 
+                    {text:"depuis",type:"preposition",isTarget:true,desc:"Indique le point de départ ou la durée."}, 
+                    {text:"trois",type:"dét"}, {text:"ans.",type:"nom"}
+                ],
+                targetCount: 1
+            },
+            {
+                type: 'detective', category: 'Analyse', color: 'var(--type-detective)', points: 1,
+                title: "Destination vs Temps", instruction: "Clique sur la préposition qui indique la <strong>DESTINATION</strong>.",
+                sentence: [
+                    {text:"Ce",role:"none"}, {text:"train",role:"none"}, 
+                    {text:"pour",role:"target",correct:true,desc:"'Pour' indique vers où va le train."}, 
+                    {text:"Lyon",role:"none"}, {text:"part",role:"none"}, 
+                    {text:"à",role:"decoy",correct:false,desc:"'À' indique ici l'heure."}, 
+                    {text:"midi.",role:"none"}
+                ]
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Futur Proche", instruction: "Indique la durée future.",
+                pre: "Je finirai ce travail ", post: " deux jours.",
+                options: [{val:"x",text:"..."}, {val:"depuis",text:"depuis",correct:false,feedback:"Indique le passé."}, {val:"dans",text:"dans",correct:true,feedback:"'Dans' indique à quel moment futur cela se fera."}, {val:"il y a",text:"il y a",correct:false,feedback:"Indique le passé."}]
+            },
+
+
+            // --- 16 to 20 ---
+            {
+                type: 'recognition', category: 'Reconnaissance', color: 'var(--type-recognition)', points: 3,
+                title: "Locutions Prépositives", instruction: "Trouve les prépositions composées.",
+                words: [{text:"grâce à",type:"preposition"}, {text:"hier",type:"adv"}, {text:"beaucoup",type:"adv"}, {text:"près de",type:"preposition"}, {text:"joli",type:"adj"}, {text:"au-dessus de",type:"preposition"}, {text:"manger",type:"verbe"}, {text:"jamais",type:"adv"}],
+                targetCount: 3
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 2,
+                title: "Direction et Lieu", instruction: "Trouve les 2 prépositions.",
+                sentence: "Elle marche vers la forêt avec son chien.",
+                structure: [
+                    {text:"Elle",type:"pro"}, {text:"marche",type:"verbe"}, 
+                    {text:"vers",type:"preposition",isTarget:true,desc:"Indique la direction."}, 
+                    {text:"la",type:"dét"}, {text:"forêt",type:"nom"}, 
+                    {text:"avec",type:"preposition",isTarget:true,desc:"Indique l'accompagnement."}, 
+                    {text:"son",type:"dét"}, {text:"chien.",type:"nom"}
+                ],
+                targetCount: 2
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Agent du Passif", instruction: "Qui fait l'action ?",
+                pre: "Cette chanson est chantée ", post: " tout le monde.",
+                options: [{val:"x",text:"..."}, {val:"de",text:"de",correct:false,feedback:"Rarement utilisé ici."}, {val:"par",text:"par",correct:true,feedback:"Introduit l'agent à la voix passive."}, {val:"pour",text:"pour",correct:false,feedback:"Indique le bénéficiaire."}]
+            },
+            {
+                type: 'detective', category: 'Analyse', color: 'var(--type-detective)', points: 1,
+                title: "Bénéficiaire vs Agent", instruction: "Qui reçoit le cadeau ? Clique sur la bonne préposition.",
+                sentence: [
+                    {text:"Ce",role:"none"}, {text:"cadeau",role:"none"}, {text:"est",role:"none"}, 
+                    {text:"pour",role:"target",correct:true,desc:"'Pour' introduit le destinataire."}, 
+                    {text:"toi,",role:"none"}, {text:"acheté",role:"none"}, 
+                    {text:"par",role:"decoy",correct:false,desc:"'Par' introduit l'agent (celui qui achète)."}, 
+                    {text:"moi.",role:"none"}
+                ]
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 1,
+                title: "L'Exclusion", instruction: "Trouve la préposition qui exclut.",
+                sentence: "Tout le monde est venu sauf lui.",
+                structure: [
+                    {text:"Tout",type:"dét"}, {text:"le",type:"dét"}, {text:"monde",type:"nom"}, {text:"est",type:"aux"}, {text:"venu",type:"verbe"}, 
+                    {text:"sauf",type:"preposition",isTarget:true,desc:"Marque l'exception/exclusion."}, 
+                    {text:"lui.",type:"pro"}
+                ],
+                targetCount: 1
+            },
+
+
+            // --- 21 to 25 ---
+            {
+                type: 'recognition', category: 'Reconnaissance', color: 'var(--type-recognition)', points: 3,
+                title: "Méli-mélo", instruction: "Trouve les 3 prépositions cachées.",
+                words: [{text:"devant",type:"preposition"}, {text:"aussitôt",type:"adv"}, {text:"pendant",type:"preposition"}, {text:"alors",type:"adv"}, {text:"selon",type:"preposition"}, {text:"mais",type:"conj"}, {text:"donc",type:"conj"}, {text:"ou",type:"conj"}],
+                targetCount: 3
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Position Spatiale", instruction: "Complète la phrase.",
+                pre: "Le chat s'est caché ", post: " le lit.",
+                options: [{val:"x",text:"..."}, {val:"sous",text:"sous",correct:true,feedback:"Indique une position inférieure."}, {val:"sur",text:"sur",correct:false,feedback:"Peu probable s'il se 'cache'."}, {val:"entre",text:"entre",correct:false,feedback:"Il faudrait deux objets."}]
+            },
+            {
+                type: 'detective', category: 'Analyse', color: 'var(--type-detective)', points: 1,
+                title: "Dates et Années", instruction: "Quelle est la bonne préposition pour une année ?",
+                sentence: [
+                    {text:"Je",role:"none"}, {text:"suis",role:"none"}, {text:"né",role:"none"}, 
+                    {text:"en",role:"target",correct:true,desc:"On utilise 'En' devant une année."}, 
+                    {text:"2010",role:"none"}, {text:"et",role:"none"}, {text:"non",role:"none"}, 
+                    {text:"à",role:"decoy",correct:false,desc:"'À' s'utilise pour une heure précise."}, 
+                    {text:"2012.",role:"none"}
+                ]
+            },
+            {
+                type: 'radar', category: 'Identification', color: 'var(--type-radar)', points: 2,
+                title: "Citation Célèbre", instruction: "Trouve les 2 prépositions.",
+                sentence: "Rien ne sert de courir, il faut partir à point.",
+                structure: [
+                    {text:"Rien",type:"pro"}, {text:"ne",type:"adv"}, {text:"sert",type:"verbe"}, 
+                    {text:"de",type:"preposition",isTarget:true,desc:"Introduit l'infinitif courir."}, 
+                    {text:"courir,",type:"verbe"}, {text:"il",type:"pro"}, {text:"faut",type:"verbe"}, {text:"partir",type:"verbe"}, 
+                    {text:"à",type:"preposition",isTarget:true,desc:"Dans la locution 'à point'."}, 
+                    {text:"point.",type:"nom"}
+                ],
+                targetCount: 2
+            },
+            {
+                type: 'builder', category: 'Construction', color: 'var(--type-builder)', points: 1,
+                title: "Dernier Défi", instruction: "Le vélo est appuyé... ?",
+                pre: "Le vélo est appuyé ", post: " le mur.",
+                options: [{val:"x",text:"..."}, {val:"contre",text:"contre",correct:true,feedback:"Indique un contact latéral/opposition."}, {val:"vers",text:"vers",correct:false,feedback:"Indique une direction sans contact."}, {val:"par",text:"par",correct:false,feedback:"Non."}]
+            }
+        ];
+
+
+        // --- State Management ---
+        let currentSlide = 0;
+        let score = 0;
+        let timerInterval;
+        let startTime;
+        let currentSlideState = { found: 0 }; 
+        let scoreBreakdown = {};
+
+
+        // --- DOM Elements ---
+        const app = document.getElementById('app');
+        const statsBar = document.getElementById('statsBar');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+
+
+        // --- Initialization ---
+        function init() {
+            currentSlide = 0;
+            score = 0;
+            scoreBreakdown = {
+                'Reconnaissance': { current: 0, max: 0 },
+                'Identification': { current: 0, max: 0 },
+                'Analyse': { current: 0, max: 0 },
+                'Construction': { current: 0, max: 0 }
+            };
+            
+            exercises.forEach(ex => {
+                scoreBreakdown[ex.category].max += ex.points;
+            });
+
+
+            startTime = new Date();
+            startTimer();
+            renderSlide();
+            statsBar.style.display = 'flex';
+        }
+
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const diff = Math.floor((now - startTime) / 1000);
+                const min = String(Math.floor(diff / 60)).padStart(2, '0');
+                const sec = String(diff % 60).padStart(2, '0');
+                timerDisplay.innerText = `${min}:${sec}`;
+            }, 1000);
+        }
+
+
+        function updateStats() {
+            progressDisplay.innerText = `${currentSlide + 1}/${exercises.length}`;
+            scoreDisplay.innerText = score;
+        }
+
+
+        // --- Rendering Logic ---
+
+
+        function renderSlide() {
+            if (currentSlide >= exercises.length) {
+                showSummary();
+                return;
+            }
+
+
+            const data = exercises[currentSlide];
+            updateStats();
+            currentSlideState = { found: 0 }; 
+
+
+            // Apply dynamic theme color to the card
+            document.documentElement.style.setProperty('--primary', data.color);
+            
+            let html = `
+                <div class="card" style="border-top-color: ${data.color}">
+                    <div class="instruction-box" style="border-left-color: ${data.color}">
+                        <div class="instruction-title" style="color: ${data.color}">${data.category} - ${data.title}</div>
+                        ${data.instruction}
+                    </div>
+                    
+                    <div id="exercise-area">`;
+
+
+            if (data.type === 'recognition') html += renderRecognition(data);
+            else if (data.type === 'radar') html += renderRadar(data);
+            else if (data.type === 'detective') html += renderDetective(data);
+            else if (data.type === 'builder') html += renderBuilder(data);
+
+
+            html += `
+                    </div>
+                    <div id="feedback-area" class="phylactere"></div>
+                    
+                    <div class="footer-nav">
+                         ${data.type === 'builder' ? '' : '<button id="nextBtn" class="btn" style="display:none; margin-left: auto;">Continuer <i class="fas fa-arrow-right"></i></button>'}
+                    </div>
+                </div>
+            `;
+
+
+            app.innerHTML = html;
+            
+            if(data.type === 'builder') attachBuilderEvents(data);
+            else document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        }
+
+
+        // --- Type 1: Recognition (Grid) ---
+        function renderRecognition(data) {
+            let gridHtml = `<div class="word-grid">`;
+            data.words.forEach((word, index) => {
+                gridHtml += `<div class="grid-item" onclick="handleGridClick(this, ${index})">${word.text}</div>`;
+            });
+            gridHtml += `</div>`;
+            return gridHtml;
+        }
+
+
+        function handleGridClick(el, index) {
+            const data = exercises[currentSlide];
+            const wordData = data.words[index];
+            const feedback = document.getElementById('feedback-area');
+            const nextBtn = document.getElementById('nextBtn');
+
+
+            if (el.classList.contains('correct') || el.classList.contains('incorrect')) return;
+
+
+            if (wordData.type === 'preposition') {
+                el.classList.add('correct');
+                currentSlideState.found++;
+                showFeedback('success', `Super ! "${wordData.text}" est bien une préposition.`);
+                
+                if (currentSlideState.found === data.targetCount) {
+                    score += data.points;
+                    scoreBreakdown[data.category].current += data.points;
+                    updateStats();
+                    feedback.innerHTML = `<i class="fas fa-check-circle"></i> Parfait ! Exercice réussi.`;
+                    nextBtn.style.display = 'block';
+                }
+            } else {
+                el.classList.add('incorrect');
+                showFeedback('error', `Non, "${wordData.text}" est un <strong>${wordData.type}</strong>.`);
+            }
+        }
+
+
+        // --- Type A: Radar (Sentence) ---
+        function renderRadar(data) {
+            let html = `<div class="sentence-container">`;
+            data.structure.forEach((word, index) => {
+                html += `<span class="interactive-word" onclick="handleRadarClick(this, ${index})">${word.text}</span> `;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+
+        function handleRadarClick(el, index) {
+            const data = exercises[currentSlide];
+            const wordData = data.structure[index];
+            const nextBtn = document.getElementById('nextBtn');
+
+
+            if (el.classList.contains('found') || el.classList.contains('wrong')) return;
+
+
+            if (wordData.isTarget) {
+                el.classList.add('found');
+                currentSlideState.found++;
+                showFeedback('success', `<strong>${wordData.text}</strong> : ${wordData.desc}`);
+                
+                if (currentSlideState.found === data.targetCount) {
+                    score += data.points;
+                    scoreBreakdown[data.category].current += data.points;
+                    updateStats();
+                    nextBtn.style.display = 'block';
+                }
+            } else {
+                el.classList.add('wrong');
+                showFeedback('error', `Non, c'est un <strong>${wordData.type}</strong>.`);
+            }
+        }
+
+
+        // --- Type B: Detective (Context) ---
+        function renderDetective(data) {
+            let html = `<div class="sentence-container">`;
+            data.sentence.forEach((word, index) => {
+                const isClickable = word.role === 'target' || word.role === 'decoy';
+                const clickAttr = isClickable ? `onclick="handleDetectiveClick(this, ${index})"` : '';
+                const classList = isClickable ? "interactive-word" : "";
+                html += `<span class="${classList}" ${clickAttr}>${word.text}</span> `;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+
+        function handleDetectiveClick(el, index) {
+            const data = exercises[currentSlide];
+            const wordData = data.sentence[index];
+            const nextBtn = document.getElementById('nextBtn');
+            
+            const allWords = document.querySelectorAll('.interactive-word');
+            allWords.forEach(w => w.classList.add('disabled'));
+            el.classList.remove('disabled'); 
+
+
+            if (wordData.role === 'target') {
+                el.classList.add('found');
+                showFeedback('success', `Exact ! ${wordData.desc}`);
+                score += data.points;
+                scoreBreakdown[data.category].current += data.points;
+                updateStats();
+            } else {
+                el.classList.add('wrong');
+                showFeedback('error', `Erreur. ${wordData.desc}`);
+            }
+            nextBtn.style.display = 'block';
+        }
+
+
+        // --- Type C: Builder (Substitution) ---
+        function renderBuilder(data) {
+            let optionsHtml = `<option value="x" disabled selected>-- ? --</option>`;
+            data.options.forEach(opt => {
+                optionsHtml += `<option value="${opt.val}">${opt.text}</option>`;
+            });
+
+
+            return `
+                <div class="substitution-container" style="border-bottom: 4px solid ${data.color}">
+                    ${data.pre} 
+                    <select id="builderSelect" style="border-color:${data.color}">${optionsHtml}</select> 
+                    ${data.post}
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn" id="checkBuilderBtn">Vérifier ma réponse</button>
+                </div>
+            `;
+        }
+
+
+        function attachBuilderEvents(data) {
+            document.getElementById('checkBuilderBtn').addEventListener('click', () => {
+                const select = document.getElementById('builderSelect');
+                const selectedVal = select.value;
+                const selectedOpt = data.options.find(o => o.val === selectedVal);
+                
+                if (!selectedOpt || selectedVal === 'x') return;
+
+
+                if (selectedOpt.correct) {
+                    showFeedback('success', selectedOpt.feedback);
+                    select.style.borderColor = 'var(--success)';
+                    select.style.background = '#e6fffa';
+                    select.disabled = true;
+                    document.getElementById('checkBuilderBtn').style.display = 'none';
+                    
+                    score += data.points;
+                    scoreBreakdown[data.category].current += data.points;
+                    updateStats();
+                    
+                    const footer = document.querySelector('.footer-nav');
+                    footer.innerHTML = '<button id="nextBtn" class="btn">Continuer <i class="fas fa-arrow-right"></i></button>';
+                    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+
+
+                } else {
+                    showFeedback('error', selectedOpt.feedback);
+                    select.style.borderColor = 'var(--danger)';
+                    select.classList.add('shake-anim');
+                    setTimeout(() => select.classList.remove('shake-anim'), 500);
+                }
+            });
+        }
+
+
+        // --- Helpers ---
+        function showFeedback(type, message) {
+            const fb = document.getElementById('feedback-area');
+            fb.className = `phylactere show ${type}`;
+            let icon = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
+            fb.innerHTML = `<i class="fas ${icon}"></i> <div>${message}</div>`;
+        }
+
+
+        function nextSlide() {
+            currentSlide++;
+            renderSlide();
+        }
+
+
+        function showSummary() {
+            clearInterval(timerInterval);
+            statsBar.style.display = 'none';
+            document.documentElement.style.setProperty('--primary', '#4361ee'); // Reset theme
+            
+            const maxScore = exercises.reduce((acc, curr) => acc + curr.points, 0);
+            const percent = Math.round((score / maxScore) * 100);
+            
+            let color = '#e71d36'; // Red
+            let message = "Continue tes efforts !";
+            if (percent >= 70) { color = '#2ec4b6'; message = "Excellent travail !"; } 
+            else if (percent >= 60) { color = '#ff9f1c'; message = "Bien, mais tu peux faire mieux !"; } 
+
+
+            const finalTime = timerDisplay.innerText;
+            const nowTime = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+
+            let breakdownHtml = '';
+            for (const [cat, val] of Object.entries(scoreBreakdown)) {
+                if(val.max > 0) {
+                    const catPercent = Math.round((val.current / val.max) * 100);
+                    breakdownHtml += `
+                        <tr>
+                            <td>${cat}</td>
+                            <td><strong>${val.current} / ${val.max}</strong></td>
+                            <td style="color:${catPercent >= 60 ? 'var(--success)' : 'var(--danger)'}">${catPercent}%</td>
+                        </tr>
+                    `;
+                }
+            }
+
+
+            let html = `
+                <div class="card summary-card">
+                    <h1>Résultat Final</h1>
+                    <div class="score-circle" style="border-color: ${color}; color: ${color}; box-shadow: 0 0 20px ${color}40;">
+                        ${percent}%
+                    </div>
+                    <h2 style="color:${color}; margin-bottom:20px;">${message}</h2>
+                    
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <i class="fas fa-star" style="color:#ff9e00"></i> Score: <strong>${score} / ${maxScore}</strong>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-clock" style="color:#4361ee"></i> Temps: <strong>${finalTime}</strong>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-calendar-check" style="color:#7209b7"></i> Fin: <strong>${nowTime}</strong>
+                        </div>
+                    </div>
+
+
+                    <table class="breakdown-table">
+                        <tbody>${breakdownHtml}</tbody>
+                    </table>
+
+
+                    <button class="btn btn-restart" onclick="init()">
+                        <i class="fas fa-redo"></i> Recommencer l'atelier
+                    </button>
+                </div>
+            `;
+            
+            app.innerHTML = html;
+        }
+
+
+        // --- Landing Page ---
+        function renderLanding() {
+             app.innerHTML = `
+                <div class="card">
+                    <div class="intro-content">
+                        <div class="intro-icon"><i class="fas fa-book-reader"></i></div>
+                        <h1>Atelier : La Préposition</h1>
+                        <p style="font-size: 1.3rem; line-height: 1.6; color: #6c757d;">
+                            Bienvenue ! Tu as <strong>${exercises.length} missions</strong> à accomplir.<br>
+                            Identifie, analyse et utilise les prépositions correctement.
+                        </p>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin: 15px 0;">
+                            <span class="stats-bar" style="background:#e2eafc; color:#4361ee">Reconnaissance</span>
+                            <span class="stats-bar" style="background:#f3e8ff; color:#7209b7">Identification</span>
+                            <span class="stats-bar" style="background:#ffe5ec; color:#f72585">Analyse</span>
+                        </div>
+                        <button class="btn" onclick="init()">Commencer l'entrainement <i class="fas fa-play" style="font-size:0.8em; margin-left:8px;"></i></button>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // Start
+        renderLanding();
+
+
+    </script>
+</body>
+</html>
