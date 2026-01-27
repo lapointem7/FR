@@ -1,0 +1,866 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier : Les Procédés Descriptifs - Niveau 1</title>
+    <!-- Google Fonts: Orbitron (Futuriste) & Exo 2 (Lisible) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Espace / Sci-Fi */
+            --bg-deep: #0B0C10;
+            --bg-panel: #1F2833;
+            
+            --neon-cyan: #45A29E;
+            --neon-green: #66FCF1;
+            --neon-purple: #C5C6C7; /* Texte clair */
+            
+            --accent-blue: #1f4287;
+            --accent-pink: #d63447; /* Erreur */
+            --accent-success: #21bf73; /* Succès */
+            
+            --font-title: 'Orbitron', sans-serif;
+            --font-text: 'Exo 2', sans-serif;
+        }
+
+
+        * { box-sizing: border-box; }
+
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--bg-deep);
+            /* Fond étoiles simple en CSS pure */
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            color: var(--neon-purple);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+
+        h1, h2, h3, h4 { font-family: var(--font-title); color: var(--neon-green); margin-top: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(102, 252, 241, 0.3); }
+
+
+        /* HEADER */
+        header {
+            background: rgba(31, 40, 51, 0.95);
+            border-bottom: 2px solid var(--neon-cyan);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(69, 162, 158, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+
+        .logo { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            color: white; 
+            display:flex; 
+            align-items:center; 
+            gap:15px; 
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+
+        .logo-sub {
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+
+        .header-info { display: flex; gap: 15px; align-items: center; }
+        .badge { 
+            background: rgba(0,0,0,0.5); 
+            padding: 5px 15px; 
+            border-radius: 4px;
+            font-size: 0.9rem; 
+            font-weight: 700;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-green);
+            box-shadow: 0 0 5px var(--neon-cyan);
+            white-space: nowrap;
+        }
+
+
+        /* CONTAINER */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px 50px 20px;
+            width: 100%;
+        }
+
+
+        /* SLIDES */
+        .slide { display: none; opacity: 0; transform: scale(0.95); transition: all 0.4s ease-out; }
+        .slide.active { display: block; opacity: 1; transform: scale(1); }
+
+
+        /* CARDS HUD STYLE */
+        .card {
+            background: var(--bg-panel);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(69, 162, 158, 0.1);
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        /* Elements décoratifs HUD */
+        .card::before {
+            content: ''; position: absolute; top: -1px; left: -1px; width: 20px; height: 20px;
+            border-top: 3px solid var(--neon-green); border-left: 3px solid var(--neon-green);
+            border-radius: 4px 0 0 0;
+        }
+        .card::after {
+            content: ''; position: absolute; bottom: -1px; right: -1px; width: 20px; height: 20px;
+            border-bottom: 3px solid var(--neon-green); border-right: 3px solid var(--neon-green);
+            border-radius: 0 0 4px 0;
+        }
+
+
+        /* TEXTE THEORIQUE */
+        .theory-box {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .theory-title { color: var(--neon-cyan); font-weight: bold; display: block; margin-bottom: 5px; }
+
+
+        /* INTERACTION ZONES */
+        .exercise-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+
+        .sentence-container {
+            font-size: 1.15rem; /* Slightly smaller to fit 3 sentences */
+            line-height: 1.6;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+        
+        .sentence-container.solved::after {
+            content: '\f00c'; /* FontAwesome Check */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-success);
+            font-size: 1.5rem;
+        }
+
+
+        /* Interactive Words (Module 1 & 3) */
+        .word-chunk {
+            padding: 2px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+        }
+        .word-chunk:hover { background: rgba(102, 252, 241, 0.1); border-bottom-color: var(--neon-cyan); }
+        
+        .word-chunk.selected-correct { background: rgba(33, 191, 115, 0.2); border: 1px solid var(--accent-success); color: var(--accent-success); }
+        .word-chunk.selected-wrong { background: rgba(214, 52, 71, 0.2); border: 1px solid var(--accent-pink); color: var(--accent-pink); animation: shake 0.4s; }
+
+
+        /* Highlighted (Module 2) */
+        .highlighted {
+            color: var(--bg-deep);
+            background: var(--neon-green);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+
+        /* BUTTONS */
+        .btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 12px 28px;
+            border-radius: 0; /* Carré pour style sci-fi */
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: var(--font-title);
+            text-transform: uppercase;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover { background: var(--neon-green); color: var(--bg-deep); box-shadow: 0 0 15px var(--neon-green); }
+        
+        /* Option buttons (Module 2 & 3) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .option-btn {
+            background: rgba(31, 66, 135, 0.3);
+            border: 1px solid var(--accent-blue);
+            padding: 15px;
+            color: white;
+            cursor: pointer;
+            font-family: var(--font-text);
+            font-size: 1.1rem;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .option-btn:hover { background: var(--accent-blue); }
+        .option-btn.correct { background: var(--accent-success); border-color: var(--accent-success); }
+        .option-btn.wrong { background: var(--accent-pink); border-color: var(--accent-pink); opacity: 0.6; }
+
+
+        /* MODAL (Module 3) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: var(--bg-panel);
+            border: 2px solid var(--neon-cyan);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(69, 162, 158, 0.3);
+        }
+
+
+        .center-btn { text-align: center; margin-top: 25px; min-height: 50px; }
+        .hidden { display: none !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+
+        /* SCOREBOARD */
+        .score-display {
+            font-size: 4rem;
+            color: var(--neon-green);
+            font-family: var(--font-title);
+            text-shadow: 0 0 20px var(--neon-green);
+            margin: 20px 0;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .score-display { font-size: 3rem; }
+            .logo span { font-size: 0.9rem; }
+            .logo i { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <i class="fas fa-satellite-dish" style="font-size: 1.5rem;"></i> 
+        <div class="logo-text">
+            <span>OBSERVATOIRE DES MOTS</span>
+            <span class="logo-sub"><i class="fas fa-chevron-up"></i> NIVEAU 1 : CADET</span>
+        </div>
+    </div>
+    <div class="header-info">
+        <span class="badge" id="slide-indicator">1 / 13</span>
+        <span class="badge"><i class="fas fa-bolt"></i> <span id="score">0</span></span>
+    </div>
+</header>
+
+
+<main id="app">
+    <!-- Contenu dynamique -->
+</main>
+
+
+<!-- Modal pour Module 3 -->
+<div class="modal-overlay" id="type-modal">
+    <div class="modal-content">
+        <h3>Analyse du signal</h3>
+        <p>Tu as localisé le procédé ! De quel type s'agit-il ?</p>
+        <div class="options-grid" id="modal-options">
+            <!-- Boutons générés par JS -->
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // --- DONNÉES PÉDAGOGIQUES ---
+
+
+    // MODULE 1 : Identification (3 Phrases par diapositive)
+    const module1Data = [
+        {
+            type: "Définition",
+            theory: "La <strong>définition</strong> permet de préciser le sens d'un mot technique ou inconnu. On utilise souvent des parenthèses, des virgules ou des verbes comme 'être', 'c'est-à-dire'.",
+            exercises: [
+                {
+                    sentence: "Le rover, un véhicule d'exploration tout-terrain, analyse le sol martien.",
+                    segments: [
+                        { text: "Le rover, ", correct: false },
+                        { text: "un véhicule d'exploration tout-terrain", correct: true },
+                        { text: ", analyse le sol martien.", correct: false }
+                    ]
+                },
+                {
+                    sentence: "Une nébuleuse, c'est-à-dire un immense nuage de gaz et de poussière, donne naissance aux étoiles.",
+                    segments: [
+                        { text: "Une nébuleuse, ", correct: false },
+                        { text: "c'est-à-dire un immense nuage de gaz et de poussière", correct: true },
+                        { text: ", donne naissance aux étoiles.", correct: false }
+                    ]
+                },
+                {
+                    sentence: "La gravité, la force qui attire les objets vers le sol, est plus faible sur la Lune.",
+                    segments: [
+                        { text: "La gravité, ", correct: false },
+                        { text: "la force qui attire les objets vers le sol", correct: true },
+                        { text: ", est plus faible sur la Lune.", correct: false }
+                    ]
+                }
+            ]
+        },
+        {
+            type: "Exemple",
+            theory: "L'<strong>exemple</strong> rend une description concrète. Il suit souvent des marqueurs comme : <em>par exemple, tel que, comme</em>.",
+            exercises: [
+                {
+                    sentence: "Plusieurs planètes gazeuses, comme Jupiter et Saturne, possèdent des anneaux.",
+                    segments: [
+                        { text: "Plusieurs planètes gazeuses, ", correct: false },
+                        { text: "comme Jupiter et Saturne", correct: true },
+                        { text: ", possèdent des anneaux.", correct: false }
+                    ]
+                },
+                {
+                    sentence: "Les astronautes subissent divers symptômes, par exemple le mal de l'espace ou la perte musculaire.",
+                    segments: [
+                        { text: "Les astronautes subissent divers symptômes, ", correct: false },
+                        { text: "par exemple le mal de l'espace ou la perte musculaire", correct: true },
+                        { text: ".", correct: false }
+                    ]
+                },
+                {
+                    sentence: "Certaines lunes du système solaire, telles que Titan et Europe, pourraient abriter de l'eau.",
+                    segments: [
+                        { text: "Certaines lunes du système solaire, ", correct: false },
+                        { text: "telles que Titan et Europe", correct: true },
+                        { text: ", pourraient abriter de l'eau.", correct: false }
+                    ]
+                }
+            ]
+        },
+        {
+            type: "Énumération",
+            theory: "L'<strong>énumération</strong> consiste à lister plusieurs éléments pour donner une idée complète. Les éléments sont séparés par des virgules.",
+            exercises: [
+                {
+                    sentence: "L'astronaute vérifie son équipement : casque, gants, bottes et réservoir d'oxygène.",
+                    segments: [
+                        { text: "L'astronaute vérifie son équipement : ", correct: false },
+                        { text: "casque, gants, bottes et réservoir d'oxygène", correct: true },
+                        { text: ".", correct: false }
+                    ]
+                },
+                {
+                    sentence: "La fusée est composée de plusieurs étages : les propulseurs, le réservoir principal et la capsule habitée.",
+                    segments: [
+                        { text: "La fusée est composée de plusieurs étages : ", correct: false },
+                        { text: "les propulseurs, le réservoir principal et la capsule habitée", correct: true },
+                        { text: ".", correct: false }
+                    ]
+                },
+                {
+                    sentence: "Pour cette mission, nous emportons tout le nécessaire : nourriture déshydratée, outils de réparation et caméras.",
+                    segments: [
+                        { text: "Pour cette mission, nous emportons tout le nécessaire : ", correct: false },
+                        { text: "nourriture déshydratée, outils de réparation et caméras", correct: true },
+                        { text: ".", correct: false }
+                    ]
+                }
+            ]
+        },
+        {
+            type: "Comparaison",
+            theory: "La <strong>comparaison</strong> crée une image en rapprochant deux éléments à l'aide d'un mot-outil (<em>comme, tel, pareil à, ressembler à</em>).",
+            exercises: [
+                {
+                    sentence: "La comète file à toute vitesse, telle une flèche de glace dans le noir.",
+                    segments: [
+                        { text: "La comète file à toute vitesse, ", correct: false },
+                        { text: "telle une flèche de glace", correct: true },
+                        { text: " dans le noir.", correct: false }
+                    ]
+                },
+                {
+                    sentence: "La surface de cette planète est rouge et poussiéreuse, semblable à un désert infini.",
+                    segments: [
+                        { text: "La surface de cette planète est rouge et poussiéreuse, ", correct: false },
+                        { text: "semblable à un désert infini", correct: true },
+                        { text: ".", correct: false }
+                    ]
+                },
+                {
+                    sentence: "Les anneaux de Saturne brillent comme des disques d'or autour de la planète.",
+                    segments: [
+                        { text: "Les anneaux de Saturne brillent ", correct: false },
+                        { text: "comme des disques d'or", correct: true },
+                        { text: " autour de la planète.", correct: false }
+                    ]
+                }
+            ]
+        }
+    ];
+
+
+    // MODULE 2 : Diagnostic (Quel est le type du surligné ?)
+    const module2Data = [
+        {
+            sentence: "Son scaphandre est <span class='highlighted'>aussi résistant qu'une carapace de tortue</span>.",
+            correctType: "Comparaison"
+        },
+        {
+            sentence: "La Voie lactée, <span class='highlighted'>notre galaxie spirale</span>, contient des milliards d'étoiles.",
+            correctType: "Définition"
+        },
+        {
+            sentence: "Pour survivre sur Mars, il faut plusieurs choses : <span class='highlighted'>de l'eau, un abri, de l'oxygène et de la nourriture</span>.",
+            correctType: "Énumération"
+        },
+        {
+            sentence: "Certains métaux rares, <span class='highlighted'>par exemple le titane</span>, sont utilisés pour la fusée.",
+            correctType: "Exemple"
+        }
+    ];
+
+
+    // MODULE 3 : Expertise (Trouve ET Identifie)
+    const module3Data = [
+        {
+            fullText: [
+                { text: "La supernova, ", type: null },
+                { text: "une explosion stellaire gigantesque", type: "Définition" },
+                { text: ", illumine toute la galaxie.", type: null }
+            ]
+        },
+        {
+            fullText: [
+                { text: "Les étoiles brillent ", type: null },
+                { text: "comme des diamants éparpillés", type: "Comparaison" },
+                { text: " sur du velours.", type: null }
+            ]
+        },
+        {
+            fullText: [
+                { text: "Ce robot possède plusieurs fonctions : ", type: null },
+                { text: "forer, analyser, photographier et transmettre", type: "Énumération" },
+                { text: ".", type: null }
+            ]
+        },
+        {
+            fullText: [
+                { text: "Des débris spatiaux, ", type: null },
+                { text: "tels que des vieux satellites", type: "Exemple" },
+                { text: ", polluent l'orbite.", type: null }
+            ]
+        }
+    ];
+
+
+    let state = {
+        slideIndex: 0,
+        score: 0,
+        totalSlides: 1 + module1Data.length + module2Data.length + module3Data.length + 1,
+        // Pour Module 3
+        currentSelection: null, 
+        currentCorrectType: null
+    };
+
+
+    const processTypes = ["Définition", "Exemple", "Énumération", "Comparaison"];
+
+
+    // --- GÉNÉRATION ---
+
+
+    function renderApp() {
+        const app = document.getElementById('app');
+        let html = '';
+        let s = 0;
+
+
+        // 1. INTRO
+        html += `
+        <div class="slide active" id="slide-${s}">
+            <div class="card" style="text-align:center; padding-top:50px;">
+                <i class="fas fa-user-astronaut" style="font-size:4rem; color:var(--neon-green); margin-bottom:20px;"></i>
+                <h1>Protocole d'Initiation</h1>
+                <h3 style="color:var(--neon-cyan); margin-top:-10px; font-size:1.2rem; letter-spacing:1px;">Simulation Alpha - Accès Cadet</h3>
+                <p style="font-size:1.2rem; margin-bottom:30px; margin-top:20px;">
+                    Bienvenue, <strong>Recrue</strong>.<br>
+                    Pour intégrer l'élite de l'Observatoire, vous devez maîtriser les bases.<br>
+                    Votre mission : identifier les 4 procédés descriptifs essentiels.
+                </p>
+                <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:30px;">
+                    <span class="badge">Définition</span>
+                    <span class="badge">Exemple</span>
+                    <span class="badge">Énumération</span>
+                    <span class="badge">Comparaison</span>
+                </div>
+                <button class="btn" onclick="nextSlide()">Lancer la simulation <i class="fas fa-power-off"></i></button>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 2. MODULE 1 (Apprentissage - 3 phrases)
+        module1Data.forEach((data, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2>Module 1 : Identification</h2>
+                        <span class="badge" style="border-color:var(--accent-blue); color:white;">Cible : ${data.type}</span>
+                    </div>
+                    
+                    <div class="theory-box">
+                        <span class="theory-title"><i class="fas fa-info-circle"></i> Base de données :</span>
+                        ${data.theory}
+                    </div>
+
+
+                    <p>Dans chaque phrase ci-dessous, clique sur le segment qui correspond à : <strong>${data.type}</strong>.</p>
+
+
+                    <div class="exercise-group" id="group-${s}" data-remaining="3">
+                        ${data.exercises.map((ex, k) => `
+                            <div class="sentence-container" id="container-${s}-${k}">
+                                ${ex.segments.map((seg, j) => `
+                                    <span class="word-chunk" onclick="handleMod1Click(this, ${seg.correct}, ${s}, ${k})">${seg.text}</span>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div class="center-btn">
+                        <div id="feedback-${s}" style="height:20px; font-weight:bold; margin-bottom:10px;"></div>
+                        <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Continuer <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 3. MODULE 2 (Diagnostic)
+        module2Data.forEach((data, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <h2>Module 2 : Diagnostic</h2>
+                    <p>Analyse le segment en surbrillance. Quel procédé est utilisé ?</p>
+                    
+                    <div class="sentence-container">
+                        ${data.sentence}
+                    </div>
+
+
+                    <div class="options-grid">
+                        ${processTypes.map(type => `
+                            <button class="option-btn" onclick="handleMod2Click(this, '${type}', '${data.correctType}', ${s})">${type}</button>
+                        `).join('')}
+                    </div>
+
+
+                    <div class="center-btn">
+                         <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Suivant <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 4. MODULE 3 (Expert)
+        module3Data.forEach((data, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <h2>Module 3 : Analyse Complète</h2>
+                    <p>Étape 1 : Trouve et clique sur le procédé descriptif dans la phrase.<br>Étape 2 : Identifie son type.</p>
+                    
+                    <div class="sentence-container">
+                        ${data.fullText.map(seg => `
+                            <span class="word-chunk" onclick="handleMod3Click(this, '${seg.type}', ${s})">${seg.text}</span>
+                        `).join('')}
+                    </div>
+
+
+                    <div class="center-btn">
+                        <div id="feedback-${s}" style="height:20px; font-weight:bold; margin-bottom:10px;"></div>
+                        <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Suivant <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 5. FINAL
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="text-align:center;">
+                <i class="fas fa-flag-checkered" style="font-size:3rem; color:var(--neon-green);"></i>
+                <h1>Rapport de Fin de Mission</h1>
+                <div class="score-display">
+                    <span id="final-score">0</span> / <span id="total-score-possible"></span>
+                </div>
+                <p id="final-msg" style="font-size:1.2rem;"></p>
+                <div id="rank-badge" style="margin-top:20px; display:none;">
+                    <span class="badge" style="font-size:1.2rem; border:2px solid var(--neon-green); color:var(--neon-green); background:rgba(0,0,0,0.8); padding:10px 20px;">
+                        <i class="fas fa-medal"></i> Grade : Analyste Junior
+                    </span>
+                </div>
+                <br><br>
+                <button class="btn" onclick="location.reload()">Relancer la simulation <i class="fas fa-redo"></i></button>
+            </div>
+        </div>`;
+
+
+        app.innerHTML = html;
+        document.getElementById('slide-indicator').innerText = `1 / ${s + 1}`;
+        
+        // Calcul du score maximum : 
+        // Mod 1: 4 slides * 3 pts = 12
+        // Mod 2: 4 slides * 1 pt = 4
+        // Mod 3: 4 slides * 1 pt = 4
+        // Total = 20
+        state.maxScore = (module1Data.length * 3) + module2Data.length + module3Data.length;
+    }
+
+
+    // --- LOGIQUE D'INTERACTION ---
+
+
+    function nextSlide() {
+        const current = document.getElementById(`slide-${state.slideIndex}`);
+        current.classList.remove('active');
+        state.slideIndex++;
+        const next = document.getElementById(`slide-${state.slideIndex}`);
+        if(next) {
+            next.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+        }
+        
+        if (state.slideIndex === state.totalSlides - 1) {
+            showFinalScore();
+        }
+    }
+
+
+    function updateScore(pts) {
+        state.score += pts;
+        document.getElementById('score').innerText = state.score;
+    }
+
+
+    // MODULE 1 : Click segment (Multi-sentence)
+    function handleMod1Click(el, isCorrect, slideId, exerciseIndex) {
+        const container = document.getElementById(`container-${slideId}-${exerciseIndex}`);
+        if(container.classList.contains('solved') || el.classList.contains('selected-wrong')) return; 
+
+
+        if(isCorrect) {
+            el.classList.add('selected-correct');
+            container.classList.add('solved');
+            
+            // Disable siblings within THIS sentence
+            Array.from(container.children).forEach(child => child.style.pointerEvents = 'none');
+            
+            updateScore(1);
+
+
+            // Check if all sentences on this slide are solved
+            const group = document.getElementById(`group-${slideId}`);
+            let remaining = parseInt(group.dataset.remaining) - 1;
+            group.dataset.remaining = remaining;
+
+
+            if (remaining === 0) {
+                document.getElementById(`feedback-${slideId}`).innerHTML = "<span style='color:var(--accent-success)'>Séquence complète validée !</span>";
+                document.getElementById(`next-${slideId}`).classList.remove('hidden');
+            }
+        } else {
+            el.classList.add('selected-wrong');
+            // Feedback temporaire mais pas bloquant pour les autres phrases
+        }
+    }
+
+
+    // MODULE 2 : Multiple Choice
+    function handleMod2Click(btn, type, correctType, slideId) {
+        if(btn.parentElement.querySelector('.correct')) return; // Already solved
+
+
+        if(type === correctType) {
+            btn.classList.add('correct');
+            document.getElementById(`next-${slideId}`).classList.remove('hidden');
+            updateScore(1);
+        } else {
+            btn.classList.add('wrong');
+        }
+    }
+
+
+    // MODULE 3 : Two-step
+    function handleMod3Click(el, type, slideId) {
+        if(document.getElementById(`next-${slideId}`).classList.contains('hidden') === false) return; // Already solved
+
+
+        if(type && type !== 'null') {
+            // Correct segment clicked
+            state.currentSelection = el;
+            state.currentCorrectType = type;
+            openModal(slideId);
+        } else {
+            // Wrong segment
+            el.classList.add('selected-wrong');
+            document.getElementById(`feedback-${slideId}`).innerHTML = "<span style='color:var(--accent-pink)'>Ce segment ne contient pas de procédé.</span>";
+            setTimeout(() => el.classList.remove('selected-wrong'), 1000);
+        }
+    }
+
+
+    function openModal(slideId) {
+        const modal = document.getElementById('type-modal');
+        const optionsContainer = document.getElementById('modal-options');
+        optionsContainer.innerHTML = ''; // Reset buttons
+
+
+        processTypes.forEach(pType => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = pType;
+            btn.onclick = () => verifyType(pType, slideId);
+            optionsContainer.appendChild(btn);
+        });
+
+
+        modal.style.display = 'flex';
+    }
+
+
+    function verifyType(selectedType, slideId) {
+        const modal = document.getElementById('type-modal');
+        modal.style.display = 'none';
+
+
+        if(selectedType === state.currentCorrectType) {
+            // SUCCESS
+            state.currentSelection.classList.add('selected-correct');
+            document.getElementById(`feedback-${slideId}`).innerHTML = "<span style='color:var(--accent-success)'>Analyse complète réussie !</span>";
+            document.getElementById(`next-${slideId}`).classList.remove('hidden');
+            
+            // Disable interactions
+            const container = state.currentSelection.parentElement;
+            Array.from(container.children).forEach(child => child.style.pointerEvents = 'none');
+            
+            updateScore(1);
+        } else {
+            // WRONG TYPE
+            document.getElementById(`feedback-${slideId}`).innerHTML = "<span style='color:var(--accent-pink)'>Bonne localisation, mais mauvaise identification. Réessaie.</span>";
+        }
+    }
+
+
+    function showFinalScore() {
+        document.getElementById('final-score').innerText = state.score;
+        document.getElementById('total-score-possible').innerText = state.maxScore;
+        const msg = document.getElementById('final-msg');
+        const percentage = (state.score / state.maxScore) * 100;
+        const badge = document.getElementById('rank-badge');
+
+
+        if(percentage === 100) {
+            msg.innerText = "Performance parfaite ! Vous avez prouvé votre valeur, Cadet.";
+            msg.style.color = "var(--neon-green)";
+            badge.style.display = "block";
+        } else if (percentage >= 70) {
+            msg.innerText = "Mission réussie. Vous êtes prêt pour la suite de la formation.";
+            msg.style.color = "var(--neon-cyan)";
+            badge.style.display = "block";
+        } else {
+            msg.innerText = "Mission compromise. Le niveau 1 doit être repris.";
+            msg.style.color = "var(--accent-pink)";
+            badge.style.display = "none";
+        }
+    }
+
+
+    // Init
+    renderApp();
+
+
+</script>
+
+
+</body>
+</html>

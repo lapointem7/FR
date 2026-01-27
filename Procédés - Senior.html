@@ -1,0 +1,1002 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier : Les Procédés Descriptifs - Niveau 2</title>
+    <!-- Google Fonts: Orbitron (Futuriste) & Exo 2 (Lisible) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Simulation Beta */
+            --bg-deep: #1a0b2e;
+            --bg-panel: #2d1b4e;
+            
+            --neon-primary: #ff9f43; /* Ambre/Orange */
+            --neon-secondary: #ff6b6b; /* Rouge doux */
+            --text-main: #e0d2f4;
+            
+            --accent-blue: #5f27cd;
+            --accent-success: #00d2d3;
+            --accent-error: #ff4757;
+            
+            --font-title: 'Orbitron', sans-serif;
+            --font-text: 'Exo 2', sans-serif;
+        }
+
+
+        * { box-sizing: border-box; }
+
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--bg-deep);
+            background-image: 
+                linear-gradient(rgba(255, 159, 67, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 159, 67, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+
+        h1, h2, h3, h4 { font-family: var(--font-title); color: var(--neon-primary); margin-top: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 159, 67, 0.3); }
+
+
+        /* HEADER */
+        header {
+            background: rgba(45, 27, 78, 0.95);
+            border-bottom: 3px solid var(--neon-secondary);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+
+        .logo { font-size: 1.2rem; font-weight: 700; color: white; display:flex; align-items:center; gap:15px; }
+        .logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .logo-sub { font-size: 0.75rem; color: var(--neon-secondary); font-weight: 400; letter-spacing: 1px; }
+
+
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .nav-btn:hover { background: var(--neon-primary); color: var(--bg-deep); }
+
+
+        .badge { 
+            background: rgba(0,0,0,0.5); 
+            padding: 5px 15px; 
+            border-radius: 4px;
+            font-size: 0.9rem; 
+            font-weight: 700;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            box-shadow: 0 0 5px var(--neon-primary);
+            white-space: nowrap;
+        }
+
+
+        /* CONTAINER */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px 50px 20px;
+            width: 100%;
+        }
+
+
+        /* SLIDES */
+        .slide { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; }
+        .slide.active { display: block; opacity: 1; transform: translateY(0); }
+
+
+        /* CARDS */
+        .card {
+            background: var(--bg-panel);
+            padding: 30px;
+            border-radius: 2px;
+            border-left: 4px solid var(--neon-primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
+        }
+
+
+        /* TEXT AREAS */
+        .text-analysis-box {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 4px;
+            text-align: left;
+        }
+        
+        .structure-word { font-weight: 900; color: var(--neon-secondary); letter-spacing: 0.5px; }
+
+
+        .interactive-segment {
+            border-bottom: 2px dashed var(--neon-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 2px 0;
+        }
+        .interactive-segment:hover { background: rgba(255, 107, 107, 0.2); color: white; }
+        .interactive-segment.solved { 
+            border-bottom: 2px solid var(--accent-success); 
+            color: var(--accent-success); 
+            cursor: default;
+            background: transparent;
+        }
+        .interactive-segment.solved::after {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            font-size: 0.8rem; margin-left: 5px; vertical-align: super;
+        }
+
+
+        /* INPUTS & SELECTS */
+        .input-box {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--neon-primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: var(--font-text);
+            width: 100%;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+        .input-box:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
+        .input-box::placeholder { color: rgba(255,255,255,0.4); font-style: italic; font-size: 0.9rem; }
+
+
+        .invasion-select {
+            background: #402663;
+            color: white;
+            border: 2px solid var(--accent-blue);
+            padding: 5px;
+            border-radius: 4px;
+            font-family: var(--font-text);
+            cursor: pointer;
+            max-width: 100%;
+            margin: 0 5px;
+        }
+        .invasion-select.valid { border-color: var(--accent-success); background: rgba(0, 210, 211, 0.2); }
+        .invasion-select.invalid { border-color: var(--accent-error); background: rgba(255, 71, 87, 0.2); }
+
+
+        .error-msg {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--accent-error);
+            margin-top: 2px;
+            margin-bottom: 10px;
+            font-style: italic;
+            padding-left: 10px;
+            border-left: 2px solid var(--accent-error);
+        }
+
+
+        /* MODULE 2 TOOLBOX */
+        .split-container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .text-area { flex: 2; min-width: 300px; }
+        .toolbox { 
+            flex: 1; min-width: 250px; 
+            background: rgba(95, 39, 205, 0.2); 
+            border: 1px solid var(--accent-blue);
+            padding: 15px; border-radius: 4px;
+            height: fit-content;
+        }
+        .toolbox h4 { color: var(--text-main); font-size: 1rem; border-bottom: 1px solid var(--accent-blue); padding-bottom: 5px; }
+        .toolbox ul { padding-left: 20px; font-size: 0.9rem; color: #d1ccc0; list-style-type: square; }
+        .toolbox li { margin-bottom: 8px; }
+        
+        .correction-block {
+            display: none; margin-top: 15px; padding: 15px;
+            background: rgba(0, 210, 211, 0.1); border-left: 3px solid var(--accent-success);
+        }
+
+
+        /* GLITCH */
+        .glitch-text { position: relative; animation: glitch 3s infinite; }
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px 0px var(--accent-error); }
+            5% { text-shadow: -2px -2px 0px var(--accent-blue); }
+            10% { text-shadow: none; }
+            100% { text-shadow: none; }
+        }
+
+
+        /* REF CARD */
+        .ref-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--text-main);
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .ref-family { margin-bottom: 5px; }
+        .ref-title { font-weight: bold; color: var(--accent-success); text-transform: uppercase; font-size: 0.75rem; }
+
+
+        /* BUTTONS */
+        .btn {
+            background: transparent;
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            padding: 12px 28px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: var(--font-title);
+            text-transform: uppercase;
+            transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-top: 20px;
+        }
+        .btn:hover { background: var(--neon-primary); color: var(--bg-deep); box-shadow: 0 0 15px var(--neon-primary); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--bg-panel);
+            border: 2px solid var(--neon-primary);
+            padding: 30px; width: 90%; max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 159, 67, 0.3);
+        }
+        .option-btn {
+            display: block; width: 100%; padding: 15px; margin: 10px 0;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--text-main);
+            color: white; cursor: pointer; font-size: 1.1rem; transition: 0.2s;
+        }
+        .option-btn:hover { background: var(--neon-primary); color: var(--bg-deep); border-color: var(--neon-primary); }
+
+
+        .hidden { display: none !important; }
+        .center-btn { text-align: center; margin-top: 20px; }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .split-container { flex-direction: column-reverse; }
+            .toolbox { width: 100%; }
+            .ref-card { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <i class="fas fa-rocket" style="font-size: 1.5rem;"></i> 
+        <div class="logo-text">
+            <span>SIMULATION BETA</span>
+            <span class="logo-sub"><i class="fas fa-star"></i> NIVEAU 2 : OFFICIER</span>
+        </div>
+    </div>
+    <div class="header-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-btn" onclick="forceNext()" title="Suivant (Force)"><i class="fas fa-chevron-right"></i></button>
+        <span class="badge" id="slide-indicator">1 / 9</span>
+        <span class="badge"><i class="fas fa-shield-alt"></i> <span id="score">0</span></span>
+    </div>
+</header>
+
+
+<main id="app">
+    <!-- Contenu dynamique -->
+</main>
+
+
+<!-- Modal pour Module 1 -->
+<div class="modal-overlay" id="selection-modal">
+    <div class="modal-content">
+        <h3>Analyse Structurelle</h3>
+        <p>Ce segment descriptif correspond à quel procédé ?</p>
+        <div id="modal-options-container"></div>
+        <button class="btn" style="margin-top:15px; border-color: #666; color:#999; font-size:0.8rem;" onclick="closeModal()">Annuler</button>
+    </div>
+</div>
+
+
+<script>
+    // --- DONNÉES PÉDAGOGIQUES ---
+
+
+    // MODULE 1 : Identification
+    const mod1Texts = [
+        {
+            title: "Rapport 402 : La Xénoflore",
+            // Structure: Org (Fam 1), Mark (Fam 3)
+            content: `<span class="structure-word">PREMIÈREMENT</span>, la végétation de la planète Xylos présente des caractéristiques uniques. <span class="structure-word">D'ABORD</span>, elle est dotée de <span class="interactive-segment" data-type="Définition">la bioluminescence, c'est-à-dire la capacité de produire sa propre lumière</span>. Dès la tombée de la nuit, la forêt s'illumine. <span class="interactive-segment" data-type="Comparaison">Les feuilles des arbres brillent comme des néons dans l'obscurité</span>. <span class="structure-word">ENSUITE</span>, plusieurs espèces de champignons, <span class="interactive-segment" data-type="Exemple">telles que le bolet radiant ou le mycélium électrique</span>, tapissent le sol d'une lueur bleutée.`,
+            targets: 3
+        },
+        {
+            title: "Rapport 403 : La Station Alpha",
+            // Structure: Org (Fam 1 - suite), Mark (Fam 2)
+            content: `<span class="structure-word">DEUXIÈMEMENT</span>, la Station Alpha est conçue pour la survie longue durée. <span class="structure-word">EN PREMIER LIEU</span>, son système vital comprend plusieurs modules : <span class="interactive-segment" data-type="Énumération">le recycleur d'eau, le générateur d'oxygène et le régulateur thermique</span>. <span class="structure-word">EN SECOND LIEU</span>, ce régulateur est crucial. <span class="interactive-segment" data-type="Comparaison">Sans lui, la station deviendrait aussi froide qu'un tombeau de glace</span>. Heureusement, <span class="interactive-segment" data-type="Définition">le réacteur à fusion (le cœur énergétique de la base)</span> fonctionne en permanence.`,
+            targets: 3
+        },
+        {
+            title: "Rapport 404 : Les Krylon",
+            // Structure: Org (Fam 1 - suite), Mark (Fam 4)
+            content: `<span class="structure-word">TROISIÈMEMENT</span>, les Krylons communiquent étrangement. <span class="structure-word">POUR COMMENCER</span>, ils utilisent des couleurs. <span class="interactive-segment" data-type="Comparaison">Leur peau change de teinte aussi vite qu'un écran vidéo</span>. Certaines couleurs, <span class="interactive-segment" data-type="Exemple">par exemple le violet profond ou le jaune vif</span>, indiquent le danger. <span class="structure-word">POUR CONTINUER</span>, ce langage visuel transmet beaucoup d'infos : <span class="interactive-segment" data-type="Énumération">cartes stellaires, coordonnées, schémas techniques et formules mathématiques</span>.`,
+            targets: 3
+        }
+    ];
+
+
+    // MODULE 2 : Construction
+    const mod2Exercises = [
+        {
+            title: "Construction : Le Fusil à Plasma",
+            toolbox: [
+                "Gaz ionisé à 5000°C",
+                "Surface du soleil",
+                "Acier renforcé",
+                "Titane",
+                "Roche",
+                "Vaporisation instantanée",
+                "Poids : 4kg",
+                "Mode silencieux",
+                "Recharge solaire"
+            ],
+            text: `<p>Le fusil à plasma est l'outil principal du soldat.</p>
+                   <p><strong>Aspect 1 : Puissance de feu</strong></p>
+                   <p><span class="structure-word">PREMIÈREMENT</span>, cette arme est redoutable. <span class="structure-word">D'ABORD</span>, elle projette du plasma, <input type="text" class="input-box" placeholder="[Procédé descriptif]">. Sa chaleur est intense.</p>
+                   <p><span class="structure-word">ENSUITE</span>, sa température est extrême. Elle est chaude comme <input type="text" class="input-box" placeholder="[Procédé descriptif]">.</p>
+                   <p><strong>Aspect 2 : Efficacité</strong></p>
+                   <p><span class="structure-word">DEUXIÈMEMENT</span>, il détruit tout. <span class="structure-word">EN PREMIER LIEU</span>, il est efficace contre plusieurs matériaux résistants : <input type="text" class="input-box" placeholder="[Procédé descriptif]"></p>
+                   <p><span class="structure-word">EN SECOND LIEU</span>, l'impact provoque une réaction immédiate, <input type="text" class="input-box" placeholder="[Procédé descriptif]">.</p>`,
+            correction: `<p><strong>Correction suggérée :</strong></p>
+                         <p><span class="structure-word">PREMIÈREMENT</span>, cette arme est redoutable. <span class="structure-word">D'ABORD</span>, elle projette du plasma, <em>c'est-à-dire un gaz ionisé à 5000°C</em>. Sa chaleur est intense.</p>
+                         <p><span class="structure-word">ENSUITE</span>, sa température est extrême. Elle est chaude comme <em>la surface du soleil</em>.</p>
+                         <p><span class="structure-word">DEUXIÈMEMENT</span>, il détruit tout. <span class="structure-word">EN PREMIER LIEU</span>, il est efficace contre plusieurs matériaux résistants : <em>l'acier renforcé, le titane et la roche</em>.</p>
+                         <p><span class="structure-word">EN SECOND LIEU</span>, l'impact provoque une réaction immédiate, <em>telle qu'une vaporisation instantanée</em>.</p>`
+        },
+        {
+            title: "Construction : La Ceinture d'Astéroïdes",
+            toolbox: [
+                "Fer, Nickel, Or",
+                "Champ de mines",
+                "Collisions, Poussière, Froid",
+                "Micro-météorites",
+                "Grains de roche très rapides",
+                "Absence d'atmosphère",
+                "Distance de la Terre"
+            ],
+            text: `<p>La ceinture d'astéroïdes est une zone complexe.</p>
+                   <p><strong>Aspect 1 : Composition</strong></p>
+                   <p><span class="structure-word">PREMIÈREMENT</span>, on y trouve de nombreuses ressources. <span class="structure-word">EN PREMIER LIEU</span>, elle regorge de métaux précieux, <input type="text" class="input-box" placeholder="[Procédé descriptif]">.</p>
+                   <p><span class="structure-word">EN DEUXIÈME LIEU</span>, la navigation y est difficile. Traverser cette zone est <input type="text" class="input-box" placeholder="[Procédé descriptif]"></p>
+                   <p><strong>Aspect 2 : Dangers</strong></p>
+                   <p><span class="structure-word">DEUXIÈMEMENT</span>, le pilote doit être vigilant. <span class="structure-word">D'ABORD</span>, il doit éviter plusieurs obstacles majeurs : <input type="text" class="input-box" placeholder="[Procédé descriptif]"></p>
+                   <p><span class="structure-word">ENSUITE</span>, il y a un péril invisible : les micro-météorites, <input type="text" class="input-box" placeholder="[Procédé descriptif]">, qui peuvent percer la coque.</p>`,
+            correction: `<p><strong>Correction suggérée :</strong></p>
+                         <p><span class="structure-word">PREMIÈREMENT</span>, on y trouve de nombreuses ressources. <span class="structure-word">EN PREMIER LIEU</span>, elle regorge de métaux précieux, <em>tels que le fer, le nickel ou l'or</em>.</p>
+                         <p><span class="structure-word">EN DEUXIÈME LIEU</span>, la navigation y est difficile. Traverser cette zone est <em>aussi dangereux que de marcher dans un champ de mines</em>.</p>
+                         <p><span class="structure-word">DEUXIÈMEMENT</span>, le pilote doit être vigilant. <span class="structure-word">D'ABORD</span>, il doit éviter plusieurs obstacles majeurs : <em>les collisions, la poussière et le froid extrême</em>.</p>
+                         <p><span class="structure-word">ENSUITE</span>, il y a un péril invisible : les micro-météorites, <em>c'est-à-dire des grains de roche très rapides</em>, qui peuvent percer la coque.</p>`
+        }
+    ];
+
+
+    // MODULE 3 : INVASION (Logique stricte)
+    
+    // Contenu généré dynamiquement pour Module 3 (Ex 1)
+    function getMod3Content() {
+        return `
+        <h3 class="glitch-text" style="color:var(--accent-error); text-align:center;">ALERTE : DONNÉES CORROMPUES</h3>
+        <div class="ref-card">
+            <div class="ref-family"><span class="ref-title">Famille 1 (Org)</span><br>Premièrement, Deuxièmement...</div>
+            <div class="ref-family"><span class="ref-title">Famille 2</span><br>En premier lieu, En deuxième lieu...</div>
+            <div class="ref-family"><span class="ref-title">Famille 3 (Marqueurs)</span><br>D'abord, Ensuite, Par la suite...</div>
+            <div class="ref-family"><span class="ref-title">Famille 4</span><br>Pour commencer, Pour poursuivre...</div>
+        </div>
+
+
+        <p><strong>L'Envahisseur Zorg</strong></p>
+        
+        <p><em>Introduction</em></p>
+        <p>Depuis le début de l'ère spatiale, l'exploration de la galaxie a permis la découverte de mondes merveilleux. Cependant, une nouvelle menace surgit des ombres du cosmos. En effet, dans ce texte, il sera question de l'envahisseur Zorg. Seront alors élaborés les aspects de son apparence physique et de sa technologie avancée.</p>
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+
+
+        <p><strong>Aspect 1 : Apparence Physique</strong></p>
+        
+        <p><span class="structure-word">PREMIÈREMENT</span>, il convient de décrire sa stature effrayante.</p>
+        
+        <ul style="list-style:none; padding-left:10px; border-left: 2px solid rgba(255,255,255,0.1);">
+            <li>${createSelect('M1-1', '[Marqueur 1]', [
+                {t: "D'ABORD", f: "CORRECT"}, 
+                {t: "PREMIÈREMENT", f: "Famille Org utilisée."}, 
+                {t: "ENSUITE", f: "Mauvais ordre (2)."}
+            ])}, il est immense. Il est haut ${createSelect('P1-0', '[Procédé : Comparaison]', [
+                {t: "comme un arbre géant", f: "CORRECT"}, 
+                {t: "et très grand", f: "Cela ne crée pas une image."}, 
+                {t: "qui dépasse tout", f: "C'est une précision, pas une image."}
+            ])}.</li>
+            
+            <li><span class="structure-word">ENSUITE</span>, il possède six tentacules ${createSelect('P1-1', '[Procédé : Comparaison]', [
+                {t: "longs comme des lianes", f: "CORRECT"}, 
+                {t: "qui sont très flexibles", f: "Cela n'est pas une comparaison."}, 
+                {t: "très dangereux", f: "Cela ne crée pas une image."}
+            ])} pour attraper ses proies.</li>
+            
+            <li>${createSelect('M1-3', '[Marqueur 3]', [
+                {t: "ENFIN", f: "CORRECT"}, 
+                {t: "D'ABORD", f: "Mauvais ordre (1)."}, 
+                {t: "TROISIÈMEMENT", f: "Famille Org utilisée."}
+            ])}, sa peau sécrète du mucus, ${createSelect('P1-2', '[Procédé : Définition]', [
+                {t: "une substance gluante et protectrice", f: "CORRECT"}, 
+                {t: "comme de la colle", f: "C'est une comparaison, pas une définition."}, 
+                {t: "qui est dégoûtant", f: "C'est un commentaire subjectif."}
+            ])}, qui le protège.</li>
+        </ul>
+
+
+        <p><strong>Aspect 2 : Technologie Avancée</strong></p>
+
+
+        <p>${createSelect('Org-2', '[Org. Aspect 2]', [
+            {t: "DEUXIÈMEMENT", f: "CORRECT"}, 
+            {t: "ENSUITE", f: "Famille Marqueur utilisée."}, 
+            {t: "PREMIÈREMENT", f: "Mauvais ordre (1)."}
+        ])}, il est nécessaire d'analyser son équipement de guerre.</p>
+
+
+        <ul style="list-style:none; padding-left:10px; border-left: 2px solid rgba(255,255,255,0.1);">
+            <li><span class="structure-word">D'ABORD</span>, son armement est complexe. Il comporte ${createSelect('P2-0', '[Procédé : Énumération]', [
+                {t: "un laser, un canon et un bouclier", f: "CORRECT"}, 
+                {t: "une arme puissante", f: "Ce n'est pas une liste."}, 
+                {t: "comme un arsenal", f: "C'est une comparaison."}
+            ])}.</li>
+            
+            <li>${createSelect('M2-2', '[Marqueur 2]', [
+                {t: "ENSUITE", f: "CORRECT"}, 
+                {t: "DEUXIÈMEMENT", f: "Famille Org utilisée."}, 
+                {t: "D'ABORD", f: "Mauvais ordre (1)."}
+            ])}, sa défense est impénétrable. Il utilise plusieurs gadgets, ${createSelect('P2-1', '[Procédé : Exemple]', [
+                {t: "tels que le champ de force", f: "CORRECT"}, 
+                {t: "qui sont invisibles", f: "C'est une description, pas un exemple précis."}, 
+                {t: "très sophistiqués", f: "C'est une appréciation."}
+            ])}.</li>
+            
+            <li><span class="structure-word">ENFIN</span>, son vaisseau est rapide. Il file ${createSelect('P2-2', '[Procédé : Comparaison]', [
+                {t: "telle une étoile filante", f: "CORRECT"}, 
+                {t: "très vite", f: "Ce n'est pas une image."}, 
+                {t: "à toute allure", f: "C'est une locution adverbiale."}
+            ])}.</li>
+        </ul>
+
+
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+        <p><em>Conclusion</em></p>
+        <p>Pour conclure, le Zorg est une créature redoutable tant par son physique monstrueux que par son armement sophistiqué. Finalement, il est à souhaiter que les forces de défense planétaire trouvent rapidement une parade avant l'invasion totale.</p>
+        `;
+    }
+
+
+    // Contenu généré dynamiquement pour Module 3 (Ex 2 - Le Léviathan)
+    function getMod3Content2() {
+        return `
+        <h3 class="glitch-text" style="color:var(--accent-error); text-align:center;">ALERTE : DONNÉES CORROMPUES</h3>
+        <div class="ref-card">
+            <div class="ref-family"><span class="ref-title">Famille 1</span><br>Premièrement, Deuxièmement...</div>
+            <div class="ref-family"><span class="ref-title">Famille 2 (Org)</span><br>En premier lieu, En deuxième lieu...</div>
+            <div class="ref-family"><span class="ref-title">Famille 3</span><br>D'abord, Ensuite, Par la suite...</div>
+            <div class="ref-family"><span class="ref-title">Famille 4 (Marqueurs)</span><br>Pour commencer, Pour poursuivre...</div>
+        </div>
+
+
+        <p><strong>Le Léviathan Cosmique</strong></p>
+        
+        <p><em>Introduction</em></p>
+        <p>Des légendes circulent depuis des millénaires sur des monstres capables de dévorer des étoiles. Récemment, l'existence d'une telle créature a été confirmée par les sondes. Dans ce rapport, il sera question du Léviathan Cosmique. Seront alors élaborés les aspects de sa physiologie unique et de son habitat mystérieux.</p>
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+
+
+        <p><strong>Aspect 1 : Physiologie</strong></p>
+        
+        <p>${createSelect('L-Org-1', '[Org. Aspect 1]', [
+            {t: "EN PREMIER LIEU", f: "CORRECT"}, 
+            {t: "POUR COMMENCER", f: "Famille Marqueur utilisée."}, 
+            {t: "EN SECOND LIEU", f: "Mauvais ordre (2)."}
+        ])}, sa physiologie unique doit être détaillée.</p>
+        
+        <ul style="list-style:none; padding-left:10px; border-left: 2px solid rgba(255,255,255,0.1);">
+            <li>${createSelect('L-M1-1', '[Marqueur 1]', [
+                {t: "POUR COMMENCER", f: "CORRECT"}, 
+                {t: "EN PREMIER LIEU", f: "Famille Org utilisée."}, 
+                {t: "POUR POURSUIVRE", f: "Mauvais ordre (2)."}
+            ])}, sa peau est incroyablement résistante. Elle est épaisse ${createSelect('L-P1-1', '[Procédé : Comparaison]', [
+                {t: "comme une armure de combat", f: "CORRECT"}, 
+                {t: "et très solide", f: "Ce n'est pas une comparaison."}, 
+                {t: "qui résiste à tout", f: "C'est une précision, pas une image."}
+            ])}.</li>
+            
+            <li>${createSelect('L-M1-2', '[Marqueur 2]', [
+                {t: "POUR POURSUIVRE", f: "CORRECT"}, 
+                {t: "POUR COMMENCER", f: "Mauvais ordre (1)."}, 
+                {t: "ENSUITE", f: "Mauvaise Famille (3)."}
+            ])}, il possède des yeux, ${createSelect('L-P1-2', '[Procédé : Définition]', [
+                {t: "des organes sensibles aux radiations", f: "CORRECT"}, 
+                {t: "tels que des radars", f: "C'est un exemple."}, 
+                {t: "comme des soleils", f: "C'est une comparaison."}
+            ])}, qui lui permettent de voir dans le noir.</li>
+            
+            <li><span class="structure-word">POUR TERMINER</span>, sa gueule est terrifiante. Elle contient ${createSelect('L-P1-3', '[Procédé : Énumération]', [
+                {t: "des crocs, des dents et des mandibules", f: "CORRECT"}, 
+                {t: "beaucoup de dents", f: "Ce n'est pas une liste détaillée."}, 
+                {t: "une rangée de pointes", f: "C'est singulier, pas une énumération."}
+            ])}.</li>
+        </ul>
+
+
+        <p><strong>Aspect 2 : Habitat</strong></p>
+
+
+        <p>${createSelect('L-Org-2', '[Org. Aspect 2]', [
+            {t: "EN SECOND LIEU", f: "CORRECT"}, 
+            {t: "POUR POURSUIVRE", f: "Famille Marqueur utilisée."}, 
+            {t: "EN PREMIER LIEU", f: "Mauvais ordre (1)."}
+        ])}, son habitat mystérieux sera exposé.</p>
+
+
+        <ul style="list-style:none; padding-left:10px; border-left: 2px solid rgba(255,255,255,0.1);">
+            <li><span class="structure-word">POUR COMMENCER</span>, il réside dans les nébuleuses, ${createSelect('L-P2-0', '[Procédé : Définition]', [
+                {t: "des nuages de gaz interstellaires", f: "CORRECT"}, 
+                {t: "comme des brumes", f: "C'est une comparaison."}, 
+                {t: "très vastes", f: "C'est un adjectif."}
+            ])}.</li>
+            
+            <li>${createSelect('L-M2-2', '[Marqueur 2]', [
+                {t: "POUR POURSUIVRE", f: "CORRECT"}, 
+                {t: "EN SECOND LIEU", f: "Famille Org utilisée."}, 
+                {t: "ENSUITE", f: "Mauvaise Famille (3)."}
+            ])}, il se cache dans des zones sombres, ${createSelect('L-P2-1', '[Procédé : Exemple]', [
+                {t: "telles que la Nébuleuse d'Orion", f: "CORRECT"}, 
+                {t: "comme un fantôme", f: "C'est une comparaison."}, 
+                {t: "qui sont froides", f: "C'est une description."}
+            ])}.</li>
+            
+            <li><span class="structure-word">POUR TERMINER</span>, il migre vers les trous noirs. Il y trouve ${createSelect('L-P2-2', '[Procédé : Énumération]', [
+                {t: "de la gravité, de la matière et de l'énergie", f: "CORRECT"}, 
+                {t: "de la nourriture", f: "Ce n'est pas une énumération."}, 
+                {t: "comme un festin", f: "C'est une comparaison."}
+            ])}.</li>
+        </ul>
+
+
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+        <p><em>Conclusion</em></p>
+        <p>Pour conclure, le Léviathan est un monstre fascinant par sa physiologie robuste et son habitat extrême. Finalement, il est à souhaiter qu'une expédition pacifique pourra un jour l'approcher sans danger.</p>
+        `;
+    }
+
+
+    function createSelect(id, label, options) {
+        let html = `<div style="display:inline-block; vertical-align:top;">
+            <select id="${id}" class="invasion-select">
+                <option value="" disabled selected>${label}</option>`;
+        
+        options.forEach(opt => {
+            html += `<option value="${opt.f}">${opt.t}</option>`;
+        });
+
+
+        html += `</select><span id="err-${id}" class="error-msg" style="display:none;"></span></div>`;
+        return html;
+    }
+
+
+    // --- ÉTAT GLOBAL ---
+    let state = {
+        slideIndex: 0,
+        score: 0,
+        totalSlides: 1 + mod1Texts.length + mod2Exercises.length + 1 + 1 + 1, // +1 pour le nouvel exercice
+        currentSelection: null,
+        maxScore: 0
+    };
+
+
+    const processTypes = ["Définition", "Exemple", "Énumération", "Comparaison"];
+
+
+    // --- GÉNÉRATION ---
+
+
+    function renderApp() {
+        // Calculate max score
+        // Mod 1: 3 slides * 3 targets * 2 points = 18
+        // Mod 2: 2 slides * 5 points = 10
+        // Mod 3: 2 slides * 15 points = 30
+        // Total = 58
+        state.maxScore = 58;
+
+
+        const app = document.getElementById('app');
+        let html = '';
+        let s = 0;
+
+
+        // 1. INTRO
+        html += `
+        <div class="slide active" id="slide-${s}">
+            <div class="card" style="text-align:center; padding-top:50px;">
+                <i class="fas fa-user-shield" style="font-size:4rem; color:var(--neon-primary); margin-bottom:20px;"></i>
+                <h1>Protocole Officier</h1>
+                <p style="font-size:1.2rem; margin-bottom:30px;">
+                    Félicitations pour votre promotion, Officier.<br>
+                    La <strong>Simulation Beta</strong> est plus complexe. 
+                </p>
+                <div style="background:rgba(255, 159, 67, 0.1); padding:15px; border-radius:4px; text-align:left; display:inline-block;">
+                    <strong>Objectifs :</strong>
+                    <ul style="margin:5px 0 0 20px;">
+                        <li>Module 1 : Analyse structurelle (Aspects/Sous-aspects)</li>
+                        <li>Module 2 : Construction assistée (Sans indices)</li>
+                        <li>Module 3 : Réparation critique (Logique & Procédés)</li>
+                    </ul>
+                </div>
+                <br>
+                <button class="btn" onclick="nextSlide()">Lancer la simulation Beta <i class="fas fa-play"></i></button>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 2. MODULE 1
+        mod1Texts.forEach((txt, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Module 1 : Analyse Structurelle</h2>
+                        <span class="badge">Dossier ${i+1}/3</span>
+                    </div>
+                    <h4>${txt.title}</h4>
+                    <p>Cliquez sur les procédés descriptifs pour les identifier.</p>
+                    <div class="text-analysis-box" id="text-box-${s}">
+                        ${txt.content}
+                    </div>
+                    <div class="center-btn">
+                        <div id="feedback-${s}" style="height:20px; font-weight:bold; margin-bottom:10px;"></div>
+                        <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Dossier Suivant <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 3. MODULE 2
+        mod2Exercises.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Module 2 : Construction</h2>
+                        <span class="badge">Projet ${i+1}/2</span>
+                    </div>
+                    <h4>${ex.title}</h4>
+                    <p>Utilisez la boîte à outils pour rédiger les procédés manquants.</p>
+                    <div class="split-container">
+                        <div class="text-area text-analysis-box">${ex.text}</div>
+                        <div class="toolbox">
+                            <h4><i class="fas fa-tools"></i> Boîte à Outils</h4>
+                            <ul>${ex.toolbox.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                    </div>
+                    <div class="correction-block" id="correction-${s}">${ex.correction}</div>
+                    <div class="center-btn">
+                        <button class="btn" id="reveal-${s}" onclick="showCorrection(${s})">Révéler le corrigé <i class="fas fa-eye"></i></button>
+                        <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Continuer <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 4. MODULE 3 (Invasion - ZORG)
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="border-left-color:var(--accent-error);">
+                <div class="card-header">
+                    <h2 class="glitch-text" style="color:var(--accent-error);">Module 3 : INVASION (Partie 1)</h2>
+                    <span class="badge" style="border-color:var(--accent-error); color:var(--accent-error);">CRITIQUE</span>
+                </div>
+                <p><strong>Attention :</strong> Utilisez les indices pour déduire la bonne famille de Marqueurs. Choisissez le bon procédé descriptif selon la demande.</p>
+                <div class="text-analysis-box" id="invasion-text-1">
+                    ${getMod3Content()}
+                </div>
+                <div class="center-btn">
+                    <div id="invasion-feedback-1" style="font-weight:bold; min-height:20px;"></div>
+                    <button class="btn" onclick="validateInvasionDropdowns(${s}, 'invasion-text-1', 'invasion-feedback-1')">Vérifier l'intégrité <i class="fas fa-bug"></i></button>
+                    <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Mission Suivante <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 5. MODULE 3 (Invasion - LEVIATHAN)
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="border-left-color:var(--accent-error);">
+                <div class="card-header">
+                    <h2 class="glitch-text" style="color:var(--accent-error);">Module 3 : INVASION (Partie 2)</h2>
+                    <span class="badge" style="border-color:var(--accent-error); color:var(--accent-error);">CRITIQUE</span>
+                </div>
+                <p><strong>Attention :</strong> Ce secteur utilise des familles différentes. Soyez vigilants.</p>
+                <div class="text-analysis-box" id="invasion-text-2">
+                    ${getMod3Content2()}
+                </div>
+                <div class="center-btn">
+                    <div id="invasion-feedback-2" style="font-weight:bold; min-height:20px;"></div>
+                    <button class="btn" onclick="validateInvasionDropdowns(${s}, 'invasion-text-2', 'invasion-feedback-2')">Vérifier l'intégrité <i class="fas fa-bug"></i></button>
+                    <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Terminer <i class="fas fa-check"></i></button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 6. FINAL
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="text-align:center;">
+                <div id="final-icon-container"></div>
+                <h1 id="final-title">Résultats de la Simulation</h1>
+                <div class="score-display" style="font-size:3rem; margin:20px 0; color:var(--text-main);">
+                    Score : <span id="final-score-value">0</span> / <span id="final-max-score">0</span>
+                    <div style="font-size:1.5rem; margin-top:5px;" id="final-percent">0%</div>
+                </div>
+                <p style="font-size:1.2rem;" id="final-message"></p>
+                <br>
+                <button class="btn" onclick="location.reload()">Recommencer <i class="fas fa-redo"></i></button>
+            </div>
+        </div>`;
+
+
+        app.innerHTML = html;
+        document.getElementById('slide-indicator').innerText = `1 / ${s + 1}`;
+        initModule1Listeners();
+    }
+
+
+    // --- LOGIQUE MODULE 1 ---
+    function initModule1Listeners() {
+        document.querySelectorAll('.interactive-segment').forEach(seg => {
+            seg.addEventListener('click', function() {
+                if (this.classList.contains('solved')) return;
+                state.currentSelection = this;
+                openModal();
+            });
+        });
+    }
+
+
+    function openModal() {
+        const modal = document.getElementById('selection-modal');
+        const container = document.getElementById('modal-options-container');
+        container.innerHTML = '';
+        processTypes.forEach(type => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = type;
+            btn.onclick = () => checkSelection(type);
+            container.appendChild(btn);
+        });
+        modal.style.display = 'flex';
+    }
+
+
+    function closeModal() {
+        document.getElementById('selection-modal').style.display = 'none';
+        state.currentSelection = null;
+    }
+
+
+    function checkSelection(type) {
+        const correctType = state.currentSelection.getAttribute('data-type');
+        if (type === correctType) {
+            state.currentSelection.classList.add('solved');
+            updateScore(2);
+            checkSlideCompletion();
+        } else {
+            alert("Erreur d'analyse. Ce n'est pas une " + type + ".");
+        }
+        closeModal();
+    }
+
+
+    function checkSlideCompletion() {
+        const currentSlide = document.querySelector('.slide.active');
+        const segments = currentSlide.querySelectorAll('.interactive-segment');
+        const solved = currentSlide.querySelectorAll('.interactive-segment.solved');
+        if (segments.length > 0 && segments.length === solved.length) {
+            const fb = currentSlide.querySelector('[id^="feedback-"]');
+            const btn = currentSlide.querySelector('[id^="next-"]');
+            if(fb) fb.innerHTML = "<span style='color:var(--accent-success)'>Analyse terminée.</span>";
+            if(btn) btn.classList.remove('hidden');
+        }
+    }
+
+
+    // --- LOGIQUE MODULE 2 ---
+    function showCorrection(id) {
+        document.getElementById(`correction-${id}`).style.display = 'block';
+        document.getElementById(`reveal-${id}`).style.display = 'none';
+        document.getElementById(`next-${id}`).classList.remove('hidden');
+        updateScore(5);
+    }
+
+
+    // --- LOGIQUE MODULE 3 (INVASION) ---
+    function validateInvasionDropdowns(id, containerId, feedbackId) {
+        const container = document.getElementById(containerId);
+        const selects = container.querySelectorAll('.invasion-select');
+        let errors = 0;
+
+
+        selects.forEach(sel => {
+            const feedbackVal = sel.value;
+            const errSpan = document.getElementById(`err-${sel.id}`);
+            
+            // Reset styles
+            sel.classList.remove('valid', 'invalid');
+            errSpan.style.display = 'none';
+
+
+            if (!feedbackVal) {
+                // Rien sélectionné
+                sel.classList.add('invalid');
+                errors++;
+            } else if (feedbackVal === "CORRECT") {
+                sel.classList.add('valid');
+            } else {
+                // Erreur
+                sel.classList.add('invalid');
+                errSpan.innerText = feedbackVal; // Affiche le message d'erreur spécifique stocké dans la value
+                errSpan.style.display = 'block';
+                errors++;
+            }
+        });
+
+
+        const fb = document.getElementById(feedbackId);
+        if (errors === 0) {
+            fb.innerHTML = "<span style='color:var(--accent-success)'>DONNÉES RESTAURÉES. LOGIQUE VALIDE.</span>";
+            document.getElementById(`next-${id}`).classList.remove('hidden');
+            updateScore(15);
+        } else {
+            fb.innerHTML = `<span style='color:var(--accent-error)'>${errors} erreur(s) détectée(s). Corrigez selon les indications.</span>`;
+        }
+    }
+
+
+    // --- FINAL RESULTS ---
+    function updateFinalResults() {
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        
+        document.getElementById('final-score-value').innerText = state.score;
+        document.getElementById('final-max-score').innerText = state.maxScore;
+        document.getElementById('final-percent').innerText = percent + "%";
+        
+        const iconContainer = document.getElementById('final-icon-container');
+        const title = document.getElementById('final-title');
+        const message = document.getElementById('final-message');
+        const scoreDisplay = document.querySelector('.score-display');
+
+
+        if (percent >= 80) {
+            iconContainer.innerHTML = '<i class="fas fa-medal" style="font-size:4rem; color:var(--accent-success);"></i>';
+            title.innerText = "Mission Accomplie";
+            title.style.color = "var(--accent-success)";
+            message.innerHTML = "Performance exemplaire.<br><strong>Grade confirmé : Officier Supérieur.</strong>";
+            scoreDisplay.style.color = "var(--accent-success)";
+        } else {
+            iconContainer.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size:4rem; color:var(--accent-error);"></i>';
+            title.innerText = "Échec de la Mission";
+            title.style.color = "var(--accent-error)";
+            message.innerHTML = "Niveau insuffisant pour l'accréditation.<br><strong>Veuillez reprendre la formation.</strong>";
+            scoreDisplay.style.color = "var(--accent-error)";
+        }
+    }
+
+
+    // --- NAVIGATION ---
+    function nextSlide() {
+        const current = document.querySelector('.slide.active');
+        current.classList.remove('active');
+        state.slideIndex++;
+        const next = document.getElementById(`slide-${state.slideIndex}`);
+        if(next) {
+            next.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+            
+            // Check if final slide
+            if (state.slideIndex === state.totalSlides - 1) {
+                updateFinalResults();
+            }
+        }
+    }
+
+
+    function prevSlide() {
+        if (state.slideIndex > 0) {
+            const current = document.querySelector('.slide.active');
+            current.classList.remove('active');
+            state.slideIndex--;
+            const prev = document.getElementById(`slide-${state.slideIndex}`);
+            prev.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+        }
+    }
+
+
+    function forceNext() {
+        // Bypass validation
+        nextSlide();
+    }
+
+
+    function updateScore(pts) {
+        state.score += pts;
+        document.getElementById('score').innerText = state.score;
+    }
+
+
+    // Init
+    renderApp();
+
+
+</script>
+</body>
+</html>

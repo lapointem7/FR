@@ -1,0 +1,1052 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Enchaînement des Conjonctions</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Danse / Scène */
+            --bg-deep: #120129;       /* Fond très sombre violet */
+            --bg-card: #240046;       /* Fond des cartes */
+            --neon-pink: #ff0099;     /* Accent Jazz/Contempo */
+            --neon-cyan: #00f3ff;     /* Accent Hip Hop */
+            --neon-green: #39ff14;    /* Vrai Vert Néon (remplace le lime jaune) */
+            --text-light: #ffffff;
+            --text-dim: #b3b3b3;
+            --error: #ff3333;
+            --success: #39ff14;       /* Match neon green */
+        }
+
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 153, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 20%);
+        }
+
+
+        /* --- HEADER --- */
+        header {
+            background-color: rgba(36, 0, 70, 0.95);
+            padding: 10px 20px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            border-bottom: 2px solid var(--neon-pink);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+            justify-self: start;
+        }
+
+
+        /* Navigation Controls in Header */
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            justify-self: center;
+        }
+
+
+        .nav-btn-header {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        .nav-btn-header:hover {
+            background: var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+        .nav-btn-header:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: transparent;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+
+        .score-board {
+            display: flex;
+            gap: 15px;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            justify-self: end;
+        }
+
+
+        .pill {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+
+        /* --- MAIN --- */
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+
+
+        .stage-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5), 0 0 10px rgba(255,0,153,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+
+        /* --- TYPOGRAPHY --- */
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--neon-pink);
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+
+        .module-tag {
+            background: var(--neon-green);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+
+        .instruction {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: var(--text-dim);
+        }
+
+
+        /* --- EXERCISES COMMON --- */
+        .game-area {
+            margin: 20px 0;
+            min-height: 200px;
+        }
+
+
+        .btn-action {
+            background: linear-gradient(45deg, var(--neon-pink), #bf00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(255, 0, 153, 0.4);
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 153, 0.6);
+        }
+
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+        .feedback.correct { background: rgba(57, 255, 20, 0.15); color: var(--success); border: 1px solid var(--success); display: block; }
+        .feedback.wrong { background: rgba(255, 51, 51, 0.15); color: var(--error); border: 1px solid var(--error); display: block; }
+
+
+        /* --- MODULE 1: RECOGNITION --- */
+        .sentence-box {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--neon-cyan);
+        }
+
+
+        .word {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 2px;
+            border: 2px solid transparent;
+        }
+        .word:hover { background: rgba(255,255,255,0.1); }
+        .word.selected { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); border-color: #fff; }
+        
+        /* Modif visuelle: Couleurs plus évidentes */
+        .word.correct-simple { 
+            background-color: var(--neon-green); 
+            color: #000;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px var(--neon-green);
+            font-weight: bold;
+        }
+        .word.correct-compound { 
+            background-color: var(--neon-pink); 
+            color: #fff;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px var(--neon-pink);
+            font-weight: bold;
+        }
+
+
+        /* --- MODULE 2: DRAG & DROP (Click Style) --- */
+        .match-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+
+        .source-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+
+        .draggable {
+            background: #3c1e70;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-weight: 600;
+        }
+        .draggable.active { border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); background: #562a9e; }
+        .draggable.used { opacity: 0.5; cursor: default; display: none; } 
+
+
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 100px;
+        }
+        .drop-zone h4 { color: var(--neon-green); margin: 0 0 10px 0; text-align: center; text-transform: uppercase; font-size: 0.9rem; }
+        .drop-zone.hover { border-color: var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+
+
+        .dropped-item {
+            background: var(--neon-cyan);
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer; 
+            position: relative;
+            padding-right: 25px;
+        }
+        .dropped-item:hover {
+            background: #fff;
+        }
+        .dropped-item::after {
+            content: '×';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #cc0000;
+        }
+
+
+        /* --- MODULE 3: FILL IN THE BLANK --- */
+        .cloze-text {
+            font-size: 1.2rem;
+            line-height: 2;
+        }
+        select.cloze-select {
+            background: #000;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            padding: 5px;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+
+        /* --- THEORY CARD --- */
+        .theory-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+            border-left: 5px solid var(--neon-pink);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .theory-card ul { list-style: none; padding: 0; }
+        .theory-card li { margin-bottom: 10px; padding-left: 20px; position: relative; }
+        .theory-card li::before { content: '🎵'; position: absolute; left: 0; font-size: 0.8rem; }
+
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) {
+            header { grid-template-columns: 1fr; gap: 10px; justify-items: center; }
+            .logo { justify-self: center; }
+            .score-board { justify-self: center; }
+            .drop-zones { grid-template-columns: 1fr; }
+            h2 { font-size: 1.4rem; }
+        }
+
+
+        .hidden { display: none !important; }
+
+
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo"><i class="fas fa-music"></i> GRAMMAIRE EN SCÈNE</div>
+    
+    <!-- Navigation Buttons -->
+    <div class="nav-controls">
+        <button class="nav-btn-header" id="header-prev" onclick="prevActivity()" title="Précédent"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-btn-header" id="header-next" onclick="nextActivity()" title="Suivant"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+
+    <div class="score-board">
+        <div class="pill"><i class="fas fa-layer-group"></i> <span id="module-display">Module 1</span></div>
+        <div class="pill"><i class="fas fa-star"></i> <span id="score-display">0</span></div>
+    </div>
+</header>
+
+
+<main>
+    <div class="stage-container" id="app">
+        <!-- Content injected by JS -->
+    </div>
+</main>
+
+
+<script>
+    /* --- DATA --- */
+    const data = {
+        module1: {
+            title: "Module 1 : Le Rythme (Identification)",
+            theory: `
+                <h3><i class="fas fa-info-circle"></i> Rappel : Reconnaître le lien</h3>
+                <ul>
+                    <li>La conjonction est <strong>invariable</strong> et <strong>non déplaçable</strong>.</li>
+                    <li>Elle relie deux mots de même nature (ex: Nom + Nom) ou deux phrases.</li>
+                    <li><strong>Forme Simple :</strong> un seul mot (mais, ou, et, donc, or, ni, car, quand, si, lorsque...).</li>
+                    <li><strong>Forme Composée (Locution) :</strong> plusieurs mots (parce que, bien que, pour que, afin que, de sorte que...).</li>
+                </ul>
+                <p><strong>Mission :</strong> Cliquez sur toutes les conjonctions dans les phrases suivantes.</p>
+            `,
+            activities: [
+                {
+                    type: "recognition",
+                    sentence: "Le Hip-hop est énergique, mais il demande beaucoup de technique.",
+                    words: ["Le", "Hip-hop", "est", "énergique,", "mais", "il", "demande", "beaucoup", "de", "technique."],
+                    targets: [4],
+                    types: ["simple"],
+                    hint: "Cherche une opposition simple."
+                },
+                {
+                    type: "recognition",
+                    sentence: "Les danseurs s'étirent parce qu'ils veulent éviter les blessures.",
+                    structuredWords: [
+                        {txt:"Les", isC:false}, {txt:"danseurs", isC:false}, {txt:"s'étirent", isC:false}, 
+                        {txt:"parce qu'", isC:true, type:"compound"}, {txt:"ils", isC:false}, {txt:"veulent", isC:false}, 
+                        {txt:"éviter", isC:false}, {txt:"les", isC:false}, {txt:"blessures.", isC:false}
+                    ],
+                    hint: "Cherche une locution (composée) qui explique la cause."
+                },
+                {
+                    type: "recognition",
+                    sentence: "Quand la musique démarre, Alice et Marc entrent en scène.",
+                    structuredWords: [
+                        {txt:"Quand", isC:true, type:"simple"}, {txt:"la", isC:false}, {txt:"musique", isC:false}, 
+                        {txt:"démarre,", isC:false}, {txt:"Alice", isC:false}, {txt:"et", isC:true, type:"simple"}, 
+                        {txt:"Marc", isC:false}, {txt:"entrent", isC:false}, {txt:"en", isC:false}, {txt:"scène.", isC:false}
+                    ],
+                    hint: "Il y a une conjonction de temps (début) et une d'addition."
+                },
+                {
+                    type: "recognition",
+                    sentence: "Bien que le rythme soit rapide, ils restent synchronisés.",
+                    structuredWords: [
+                        {txt:"Bien que", isC:true, type:"compound"}, {txt:"le", isC:false}, {txt:"rythme", isC:false}, 
+                        {txt:"soit", isC:false}, {txt:"rapide,", isC:false}, {txt:"ils", isC:false}, 
+                        {txt:"restent", isC:false}, {txt:"synchronisés.", isC:false}
+                    ],
+                    hint: "Cherche une locution d'opposition (concession) au début."
+                },
+                {
+                    type: "recognition",
+                    sentence: "Il répète son mouvement pour que tout soit parfait.",
+                    structuredWords: [
+                        {txt:"Il", isC:false}, {txt:"répète", isC:false}, {txt:"son", isC:false}, 
+                        {txt:"mouvement", isC:false}, {txt:"pour que", isC:true, type:"compound"}, 
+                        {txt:"tout", isC:false}, {txt:"soit", isC:false}, {txt:"parfait.", isC:false}
+                    ],
+                    hint: "Cherche une locution de but."
+                },
+                {
+                    type: "recognition",
+                    sentence: "Lorsque les projecteurs s'allument, le public retient son souffle.",
+                    structuredWords: [
+                        {txt:"Lorsque", isC:true, type:"simple"}, {txt:"les", isC:false}, {txt:"projecteurs", isC:false}, 
+                        {txt:"s'allument,", isC:false}, {txt:"le", isC:false}, {txt:"public", isC:false}, 
+                        {txt:"retient", isC:false}, {txt:"son", isC:false}, {txt:"souffle.", isC:false}
+                    ],
+                    hint: "Cherche une conjonction de temps au début."
+                }
+            ]
+        },
+        module2: {
+            title: "Module 2 : La Chorégraphie (Sens)",
+            theory: `
+                <h3><i class="fas fa-info-circle"></i> Rappel : Le Sens du Mouvement</h3>
+                <p>Une conjonction donne une "couleur" à la phrase. C'est comme le style de danse :</p>
+                <ul>
+                    <li><strong>Addition :</strong> Et, ni, ainsi que (On ajoute un danseur).</li>
+                    <li><strong>Opposition :</strong> Mais, pourtant, bien que (Contraste de style).</li>
+                    <li><strong>Cause :</strong> Car, parce que, puisque (Pourquoi on danse ?).</li>
+                    <li><strong>But :</strong> Pour que, afin que (L'objectif).</li>
+                    <li><strong>Temps :</strong> Quand, lorsque (Le timing).</li>
+                </ul>
+                <p><strong>Mission :</strong> Classez les conjonctions dans la bonne catégorie. <br><em>(Cliquez sur une réponse déposée pour la retirer).</em></p>
+            `,
+            activities: [
+                {
+                    type: "dragdrop",
+                    items: [
+                        {text: "Mais", cat: "opposition"}, {text: "Et", cat: "addition"}, 
+                        {text: "Parce que", cat: "cause"}, {text: "Pourtant", cat: "opposition"}
+                    ],
+                    zones: [
+                        {id: "opposition", label: "Opposition ⚡"}, {id: "addition", label: "Addition ➕"}, {id: "cause", label: "Cause ❓"}
+                    ]
+                },
+                {
+                    type: "dragdrop",
+                    items: [
+                        {text: "Pour que", cat: "but"}, {text: "Quand", cat: "temps"}, 
+                        {text: "Afin que", cat: "but"}, {text: "Lorsque", cat: "temps"}
+                    ],
+                    zones: [
+                        {id: "but", label: "But / Objectif 🎯"}, {id: "temps", label: "Temps ⏰"}
+                    ]
+                },
+                {
+                    type: "dragdrop",
+                    items: [
+                        {text: "Ou", cat: "choix"}, {text: "Ni", cat: "addition"}, 
+                        {text: "Soit... soit", cat: "choix"}, {text: "Car", cat: "cause"}
+                    ],
+                    zones: [
+                        {id: "choix", label: "Alternative / Choix ↔️"}, {id: "addition", label: "Addition (Négative) ➖"}, {id: "cause", label: "Cause ❓"}
+                    ]
+                }
+            ]
+        },
+        module3: {
+            title: "Module 3 : Improvisation (Complétion)",
+            theory: `
+                <h3><i class="fas fa-info-circle"></i> Rappel : Contextualisation</h3>
+                <p>Pour bien improviser, il faut comprendre le lien logique entre les parties de la chorégraphie (les phrases).</p>
+                <ul>
+                    <li>Parfois le sens est donné (Indice).</li>
+                    <li>Parfois, vous devez le deviner grâce au contexte.</li>
+                    <li><strong>Note :</strong> "Mais" et "car" sont souvent précédés d'une virgule.</li>
+                </ul>
+            `,
+            activities: [
+                {
+                    type: "cloze",
+                    text: "Le ballet demande de la rigueur [ADDITION] ___ de la souplesse. Les danseurs répètent [TEMPS] ___ le spectacle approche.",
+                    segments: [
+                        {options: ["mais", "et", "ou"], correct: "et", hint: "Addition"},
+                        {options: ["si", "quand", "car"], correct: "quand", hint: "Temps"}
+                    ],
+                    withHints: true
+                },
+                {
+                    type: "cloze",
+                    text: "Ce danseur de Krump semble agressif. [OPPOSITION] ___, il est très doux dans la vie. Il danse [BUT] ___ exprimer ses émotions.",
+                    segments: [
+                        {options: ["Et", "Donc", "Pourtant"], correct: "Pourtant", hint: "Opposition"},
+                        {options: ["pour", "car", "si"], correct: "pour", hint: "But"}
+                    ],
+                    withHints: true
+                },
+                {
+                    type: "cloze",
+                    text: "Elle ne viendra pas s'entraîner, ___ elle est blessée. ___ elle guérisse, elle doit se reposer.",
+                    segments: [
+                        {options: ["car", "mais", "donc"], correct: "car", hint: "Contexte: explication"},
+                        {options: ["Pour qu'", "Bien qu'", "Puisqu'"], correct: "Pour qu'", hint: "Contexte: but"}
+                    ],
+                    withHints: false // Challenge mode
+                }
+            ]
+        }
+    };
+
+
+    /* --- STATE --- */
+    let state = {
+        currentModuleId: 'module1',
+        currentActivityIndex: 0,
+        score: 0,
+        tempSelections: {}, // For drag and drop logic
+        theoryShown: false
+    };
+
+
+    const modulesOrder = ['module1', 'module2', 'module3'];
+
+
+    /* --- RENDER FUNCTIONS --- */
+    
+    function init() {
+        renderStage();
+        updateNavButtons();
+    }
+
+
+    function renderStage() {
+        const app = document.getElementById('app');
+        app.innerHTML = ''; // Clear
+
+
+        const modData = data[state.currentModuleId];
+        const activity = modData.activities[state.currentActivityIndex];
+
+
+        // 1. Show Theory if first activity and theory not shown yet for this module
+        if (state.currentActivityIndex === 0 && !state.theoryShown) {
+            app.innerHTML = `
+                <span class="module-tag">${state.currentModuleId.replace('module', 'Module ')}</span>
+                <h2>${modData.title}</h2>
+                <div class="theory-card">${modData.theory}</div>
+                <button class="btn-action" onclick="startModule()">Entrer en scène !</button>
+            `;
+            updateNavButtons(true); // Disable nav during theory
+            return;
+        }
+
+
+        // 2. Render Activity Header
+        let html = `
+            <span class="module-tag">${state.currentModuleId.replace('module', 'Module ')} • Activité ${state.currentActivityIndex + 1}/${modData.activities.length}</span>
+            <h2>${modData.title}</h2>
+        `;
+
+
+        // 3. Render Specific Activity Type
+        if (activity.type === 'recognition') {
+            html += renderRecognition(activity);
+        } else if (activity.type === 'dragdrop') {
+            html += renderDragDrop(activity);
+        } else if (activity.type === 'cloze') {
+            html += renderCloze(activity);
+        }
+
+
+        // 4. Feedback & Navigation Area
+        html += `<div id="feedback-area" class="feedback"></div>`;
+        html += `<button id="check-btn" class="btn-action" onclick="checkAnswer()">Vérifier</button>`;
+        html += `<button id="next-btn" class="btn-action hidden" onclick="nextActivity()">Suite <i class="fas fa-arrow-right"></i></button>`;
+
+
+        app.innerHTML = html;
+        updateHeader();
+        updateNavButtons();
+
+
+        // Re-attach listeners for Drag Drop if needed
+        if (activity.type === 'dragdrop') {
+            state.tempSelections = { activeItem: null, dropped: {} };
+        }
+    }
+
+
+    function startModule() {
+        state.theoryShown = true;
+        renderStage();
+    }
+
+
+    /* --- ACTIVITY RENDERERS --- */
+
+
+    function renderRecognition(act) {
+        let wordsHtml = '';
+        
+        let words = act.structuredWords || act.words.map(w => ({txt: w, isC: false}));
+        
+        if (!act.structuredWords) {
+             act.targets.forEach(idx => words[idx].isC = true);
+        }
+
+
+        wordsHtml = `<div class="sentence-box">`;
+        words.forEach((w, idx) => {
+            wordsHtml += `<span class="word" data-index="${idx}" onclick="toggleWord(this)">${w.txt}</span> `;
+        });
+        wordsHtml += `</div><p class="instruction" style="margin-top:10px; font-size:0.9rem;"><i class="fas fa-lightbulb"></i> Indice : ${act.hint}</p>`;
+        return wordsHtml;
+    }
+
+
+    function renderDragDrop(act) {
+        let html = `<p class="instruction">Touchez un mot, puis touchez sa catégorie (Sens). Pour annuler, touchez un mot déjà placé.</p>`;
+        
+        // Bank
+        html += `<div class="source-bank" id="word-bank">`;
+        act.items.forEach((item, idx) => {
+            html += `<div class="draggable" id="drag-${idx}" onclick="selectDraggable(${idx})">${item.text}</div>`;
+        });
+        html += `</div>`;
+
+
+        // Drop Zones
+        html += `<div class="drop-zones">`;
+        act.zones.forEach(zone => {
+            html += `<div class="drop-zone" id="zone-${zone.id}" onclick="placeDraggable('${zone.id}')">
+                <h4>${zone.label}</h4>
+                <div class="zone-content"></div>
+            </div>`;
+        });
+        html += `</div>`;
+
+
+        return html;
+    }
+
+
+    function renderCloze(act) {
+        let html = `<p class="instruction">Complétez le texte. ${act.withHints ? 'Les indices de sens sont entre crochets [ ].' : 'Utilisez le contexte.'}</p>`;
+        html += `<div class="sentence-box cloze-text">`;
+        
+        let parts = act.text.split("___");
+        parts.forEach((part, idx) => {
+            html += part;
+            if (idx < parts.length - 1) {
+                const seg = act.segments[idx];
+                html += `<select class="cloze-select" id="select-${idx}">
+                    <option value="">?</option>`;
+                seg.options.sort(() => Math.random() - 0.5).forEach(opt => {
+                    html += `<option value="${opt}">${opt}</option>`;
+                });
+                html += `</select>`;
+            }
+        });
+        
+        html += `</div>`;
+        return html;
+    }
+
+
+    /* --- INTERACTIONS --- */
+
+
+    function toggleWord(el) {
+        if(document.getElementById('next-btn').classList.contains('hidden') === false) return; // Prevent clicking after validation
+        el.classList.toggle('selected');
+    }
+
+
+    // Module 2 Logic (Click to Select, Click to Place)
+    function selectDraggable(idx) {
+        if(document.getElementById('next-btn').classList.contains('hidden') === false) return;
+
+
+        // Visual toggle
+        document.querySelectorAll('.draggable').forEach(d => d.classList.remove('active'));
+        const el = document.getElementById(`drag-${idx}`);
+        
+        if (el && (!el.style.display || el.style.display !== 'none')) {
+            el.classList.add('active');
+            state.tempSelections.activeItem = idx;
+        }
+    }
+
+
+    function placeDraggable(zoneId) {
+        if (state.tempSelections.activeItem === null) return;
+        
+        const itemIdx = state.tempSelections.activeItem;
+        const modData = data[state.currentModuleId];
+        const act = modData.activities[state.currentActivityIndex];
+        const item = act.items[itemIdx];
+
+
+        // Place visually
+        const zone = document.querySelector(`#zone-${zoneId} .zone-content`);
+        const span = document.createElement('span');
+        span.className = 'dropped-item';
+        span.innerHTML = item.text; 
+        span.onclick = function(e) {
+            e.stopPropagation(); 
+            removeDroppedItem(itemIdx, this);
+        };
+        zone.appendChild(span);
+
+
+        // Hide source
+        const source = document.getElementById(`drag-${itemIdx}`);
+        source.style.display = 'none'; 
+        source.classList.remove('active');
+
+
+        // Save selection for validation
+        state.tempSelections.dropped[itemIdx] = zoneId; 
+        state.tempSelections.activeItem = null;
+    }
+
+
+    function removeDroppedItem(itemIdx, element) {
+        if(document.getElementById('next-btn').classList.contains('hidden') === false) return; 
+
+
+        // Remove from DOM
+        element.remove();
+
+
+        // Restore source
+        const source = document.getElementById(`drag-${itemIdx}`);
+        source.style.display = 'block';
+
+
+        // Remove from state
+        delete state.tempSelections.dropped[itemIdx];
+    }
+
+
+    /* --- VALIDATION LOGIC --- */
+
+
+    function checkAnswer() {
+        const modData = data[state.currentModuleId];
+        const act = modData.activities[state.currentActivityIndex];
+        const feedbackEl = document.getElementById('feedback-area');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+
+        let isCorrect = false;
+        let msg = "";
+
+
+        if (act.type === 'recognition') {
+            const selected = Array.from(document.querySelectorAll('.word.selected')).map(el => parseInt(el.dataset.index));
+            
+            let targets = [];
+            if(act.targets) targets = act.targets;
+            else act.structuredWords.forEach((w, i) => { if(w.isC) targets.push(i); });
+
+
+            const allFound = targets.every(t => selected.includes(t));
+            const noExtras = selected.every(s => targets.includes(s));
+
+
+            if (allFound && noExtras) {
+                isCorrect = true;
+                msg = "Bravo ! Tu as trouvé le bon rythme.";
+                state.score += 10;
+                targets.forEach(idx => {
+                    const el = document.querySelector(`.word[data-index="${idx}"]`);
+                    let type = "simple";
+                    if(act.structuredWords && act.structuredWords[idx].type) type = act.structuredWords[idx].type;
+                    else if(act.types) type = act.types[0]; 
+
+
+                    el.classList.add(type === 'compound' ? 'correct-compound' : 'correct-simple');
+                });
+                msg += "<br><small>(Vert = Simple, Rose = Composée)</small>";
+            } else {
+                msg = "Pas tout à fait. Regarde bien la structure.";
+                targets.forEach(idx => {
+                    const el = document.querySelector(`.word[data-index="${idx}"]`);
+                    if(el) el.style.border = "2px dashed yellow";
+                });
+            }
+
+
+        } else if (act.type === 'dragdrop') {
+            let correctCount = 0;
+            let total = act.items.length;
+            let allPlaced = Object.keys(state.tempSelections.dropped).length === total;
+
+
+            if(!allPlaced) {
+                feedbackEl.innerHTML = "Place tous les mots avant de vérifier !";
+                feedbackEl.className = 'feedback wrong';
+                return;
+            }
+
+
+            for (let i = 0; i < total; i++) {
+                if (state.tempSelections.dropped[i] === act.items[i].cat) {
+                    correctCount++;
+                }
+            }
+
+
+            if (correctCount === total) {
+                isCorrect = true;
+                msg = "Chorégraphie parfaite ! Tous les sens sont respectés.";
+                state.score += 10;
+            } else {
+                msg = `Tu as ${correctCount} mouvements corrects sur ${total}.`;
+            }
+
+
+        } else if (act.type === 'cloze') {
+            let correctCount = 0;
+            act.segments.forEach((seg, idx) => {
+                const val = document.getElementById(`select-${idx}`).value;
+                if(val === seg.correct) correctCount++;
+                else {
+                    document.getElementById(`select-${idx}`).style.border = "1px solid var(--error)";
+                }
+            });
+
+
+            if (correctCount === act.segments.length) {
+                isCorrect = true;
+                msg = "Excellente improvisation ! Le texte a du sens.";
+                state.score += 10;
+            } else {
+                msg = "Certains liens ne fonctionnent pas. Réessaie !";
+            }
+        }
+
+
+        feedbackEl.innerHTML = (isCorrect ? '<i class="fas fa-check"></i> ' : '<i class="fas fa-times"></i> ') + msg;
+        feedbackEl.className = isCorrect ? 'feedback correct' : 'feedback wrong';
+        
+        if (isCorrect) {
+            checkBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            updateHeader();
+        }
+    }
+
+
+    /* --- NAVIGATION --- */
+
+
+    function nextActivity() {
+        const modData = data[state.currentModuleId];
+        
+        if (state.currentActivityIndex < modData.activities.length - 1) {
+            state.currentActivityIndex++;
+            renderStage();
+        } else {
+            const currentModIdx = modulesOrder.indexOf(state.currentModuleId);
+            if (currentModIdx < modulesOrder.length - 1) {
+                state.currentModuleId = modulesOrder[currentModIdx + 1];
+                state.currentActivityIndex = 0;
+                state.theoryShown = false; 
+                renderStage();
+            } else {
+                showFinalScreen();
+            }
+        }
+    }
+
+
+    function prevActivity() {
+        // Can go back within module or to previous module
+        if (state.currentActivityIndex > 0) {
+            state.currentActivityIndex--;
+            renderStage();
+        } else {
+            const currentModIdx = modulesOrder.indexOf(state.currentModuleId);
+            if (currentModIdx > 0) {
+                state.currentModuleId = modulesOrder[currentModIdx - 1];
+                state.currentActivityIndex = data[state.currentModuleId].activities.length - 1;
+                state.theoryShown = true; // Skip theory when going back
+                renderStage();
+            }
+        }
+    }
+
+
+    function updateNavButtons(isTheory = false) {
+        const prevBtn = document.getElementById('header-prev');
+        const nextBtn = document.getElementById('header-next');
+
+
+        if(isTheory) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            return;
+        }
+
+
+        // Logic for Previous button
+        const isFirst = state.currentModuleId === 'module1' && state.currentActivityIndex === 0;
+        prevBtn.disabled = isFirst;
+
+
+        // Logic for Next button (Manual navigation)
+        // Usually, we lock "Next" until completion, but if user wants "navigation buttons",
+        // they might expect free roam. However, free roam breaks score logic.
+        // Let's keep Next disabled in header if current activity is not done, 
+        // OR allow it but don't give points? Safest is to sync it with validation.
+        // For this version, I'll allow Header Next only if the bottom Next is visible
+        // OR allow it always but warn? 
+        // Let's make it consistent: Header "Next" does the same as "Suite" button.
+        const bottomNextHidden = document.getElementById('next-btn') ? document.getElementById('next-btn').classList.contains('hidden') : true;
+        nextBtn.disabled = bottomNextHidden;
+    }
+
+
+    /* --- FINAL SCREEN --- */
+
+
+    function showFinalScreen() {
+        const app = document.getElementById('app');
+        const maxScore = calculateMaxScore();
+        const percentage = Math.round((state.score / maxScore) * 100);
+        
+        let color, title, msg, btnText;
+        
+        if (percentage > 80) {
+            color = 'var(--neon-green)';
+            title = "SPECTACLE TERMINÉ !";
+            msg = "Félicitations ! Tu maîtrises parfaitement l'enchaînement des conjonctions. La scène est à toi !";
+            btnText = "Recommencer le Show";
+        } else {
+            color = 'var(--neon-pink)';
+            title = "FIN DE LA RÉPÉTITION";
+            msg = "Tu as de bonnes bases, mais il manque un peu de précision pour monter sur scène. Recommence pour atteindre 80% !";
+            btnText = "Retourner à l'entraînement";
+        }
+        
+        app.innerHTML = `
+            <div style="text-align:center;">
+                <h1 style="font-size:3rem; color:${color}; text-shadow:0 0 10px ${color}">${title}</h1>
+                <p class="instruction">${msg}</p>
+                
+                <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; margin:30px 0;">
+                    <h3 style="margin:0;">SCORE FINAL</h3>
+                    <div style="font-size:4rem; font-weight:800; color:${color}">${state.score} / ${maxScore}</div>
+                    <div style="font-size:1.5rem; color:#fff">(${percentage}%)</div>
+                </div>
+
+
+                <button class="btn-action" onclick="location.reload()"><i class="fas fa-redo"></i> ${btnText}</button>
+            </div>
+        `;
+        
+        // Disable nav on final screen
+        document.getElementById('header-prev').disabled = true;
+        document.getElementById('header-next').disabled = true;
+    }
+
+
+    function calculateMaxScore() {
+        let total = 0;
+        Object.keys(data).forEach(mod => {
+            total += data[mod].activities.length * 10;
+        });
+        return total;
+    }
+
+
+    function updateHeader() {
+        document.getElementById('module-display').innerText = state.currentModuleId.replace('module', 'Module ');
+        document.getElementById('score-display').innerText = state.score;
+    }
+
+
+    // Start
+    init();
+
+
+</script>
+</body>
+</html>
