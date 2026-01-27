@@ -1,0 +1,821 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labo-Rédaction : La Formule Finale</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Chimie / Toxic */
+            --lab-bg: #111518;
+            --liquid-green: #39ff14;
+            --liquid-blue: #00f3ff;
+            --liquid-pink: #ff00ff;
+            --liquid-yellow: #ffee00;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.2);
+            
+            --text-main: #f0f0f0;
+            --text-dim: #a0a0a0;
+        }
+
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--lab-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 50%);
+        }
+
+
+        /* Bubbles BG */
+        .bubbles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bubble {
+            position: absolute;
+            bottom: -20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 10s infinite ease-in;
+        }
+        .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 20px; height: 20px; left: 20%; animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; animation-duration: 10s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 80px; height: 80px; left: 50%; animation-duration: 15s; animation-delay: 0s; background: rgba(0, 243, 255, 0.05); }
+        .bubble:nth-child(5) { width: 35px; height: 35px; left: 55%; animation-duration: 7s; animation-delay: 3s; }
+        .bubble:nth-child(6) { width: 10px; height: 10px; left: 80%; animation-duration: 12s; animation-delay: 4s; }
+
+
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { bottom: 100vh; transform: translateX(-100px); opacity: 0; }
+        }
+
+
+        /* --- HEADER --- */
+        header {
+            background: rgba(20, 25, 30, 0.95);
+            border-bottom: 3px solid var(--liquid-green);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+
+        .logo {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+            color: var(--liquid-green);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .progress-tube-container {
+            flex: 1;
+            max-width: 300px;
+            height: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            margin: 0 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-liquid {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--liquid-blue), var(--liquid-green));
+            transition: width 0.5s ease-out;
+            position: relative;
+        }
+
+
+        /* --- MAIN --- */
+        main {
+            flex: 1;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 10;
+        }
+
+
+        .lab-panel {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+
+        h2 {
+            font-family: 'Fira Code', monospace;
+            color: #fff;
+            margin-top: 0;
+            border-bottom: 2px dashed var(--border-glass);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        h2 i { color: var(--liquid-pink); margin-right: 10px; }
+
+
+        .instruction {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+
+        /* --- REVIEW PAGE STYLE --- */
+        .review-page-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--liquid-yellow);
+        }
+        .review-page-content h4 {
+            color: var(--liquid-yellow);
+            text-transform: uppercase;
+            font-family: 'Fira Code', monospace;
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+        .review-page-content strong { color: var(--liquid-blue); }
+        .review-page-content ul { padding-left: 20px; }
+        .review-page-content li { margin-bottom: 10px; }
+
+
+        /* --- ELEMENTS INTERACTIFS --- */
+        .chem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .chem-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .chem-btn:hover { border-color: var(--liquid-blue); background: rgba(0, 243, 255, 0.1); }
+        .chem-btn.correct { background: rgba(57, 255, 20, 0.2); border-color: var(--liquid-green); color: var(--liquid-green); cursor: default; }
+        .chem-btn.wrong { background: rgba(255, 0, 85, 0.2); border-color: var(--liquid-pink); color: var(--liquid-pink); opacity: 0.6; cursor: default; }
+
+
+        /* Comparison Cards */
+        .sample-box {
+            background: #000;
+            border-left: 4px solid var(--text-dim);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--liquid-blue);
+            line-height: 1.5;
+        }
+
+
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .result-card:hover { border-color: #fff; }
+        .result-card.correct { border: 2px solid var(--liquid-green); box-shadow: 0 0 15px rgba(57, 255, 20, 0.1); }
+        .result-card.wrong { border: 2px solid var(--liquid-pink); opacity: 0.6; }
+
+
+        /* Flask Options */
+        .flask-option {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            font-size: 0.95rem;
+        }
+        .flask-icon {
+            width: 35px; height: 35px;
+            background: #222;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 15px;
+            border: 2px solid var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .flask-option.correct { border-color: var(--liquid-green); background: rgba(57, 255, 20, 0.1); }
+        .flask-option.correct .flask-icon { border-color: var(--liquid-green); color: var(--liquid-green); }
+        .flask-option.wrong .flask-icon { border-color: var(--liquid-pink); color: var(--liquid-pink); }
+
+
+        /* Feedback & Action */
+        .feedback-display {
+            margin-top: 20px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            min-height: 40px;
+        }
+        
+        .action-btn {
+            background: var(--liquid-green);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            display: none; /* Hidden by default */
+            margin: 10px auto 0;
+            text-transform: uppercase;
+        }
+        .action-btn:hover { box-shadow: 0 0 15px var(--liquid-green); transform: scale(1.02); }
+
+
+        /* Tablet Btn (now used for progress or other info if needed, modal hidden) */
+        .tablet-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            display: none; /* Hidden as requested to separate theory */
+        }
+
+
+        @media (max-width: 600px) {
+            .logo span { display: none; }
+            .progress-tube-container { max-width: 150px; }
+            .chem-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</div>
+
+
+<header>
+    <div class="logo"><i class="fas fa-vial"></i> <span>LABO RÉDACTION</span></div>
+    <div class="progress-tube-container">
+        <div class="progress-liquid" id="progress-bar"></div>
+    </div>
+    <div style="font-family:'Fira Code'; font-size:0.8rem; color:var(--text-dim);">Score: <span id="score-display">0</span></div>
+</header>
+
+
+<main>
+    <div class="lab-panel" id="game-area">
+        <!-- Content injected via JS -->
+    </div>
+</main>
+
+
+<script>
+    /* --- DATA CONTENT --- */
+    const content = {
+        intro: {
+            title: "Protocole de Sécurité",
+            html: `
+                <p>Chercheur, votre rapport d'expérience (texte descriptif) est presque terminé. Il manque l'élément crucial pour valider vos résultats : <strong>La Conclusion</strong>.</p>
+                <p>Une conclusion bâclée contamine toute l'expérience. Pour réussir, vous devez maîtriser les 3 phases de la stabilisation :</p>
+                <ul style="color:var(--liquid-blue); list-style:none; padding:0; margin-top:20px; line-height:1.8;">
+                    <li><i class="fas fa-atom"></i> <strong>1. Le Catalyseur</strong> (Lancer la fin)</li>
+                    <li><i class="fas fa-filter"></i> <strong>2. La Distillation</strong> (Synthétiser sans répéter)</li>
+                    <li><i class="fas fa-lightbulb"></i> <strong>3. L'Hypothèse</strong> (Ouvrir vers le futur)</li>
+                </ul>
+                <div style="text-align:center; margin-top:30px;">
+                    <button class="action-btn" style="display:inline-block;" onclick="startExperiment()">LANCER LA RÉACTION</button>
+                </div>
+            `
+        },
+        module1: {
+            title: "Étape 1 : Le Catalyseur",
+            review: `
+                <h4><i class="fas fa-book"></i> Révision : Organisateur Textuel</h4>
+                <p>Pour commencer une conclusion, on utilise un organisateur textuel spécifique qui indique clairement au lecteur que le texte se termine.</p>
+                <ul>
+                    <li><strong>Exemples valides :</strong> Bref, En somme, Pour conclure, Finalement, Tout compte fait.</li>
+                    <li><strong>À éviter :</strong> <em>Ensuite</em> (continuité), <em>Cependant</em> (opposition), <em>Premièrement</em> (début), <em>Puis</em> (séquence).</li>
+                </ul>
+            `,
+            instruction: "Trouvez les 7 organisateurs textuels valides pour débloquer l'étape suivante.",
+            options: [
+                { txt: "En somme", valid: true, feedback: "Correct ! C'est un marqueur de synthèse." },
+                { txt: "Premièrement", valid: false, feedback: "Non, c'est pour le début d'une énumération." }, 
+                { txt: "Pour conclure", valid: true, feedback: "Exact ! Très explicite." },
+                { txt: "Par ailleurs", valid: false, feedback: "Non, cela sert à ajouter une idée." }, 
+                { txt: "Bref", valid: true, feedback: "Oui, idéal pour résumer." },
+                { txt: "Cependant", valid: false, feedback: "Non, cela marque une opposition." }, 
+                { txt: "Finalement", valid: true, feedback: "Oui, marque la fin d'une suite." },
+                { txt: "En terminant", valid: true, feedback: "Correct, indique la fin." },
+                { txt: "Puis", valid: false, feedback: "Non, cela marque une succession temporelle." },
+                { txt: "En guise de conclusion", valid: true, feedback: "Excellent choix soutenu." },
+                { txt: "Ensuite", valid: false, feedback: "Non, cela indique la suite, pas la fin." },
+                { txt: "Tout compte fait", valid: true, feedback: "Oui, marque le bilan." },
+                { txt: "Au début", valid: false, feedback: "Non, c'est un marqueur de début." }
+            ],
+            targetCount: 7
+        },
+        module2: {
+            title: "Étape 2 : La Distillation",
+            review: `
+                <h4><i class="fas fa-book"></i> Révision : La Synthèse</h4>
+                <p>La synthèse rappelle le sujet et les aspects principaux. Règles d'or :</p>
+                <ul>
+                    <li><strong>3e personne obligatoire :</strong> Utilisez "on", "ce texte", "il". Jamais "je" ou "nous".</li>
+                    <li><strong>Reformulation :</strong> Ne répétez pas les mots exacts de l'introduction. Changez le vocabulaire.</li>
+                    <li><strong>Concision :</strong> Allez à l'essentiel.</li>
+                </ul>
+            `,
+            instruction: "Analysez l'échantillon brut (Introduction). Quelle est la meilleure version purifiée (Synthèse) ?",
+            scenarios: [
+                {
+                    intro: "L'intelligence artificielle transforme la société. Il sera question ici de ses avantages médicaux et de ses risques éthiques.",
+                    options: [
+                        { txt: "Bref, l'intelligence artificielle change la société avec ses avantages médicaux et ses risques.", correct: false, feedback: "Contamination : Répétition des mots de l'intro. Aucune reformulation." },
+                        { txt: "En somme, cette technologie révolutionnaire apporte des espoirs de guérison, mais soulève aussi de lourdes questions morales.", correct: true, feedback: "Formule pure ! Vocabulaire riche et reformulation des aspects." }
+                    ]
+                },
+                {
+                    intro: "Le hockey est le sport national. Ce texte exposera l'équipement nécessaire et les règles de base.",
+                    options: [
+                        { txt: "Pour terminer, qu'il s'agisse des protections requises ou du fonctionnement du jeu, ce sport d'hiver reste un classique.", correct: true, feedback: "Excellente distillation. 'Protections' remplace 'équipement' et 'fonctionnement' remplace 'règles'." },
+                        { txt: "Finalement, je vous ai parlé du hockey, de son équipement et de ses règles.", correct: false, feedback: "Erreur critique : Utilisation du 'je' et répétition des termes." }
+                    ]
+                },
+                {
+                    intro: "Les abeilles sont essentielles à la biodiversité. Nous avons examiné leur rôle dans la pollinisation et les dangers qui les menacent.",
+                    options: [
+                        { txt: "Finalement, les abeilles sont essentielles pour la biodiversité, la pollinisation et à cause des dangers.", correct: false, feedback: "Syntaxe faible et répétition mot pour mot." },
+                        { txt: "En somme, la survie de ces insectes pollinisateurs est cruciale pour l'équilibre naturel, malgré la précarité de leur existence actuelle.", correct: true, feedback: "Parfait. 'Insectes pollinisateurs' remplace 'abeilles', les concepts sont élevés." }
+                    ]
+                },
+                {
+                    intro: "Le système solaire est vaste. Ce texte a décrit les planètes rocheuses et les géantes gazeuses.",
+                    options: [
+                        { txt: "Pour conclure, le système solaire est vaste avec ses planètes rocheuses et ses géantes gazeuses.", correct: false, feedback: "Aucun effort de reformulation." },
+                        { txt: "Bref, de la petite Mercure à l'immense Jupiter, ce voisinage cosmique offre une diversité de mondes fascinante.", correct: true, feedback: "Très belle synthèse qui image les deux types de planètes sans les nommer techniquement." }
+                    ]
+                }
+            ]
+        },
+        module3: {
+            title: "Étape 3 : La Nouvelle Hypothèse",
+            review: `
+                <h4><i class="fas fa-book"></i> Révision : L'Ouverture</h4>
+                <p>C'est la toute dernière phrase. Elle doit élargir le sujet sans commencer une nouvelle explication.</p>
+                <p>Types d'ouvertures :</p>
+                <ul>
+                    <li><strong>Souhait / Conseil</strong> (Espérons que..., Il faut...)</li>
+                    <li><strong>Projection dans le futur</strong> (Dans 100 ans...)</li>
+                    <li><strong>Réflexion globale / Question</strong> (Est-ce vraiment la solution ?)</li>
+                    <li><strong>Information nouvelle</strong> (Autre aspect connexe)</li>
+                    <li><strong>Citation célèbre</strong></li>
+                </ul>
+            `,
+            instruction: "Analysez la dernière phrase du rapport. Quel type d'ouverture est utilisé ?",
+            questions: [
+                { text: "Si la pollution continue ainsi, que restera-t-il aux générations futures ?", type: "Réflexion / Projection", correct: 0 },
+                { text: "Comme le disait Lavoisier : « Rien ne se perd, rien ne se crée, tout se transforme. »", type: "Citation célèbre", correct: 3 },
+                { text: "Il serait fascinant d'étudier maintenant l'impact de ce phénomène sur les océans.", type: "Information nouvelle / Autre aspect", correct: 2 },
+                { text: "Souhaitons que les mentalités évoluent rapidement.", type: "Souhait", correct: 1 },
+                { text: "N'est-il pas temps de changer radicalement les habitudes de consommation ?", type: "Réflexion / Question", correct: 0 },
+                { text: "Il est crucial de prendre soin de son sommeil, car la santé mentale en dépend.", type: "Conseil / Souhait", correct: 1 }
+            ],
+            types: [
+                "Projection / Réflexion",
+                "Souhait / Conseil",
+                "Information nouvelle",
+                "Citation célèbre"
+            ]
+        }
+    };
+
+
+    /* --- STATE --- */
+    let state = {
+        step: 0,
+        subStep: 0,
+        score: 0,
+        answered: false,
+        isReview: false,
+        mod1FoundCount: 0,
+        attemptedWrong: false // Flag to track if user missed the first attempt
+    };
+
+
+    // Calcul du score max
+    // Mod 1: 7 bonnes réponses
+    // Mod 2: 4 scénarios
+    // Mod 3: 6 questions
+    const MAX_SCORE = 17;
+
+
+    /* --- INIT --- */
+    function init() {
+        render();
+    }
+
+
+    /* --- RENDER ENGINE --- */
+    function render() {
+        const area = document.getElementById('game-area');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        scoreDisplay.innerText = state.score + "/" + MAX_SCORE;
+        state.answered = false;
+        state.attemptedWrong = false; // Reset attempt flag on new render
+
+
+        let progress = 0;
+
+
+        // Reset content
+        area.innerHTML = '';
+
+
+        if (state.step === 0) {
+            // INTRO PAGE
+            area.innerHTML += `<h2>${content.intro.title}</h2>${content.intro.html}`;
+            progress = 5;
+        } 
+        else if (state.step === 4) {
+            // END PAGE
+            renderEnd(area);
+            progress = 100;
+        }
+        else {
+            // MODULES 1, 2, 3
+            if (state.isReview) {
+                renderReview(state.step);
+                if(state.step === 1) progress = 10;
+                if(state.step === 2) progress = 35;
+                if(state.step === 3) progress = 65;
+            } else {
+                if (state.step === 1) {
+                    renderModule1(area);
+                    progress = 25;
+                } else if (state.step === 2) {
+                    renderModule2(area);
+                    progress = 40 + (state.subStep * 5);
+                } else if (state.step === 3) {
+                    renderModule3(area);
+                    progress = 70 + (state.subStep * 4);
+                }
+            }
+        }
+
+
+        progressBar.style.width = progress + "%";
+    }
+
+
+    /* --- SPECIFIC RENDERERS --- */
+
+
+    function renderReview(modIndex) {
+        const modKey = 'module' + modIndex;
+        const modData = content[modKey];
+        let html = `
+            <h2><i class="fas fa-book"></i> BRIEFING TECHNIQUE</h2>
+            <div class="review-page-content">
+                ${modData.review}
+            </div>
+            <div style="text-align:center; margin-top:30px;">
+                <button class="action-btn" style="display:inline-block;" onclick="endReview()">ACCÉDER À L'EXPÉRIENCE</button>
+            </div>
+        `;
+        document.getElementById('game-area').innerHTML = html;
+    }
+
+
+    function renderModule1(container) {
+        let html = `
+            <h2><i class="fas fa-flask"></i> ${content.module1.title}</h2>
+            <p class="instruction">${content.module1.instruction}</p>
+            <div style="text-align:center; margin-bottom:15px; font-weight:bold; color:var(--liquid-blue);">
+                Trouvés : <span id="found-count">${state.mod1FoundCount}</span> / ${content.module1.targetCount}
+            </div>
+            <div class="chem-grid">
+        `;
+        content.module1.options.forEach((opt, idx) => {
+            html += `<div class="chem-btn" id="btn-ot-${idx}" onclick="checkOT(${idx}, ${opt.valid})">${opt.txt}</div>`;
+        });
+        html += `</div>
+        <div id="feedback" class="feedback-display"></div>
+        <div style="text-align:center;">
+            <button class="action-btn" id="mod-btn" onclick="nextModule()" disabled style="opacity:0.5; cursor:not-allowed;">ÉTAPE SUIVANTE</button>
+        </div>`;
+        container.innerHTML = html;
+        
+        // Re-apply disabled state logic for button
+        const btn = document.getElementById('mod-btn');
+        if(state.mod1FoundCount >= content.module1.targetCount) {
+             btn.disabled = false;
+             btn.style.display = 'inline-block';
+             btn.style.opacity = '1';
+             btn.style.cursor = 'pointer';
+        }
+    }
+
+
+    function renderModule2(container) {
+        const scenario = content.module2.scenarios[state.subStep];
+        let html = `
+            <h2><i class="fas fa-filter"></i> ${content.module2.title} (${state.subStep+1}/${content.module2.scenarios.length})</h2>
+            <p class="instruction">${content.module2.instruction}</p>
+            
+            <div class="sample-box">
+                // ÉCHANTILLON (INTRO) :<br>
+                > ${scenario.intro}
+            </div>
+        `;
+        scenario.options.forEach((opt, idx) => {
+            html += `<div class="result-card" id="syn-${idx}" onclick="checkSynthesis(${idx}, ${opt.correct})">
+                <i class="fas fa-microscope"></i> ${opt.txt}
+            </div>`;
+        });
+        html += `<div id="feedback" class="feedback-display"></div>
+        <div style="text-align:center;"><button class="action-btn" id="mod-btn" onclick="nextSubStep()">ANALYSE SUIVANTE</button></div>`;
+        container.innerHTML = html;
+    }
+
+
+    function renderModule3(container) {
+        const q = content.module3.questions[state.subStep];
+        let html = `
+            <h2><i class="fas fa-telescope"></i> ${content.module3.title} (${state.subStep+1}/${content.module3.questions.length})</h2>
+            <p class="instruction">${content.module3.instruction}</p>
+            
+            <div style="text-align:center; font-style:italic; font-size:1.1rem; margin-bottom:20px; color:var(--liquid-blue); padding:10px; background:rgba(0,0,0,0.3); border-radius:5px;">
+                "${q.text}"
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+        `;
+        content.module3.types.forEach((type, idx) => {
+            html += `<div class="flask-option" id="type-${idx}" onclick="checkOpening(${idx}, ${q.correct})">
+                <div class="flask-icon"><i class="fas fa-vial"></i></div>
+                <div>${type}</div>
+            </div>`;
+        });
+        html += `</div>
+        <div id="feedback" class="feedback-display"></div>
+        <div style="text-align:center;"><button class="action-btn" id="mod-btn" onclick="nextSubStep()">SUIVANT</button></div>`;
+        container.innerHTML = html;
+    }
+
+
+    function renderEnd(container) {
+        const percent = Math.round((state.score / MAX_SCORE) * 100);
+        let color = percent >= 80 ? 'var(--liquid-green)' : 'var(--liquid-pink)';
+        let title = percent >= 80 ? 'FORMULE STABILISÉE' : 'ÉCHEC DE LA RÉACTION';
+        let msg = percent >= 80 
+            ? "Félicitations ! Votre rapport est conforme aux normes du laboratoire."
+            : "Attention ! La formule est instable (" + percent + "%). Il faut revoir le protocole.";
+        let btnText = percent >= 80 ? "CERTIFIER LE RAPPORT" : "RECOMMENCER LE PROTOCOLE";
+        
+        container.innerHTML = `
+            <div style="text-align:center;">
+                <h1 style="color:${color}; font-family:'Fira Code'; margin-bottom:10px;">${title}</h1>
+                <div style="font-size:4rem; margin:20px 0; color:${color}; text-shadow:0 0 30px ${color};">
+                    ${percent}%
+                </div>
+                <p class="instruction">${msg}</p>
+                <button class="action-btn" style="display:inline-block;" onclick="location.reload()">${btnText}</button>
+            </div>
+        `;
+    }
+
+
+    /* --- LOGIC --- */
+
+
+    function checkOT(idx, isValid) {
+        const btn = document.getElementById(`btn-ot-${idx}`);
+        const fb = document.getElementById('feedback');
+        const optionData = content.module1.options[idx];
+        
+        // Prevent clicking same button twice
+        if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+
+
+        if (isValid) {
+            btn.classList.add('correct');
+            // Add Check Icon
+            btn.innerHTML = `<i class="fas fa-check-circle"></i> ${optionData.txt}`;
+            state.score++;
+            state.mod1FoundCount++;
+            document.getElementById('found-count').innerText = state.mod1FoundCount;
+            updateScore();
+            fb.innerHTML = `<span style="color:var(--liquid-green)">${optionData.feedback}</span>`;
+        } else {
+            btn.classList.add('wrong');
+            // Add Times Icon
+            btn.innerHTML = `<i class="fas fa-times-circle"></i> ${optionData.txt}`;
+            fb.innerHTML = `<span style="color:var(--liquid-pink)">${optionData.feedback}</span>`;
+            state.score = Math.max(0, state.score - 1); // Penalize wrong answer
+            updateScore();
+        }
+        
+        // Check completion condition
+        if (state.mod1FoundCount >= content.module1.targetCount) {
+            const nextBtn = document.getElementById('mod-btn');
+            nextBtn.disabled = false;
+            nextBtn.style.display = 'inline-block';
+            nextBtn.style.opacity = '1';
+            nextBtn.style.cursor = 'pointer';
+            fb.innerHTML = `<span style="color:var(--liquid-green); font-size:1.2rem;">SÉQUENCE COMPLÈTE !</span>`;
+        }
+    }
+
+
+    function checkSynthesis(idx, isCorrect) {
+        if(state.answered) return;
+        
+        const fb = document.getElementById('feedback');
+        const scenario = content.module2.scenarios[state.subStep];
+        
+        if (isCorrect) {
+            state.answered = true; // Lock only on success
+            document.getElementById(`syn-${idx}`).classList.add('correct');
+            
+            // Score only if first attempt was correct
+            if (!state.attemptedWrong) {
+                state.score++;
+            }
+            
+            fb.innerHTML = `<span style="color:var(--liquid-green)">PURETÉ MAXIMALE !</span><br><span style="font-size:0.9rem; color:#888">${scenario.options[idx].feedback}</span>`;
+            updateScore();
+            document.getElementById('mod-btn').style.display = 'inline-block';
+        } else {
+            state.attemptedWrong = true; // Mark as failed attempt
+            document.getElementById(`syn-${idx}`).classList.add('wrong');
+            fb.innerHTML = `<span style="color:var(--liquid-pink)">CONTAMINATION.</span><br><span style="font-size:0.9rem; color:#888">${scenario.options[idx].feedback}</span>`;
+        }
+    }
+
+
+    function checkOpening(idx, correctIdx) {
+        if(state.answered) return;
+
+
+        const fb = document.getElementById('feedback');
+        
+        if (idx === correctIdx) {
+            state.answered = true;
+            document.getElementById(`type-${idx}`).classList.add('correct');
+            
+            // Score only if first attempt was correct
+            if (!state.attemptedWrong) {
+                state.score++;
+            }
+
+
+            fb.innerHTML = `<span style="color:var(--liquid-green)">ANALYSE CORRECTE.</span>`;
+            updateScore();
+            document.getElementById('mod-btn').style.display = 'inline-block';
+        } else {
+            state.attemptedWrong = true; // Mark as failed attempt
+            document.getElementById(`type-${idx}`).classList.add('wrong');
+            fb.innerHTML = `<span style="color:var(--liquid-pink)">ERREUR D'IDENTIFICATION. RÉESSAYEZ.</span>`;
+        }
+    }
+
+
+    function updateScore() {
+        document.getElementById('score-display').innerText = state.score + "/" + MAX_SCORE;
+    }
+
+
+    /* --- NAV --- */
+    
+    function startExperiment() {
+        state.step = 1;
+        state.isReview = true;
+        render();
+    }
+
+
+    function endReview() {
+        state.isReview = false;
+        render();
+    }
+
+
+    function nextModule() {
+        // From Mod 1 Exercise to Mod 2 Review
+        state.step = 2;
+        state.subStep = 0;
+        state.isReview = true;
+        render();
+    }
+
+
+    function nextSubStep() {
+        if (state.step === 2) {
+            if (state.subStep < content.module2.scenarios.length - 1) {
+                state.subStep++;
+                render();
+            }
+            else { 
+                // Go to Mod 3 Review
+                state.step = 3; 
+                state.subStep = 0; 
+                state.isReview = true;
+                render(); 
+            }
+        } else if (state.step === 3) {
+            if (state.subStep < content.module3.questions.length - 1) {
+                state.subStep++;
+                render();
+            }
+            else { 
+                state.step = 4; // End
+                render();
+            }
+        }
+    }
+
+
+    // Simplified back nav
+    // Note: Going back resets progress in current logic because we don't store deep history.
+    // For a simple linear tool, this is acceptable.
+    /* function prevStep() { ... removed to force forward flow or need complex state management ... } */
+
+
+    init();
+</script>
+</body>
+</html>

@@ -1,0 +1,844 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier : L'Introduction - Niveau Intermédiaire</title>
+    <!-- Google Fonts: Special Elite (Machine à écrire) & Lato (Lisible) -->
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Carnet de Terrain / Nature */
+            --bg-body: #e8e4c9; /* Beige papier vieux */
+            --bg-card: #fdfbf7;
+            
+            --primary: #2f3e46; /* Gris ardoise foncé */
+            --secondary: #5f6f52; /* Vert Olive */
+            --accent: #a98467; /* Cuir brun */
+            --highlight: #b9935a; /* Or vieilli */
+            
+            --success: #3a5a40;
+            --error: #bc4749;
+            
+            --font-title: 'Special Elite', cursive;
+            --font-text: 'Lato', sans-serif;
+            
+            --shadow-paper: 2px 2px 10px rgba(0,0,0,0.1), 0 0 40px rgba(0,0,0,0.05) inset;
+        }
+
+
+        * { box-sizing: border-box; }
+
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--bg-body);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%235f6f52' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: var(--primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+
+        h1, h2, h3 { font-family: var(--font-title); margin-top: 0; color: var(--primary); letter-spacing: 1px; }
+
+
+        /* HEADER */
+        header {
+            background: var(--primary);
+            color: #f1f1f1;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid var(--accent);
+        }
+
+
+        .logo { font-size: 1.4rem; font-weight: 700; display:flex; align-items:center; gap:12px; }
+        .logo i { color: var(--highlight); }
+        
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 35px; height: 35px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:hover { background: var(--highlight); color: var(--primary); border-color: var(--highlight); }
+
+
+        .badge { 
+            background: rgba(0,0,0,0.4); 
+            padding: 6px 15px; 
+            border-radius: 4px;
+            font-size: 0.9rem; 
+            font-weight: 600;
+            border: 1px solid var(--highlight);
+            color: var(--highlight);
+            font-family: var(--font-text);
+        }
+
+
+        /* CONTAINER */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px 60px 20px;
+            width: 100%;
+        }
+
+
+        /* SLIDES */
+        .slide { display: none; opacity: 0; transform: translateY(15px); transition: all 0.5s ease-out; }
+        .slide.active { display: block; opacity: 1; transform: translateY(0); }
+
+
+        /* CARDS - Carnet de Terrain */
+        .card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: var(--shadow-paper);
+            margin-bottom: 30px;
+            position: relative;
+            border: 1px solid #d4d0b6;
+        }
+        
+        /* Reliure spirale */
+        .card::before {
+            content: ''; position: absolute; top: 10px; bottom: 10px; left: 15px; width: 4px;
+            border-left: 2px dashed #ccc;
+        }
+
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 25px; padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+        .card-header h2 { font-size: 1.8rem; margin: 0; display: flex; align-items: center; gap: 10px; }
+        
+        .tag-stamp {
+            border: 2px solid var(--secondary); color: var(--secondary);
+            padding: 5px 12px; border-radius: 4px;
+            font-size: 0.85rem; font-weight: 900; text-transform: uppercase;
+            transform: rotate(-2deg);
+            font-family: var(--font-title);
+        }
+
+
+        /* --- MODULE 1: PONT LOGIQUE --- */
+        .bridge-container {
+            display: flex; flex-direction: column; gap: 15px; margin: 20px 0;
+        }
+        .bridge-step {
+            padding: 15px; border-radius: 6px; font-size: 1.1rem;
+        }
+        .step-fixed { background: #e0e0e0; color: #555; border: 1px solid #ccc; }
+        .step-question { 
+            background: #fff; border: 2px dashed var(--accent); 
+            padding: 20px; text-align: center;
+        }
+        
+        .bridge-options { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        .bridge-opt {
+            background: white; padding: 15px; border: 1px solid var(--accent);
+            cursor: pointer; transition: 0.2s; border-radius: 4px; text-align: left;
+            position: relative;
+        }
+        .bridge-opt:hover { background: #fdf0d5; border-color: var(--highlight); }
+        .bridge-opt.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* --- MODULE 2: PARALLÉLISME --- */
+        .syntax-box {
+            background: #fff; padding: 20px; border: 1px solid #ccc;
+            font-family: 'Courier New', monospace; font-size: 1.1rem;
+            margin-bottom: 20px; border-left: 5px solid var(--secondary);
+        }
+        .syntax-choice {
+            display: block; margin: 10px 0; padding: 10px;
+            border: 1px solid #ddd; cursor: pointer; transition: 0.2s;
+        }
+        .syntax-choice:hover { background: #f0f8ff; border-color: var(--accent); }
+        .syntax-choice.correct { background: #d4edda; border-color: var(--success); color: #155724; }
+        .syntax-choice.wrong { background: #f8d7da; border-color: var(--error); color: #721c24; }
+
+
+        /* --- MODULE 3: DIAGNOSTIC --- */
+        .diag-text {
+            background: #fff; padding: 20px; border: 1px solid #ccc;
+            line-height: 1.6; margin-bottom: 20px; font-style: italic;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .diag-btn {
+            padding: 12px; border: 2px solid #ccc; background: #eee;
+            font-weight: bold; cursor: pointer; border-radius: 4px; color: #555;
+        }
+        .diag-btn:hover { background: #ddd; }
+        .diag-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+
+        /* --- MODULE 4: RECONSTRUCTION --- */
+        .puzzle-area {
+            background: #fdfbf7; padding: 15px; border: 2px dashed #ccc; min-height: 100px;
+            margin-bottom: 20px; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 8px;
+            align-items: center;
+        }
+        .puzzle-piece {
+            background: white; border: 1px solid var(--primary); padding: 8px 12px;
+            border-radius: 20px; cursor: pointer; user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .puzzle-piece:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); background: #f9f9f9; }
+        .puzzle-piece.in-slot { background: var(--secondary); color: white; border-color: var(--secondary); }
+
+
+        .bank-area {
+            display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: #e8e4c9; border-radius: 6px;
+        }
+
+
+        /* FEEDBACK */
+        .feedback-box {
+            margin-top: 25px; padding: 15px; border-radius: 4px; text-align: center;
+            font-weight: bold; display: none; animation: popIn 0.3s;
+        }
+        .fb-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fb-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+
+        /* BOUTONS */
+        .btn-action {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 30px; font-family: var(--font-title); font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; margin-top: 10px; border-radius: 2px;
+        }
+        .btn-action:hover { background: var(--highlight); color: var(--primary); }
+        .center-wrap { text-align: center; margin-top: 30px; }
+        .hidden { display: none !important; }
+
+
+        /* FINAL */
+        .final-score { font-size: 4rem; color: var(--secondary); font-weight: 900; margin: 20px 0; }
+
+
+        @media (max-width: 600px) {
+            .diag-grid { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <i class="fas fa-binoculars"></i> <span>Carnet de Terrain</span>
+    </div>
+    <div class="header-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent"><i class="fas fa-arrow-left"></i></button>
+        <button class="nav-btn" onclick="forceNext()" title="Suivant (Enseignant)"><i class="fas fa-arrow-right"></i></button>
+        <span class="badge" id="slide-indicator">1 / 10</span>
+        <span class="badge"><i class="fas fa-award"></i> <span id="score">0</span>%</span>
+    </div>
+</header>
+
+
+<main id="app">
+    <!-- Contenu dynamique -->
+</main>
+
+
+<script>
+    // --- DONNÉES ---
+
+
+    // Module 1 : Le Pont Logique (Sujet Amené sans nommer le sujet)
+    const bridgeData = [
+        {
+            title: "Dossier : Les Abysses",
+            step1: "Les océans recouvrent plus de 70% de la surface terrestre, offrant un habitat vaste et méconnu.",
+            step3: "Alors, dans ce texte, il sera question des abysses.",
+            options: [
+                { text: "Cependant, les abysses sont des zones profondes et dangereuses.", correct: false, reason: "Erreur : Le sujet 'abysses' est nommé dans le Sujet Amené." },
+                { text: "À mesure que la profondeur augmente, les conditions deviennent extrêmes et la lumière se fait rare.", correct: true, reason: "Excellent. Transition logique par les caractéristiques (profondeur) sans nommer le sujet." },
+                { text: "Il y a beaucoup de poissons dans l'eau salée.", correct: false, reason: "Trop vague et simpliste pour ce contexte." }
+            ]
+        },
+        {
+            title: "Dossier : L'Intelligence Artificielle",
+            step1: "Depuis l'invention de l'ordinateur, la technologie a évolué à une vitesse fulgurante.",
+            step3: "Ainsi, il sera question de l'intelligence artificielle.",
+            options: [
+                { text: "Aujourd'hui, des machines sont capables de simuler le raisonnement humain.", correct: true, reason: "Parfait. Le contexte technologique est précisé sans dire 'IA'." },
+                { text: "Tout le monde utilise l'intelligence artificielle sur son téléphone.", correct: false, reason: "Erreur : Le sujet est nommé explicitement." },
+                { text: "Les robots vont bientôt dominer le monde.", correct: false, reason: "Trop subjectif et alarmiste pour une introduction." }
+            ]
+        }
+    ];
+
+
+    // Module 2 : L'Équilibre (Parallélisme Syntaxique dans le SD)
+    const syntaxData = [
+        {
+            title: "Sujet : La Forêt Amazonienne",
+            context: "Seront alors élaborés les aspects...",
+            choices: [
+                { text: "de sa faune, de comment est sa flore et son climat.", correct: false, reason: "Structure mixte (Nom, Phrase, Nom). À éviter." },
+                { text: "de sa faune, de sa flore et de son climat.", correct: true, reason: "Parallélisme parfait : trois groupes nominaux." },
+                { text: "de sa faune, sa flore et le climat chaud.", correct: false, reason: "Rupture de construction (déterminants et adjectifs inconstants)." }
+            ]
+        },
+        {
+            title: "Sujet : La Conquête Spatiale",
+            context: "Ce texte abordera...",
+            choices: [
+                { text: "les coûts exorbitants, les risques techniques et les découvertes scientifiques.", correct: true, reason: "Parallélisme respecté : trois groupes nominaux (Nom + Adjectif)." },
+                { text: "combien ça coûte, les risques techniques et découvrir des choses.", correct: false, reason: "Structure chaotique (Interrogative indirecte, Nom, Verbe)." },
+                { text: "les coûts, risquer sa vie et la science.", correct: false, reason: "Mélange de nature (Nom, Verbe, Nom)." }
+            ]
+        }
+    ];
+
+
+    // Module 3 : Diagnostic (Trouver l'erreur)
+    const diagData = [
+        {
+            text: "L'histoire de l'humanité est marquée par de grands conflits. Au 20e siècle, une guerre mondiale a bouleversé l'Europe. Dans ce texte, je vais vous parler de la Seconde Guerre mondiale.",
+            error: "Présence de l'auteur",
+            correction: "Le sujet posé utilise 'je vais vous parler'. Il faut rester impersonnel : 'il sera question de'."
+        },
+        {
+            text: "La nature est belle. Il y a des fleurs et des arbres. C'est pourquoi il sera question de la photosynthèse. Seront élaborés les aspects du soleil et de l'eau.",
+            error: "Sujet Amené faible",
+            correction: "Le Sujet Amené est trop simpliste et le lien logique avec la photosynthèse est faible."
+        },
+        {
+            text: "Les moyens de transport ont transformé les sociétés modernes. Parmi eux, le train a révolutionné la manière de voyager sur terre en réduisant les distances. Ainsi, il sera question du TGV. Seront abordés sa vitesse, son confort et son prix.",
+            error: "Aucune erreur",
+            correction: "C'est une excellente introduction. Le Sujet Amené reste général (le train) avant de préciser le sujet (le TGV)."
+        }
+    ];
+
+
+    // Module 4 : Reconstruction (Puzzle) - 3 Exercices
+    const puzzleData = [
+        {
+            title: "Sujet : Les Énergies Renouvelables",
+            segments: [
+                { text: "Depuis la révolution industrielle,", type: "sa" },
+                { text: "les besoins énergétiques mondiaux n'ont cessé de croître.", type: "sa" },
+                { text: "Face à l'épuisement des ressources fossiles,", type: "sa" },
+                { text: "des alternatives durables émergent.", type: "sa" },
+                { text: "Ainsi,", type: "sp_mark" },
+                { text: "il sera question des énergies renouvelables.", type: "sp" },
+                { text: "Seront alors élaborés les aspects", type: "sd_intro" },
+                { text: "de l'énergie solaire,", type: "sd1" },
+                { text: "de l'énergie éolienne", type: "sd2" },
+                { text: "et de l'énergie hydraulique.", type: "sd3" }
+            ]
+        },
+        {
+            title: "Sujet : La Démocratie Athénienne",
+            segments: [
+                { text: "Durant l'Antiquité,", type: "sa" },
+                { text: "la Grèce a vu naître de nombreuses cités-états.", type: "sa" },
+                { text: "Au sein de ces communautés,", type: "sa" },
+                { text: "un système politique inédit a émergé.", type: "sa" },
+                { text: "Ainsi,", type: "sp_mark" },
+                { text: "il sera question de la démocratie athénienne.", type: "sp" },
+                { text: "Seront abordés ses fondements,", type: "sd_intro" },
+                { text: "ses institutions politiques,", type: "sd1" },
+                { text: "le rôle des citoyens", type: "sd2" },
+                { text: "et ses limites historiques.", type: "sd3" }
+            ]
+        },
+        {
+            title: "Sujet : Les Trous Noirs",
+            segments: [
+                { text: "Dans l'immensité du cosmos,", type: "sa" },
+                { text: "la vie des étoiles suit un cycle précis.", type: "sa" },
+                { text: "Lorsque certaines meurent,", type: "sa" },
+                { text: "elles s'effondrent sur elles-mêmes.", type: "sa" },
+                { text: "Alors,", type: "sp_mark" },
+                { text: "il sera question des trous noirs.", type: "sp" },
+                { text: "Seront expliqués", type: "sd_intro" },
+                { text: "leur formation gravitationnelle,", type: "sd1" },
+                { text: "leur horizon des événements", type: "sd2" },
+                { text: "et leur singularité centrale.", type: "sd3" }
+            ]
+        }
+    ];
+
+
+    // --- ÉTAT GLOBAL ---
+    let state = {
+        slideIndex: 0,
+        score: 0,
+        maxScore: 2 + 2 + 3 + 15, // Bridge(2) + Syntax(2) + Diag(3) + Puzzle(3 * 5 = 15) = 22 pts
+        currentPuzzle: []
+    };
+
+
+    // --- RENDU ---
+
+
+    function renderApp() {
+        const app = document.getElementById('app');
+        let html = '';
+        let s = 0;
+
+
+        // 1. INTRO
+        html += `
+        <div class="slide active" id="slide-${s}">
+            <div class="card" style="text-align:center; padding: 60px;">
+                <i class="fas fa-compass fa-4x" style="color:var(--secondary); margin-bottom:20px;"></i>
+                <h1>Carnet de Terrain</h1>
+                <h3 style="color:var(--accent);">Niveau Intermédiaire : Explorateur</h3>
+                <p style="font-size:1.2rem; color:#555; margin:30px 0;">
+                    Votre mission : affiner la précision de vos rapports.<br>
+                    Le général ne suffit plus. Il faut de la cohérence, de la structure et une syntaxe irréprochable.
+                </p>
+                <div class="center-wrap">
+                    <button class="btn-action" onclick="nextSlide()">Ouvrir le Carnet</button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 2. MODULE 1 (Pont Logique)
+        bridgeData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-link"></i> Le Pont Logique</h2>
+                        <span class="tag-stamp">Sujet Amené</span>
+                    </div>
+                    <p>Complétez l'entonnoir. Quelle phrase assure la transition vers le sujet <strong>sans le nommer</strong> ?</p>
+                    
+                    <div class="bridge-container">
+                        <div class="bridge-step step-fixed">1. ${ex.step1}</div>
+                        <div class="bridge-step step-question">
+                            <i class="fas fa-question-circle"></i> [ Insérer la transition ici ]
+                        </div>
+                        <div class="bridge-step step-fixed">3. ${ex.step3}</div>
+                    </div>
+
+
+                    <div class="bridge-options">
+                        ${ex.options.sort(() => Math.random() - 0.5).map((opt, idx) => `
+                            <div class="bridge-opt" onclick="checkBridge(this, ${opt.correct}, '${opt.reason.replace(/'/g, "\\'")}', ${s})">
+                                ${opt.text}
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div id="fb-${s}" class="feedback-box"></div>
+                    <div class="center-wrap">
+                        <button class="btn-action hidden" id="next-${s}" onclick="nextSlide()">Continuer</button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 3. MODULE 2 (Syntaxe)
+        syntaxData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-balance-scale"></i> L'Équilibre</h2>
+                        <span class="tag-stamp">Sujet Divisé</span>
+                    </div>
+                    <p>Pour <strong>${ex.title}</strong>, choisissez le Sujet Divisé qui respecte le <strong>parallélisme syntaxique</strong> (même construction pour chaque aspect).</p>
+                    
+                    <div class="syntax-box">
+                        ${ex.context}
+                    </div>
+
+
+                    <div>
+                        ${ex.choices.sort(() => Math.random() - 0.5).map(c => `
+                            <div class="syntax-choice" onclick="checkSyntax(this, ${c.correct}, '${c.reason.replace(/'/g, "\\'")}', ${s})">
+                                ${c.text}
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div id="fb-${s}" class="feedback-box"></div>
+                    <div class="center-wrap">
+                        <button class="btn-action hidden" id="next-${s}" onclick="nextSlide()">Continuer</button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 4. MODULE 3 (Diagnostic)
+        diagData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-stethoscope"></i> Le Diagnostic</h2>
+                        <span class="tag-stamp">Analyse</span>
+                    </div>
+                    <p>Lisez cette introduction. Quel est son défaut principal ?</p>
+                    
+                    <div class="diag-text">"${ex.text}"</div>
+
+
+                    <div class="diag-grid">
+                        <button class="diag-btn" onclick="checkDiag(this, 'Présence de l\\'auteur', '${ex.error.replace(/'/g, "\\'")}', '${ex.correction.replace(/'/g, "\\'")}', ${s})">Présence de l'auteur ("Je/Nous")</button>
+                        <button class="diag-btn" onclick="checkDiag(this, 'Sujet nommé trop tôt', '${ex.error.replace(/'/g, "\\'")}', '${ex.correction.replace(/'/g, "\\'")}', ${s})">Sujet nommé trop tôt</button>
+                        <button class="diag-btn" onclick="checkDiag(this, 'Sujet Amené faible', '${ex.error.replace(/'/g, "\\'")}', '${ex.correction.replace(/'/g, "\\'")}', ${s})">Sujet Amené faible/Devinette</button>
+                        <button class="diag-btn" onclick="checkDiag(this, 'Aucune erreur', '${ex.error.replace(/'/g, "\\'")}', '${ex.correction.replace(/'/g, "\\'")}', ${s})">Aucune erreur</button>
+                    </div>
+
+
+                    <div id="fb-${s}" class="feedback-box"></div>
+                    <div class="center-wrap">
+                        <button class="btn-action hidden" id="next-${s}" onclick="nextSlide()">Continuer</button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 5. MODULE 4 (Reconstruction) - 3 Exercices
+        puzzleData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-puzzle-piece"></i> Reconstruction</h2>
+                        <span class="tag-stamp">Synthèse (${i+1}/3)</span>
+                    </div>
+                    <p>Reconstituez l'introduction complète sur : <strong>${ex.title}</strong>. Cliquez sur les segments dans l'ordre logique.</p>
+                    
+                    <div class="puzzle-area" id="drop-zone-${s}">
+                        <span style="color:#aaa; font-style:italic; width:100%; text-align:center;" id="placeholder-${s}">Votre texte apparaîtra ici...</span>
+                    </div>
+
+
+                    <div class="bank-area" id="bank-${s}">
+                        ${ex.segments.sort(() => Math.random() - 0.5).map((seg, idx) => `
+                            <div class="puzzle-piece" id="piece-${s}-${idx}" onclick="movePiece(${s}, ${idx}, '${seg.text.replace(/'/g, "\\'")}', '${seg.type}')">
+                                ${seg.text}
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div id="fb-${s}" class="feedback-box"></div>
+                    <div class="center-wrap">
+                        <button class="btn-action" id="check-${s}" onclick="checkPuzzle(${s})">Vérifier la structure</button>
+                        <button class="btn-action hidden" id="next-${s}" onclick="nextSlide()">Suivant</button>
+                        <button class="btn-action" style="background:#888; margin-left:10px;" onclick="resetPuzzle(${s})">Réinitialiser</button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 6. FINAL
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:4rem; color:var(--secondary);"><i class="fas fa-clipboard-check"></i></div>
+                <h1>Mission Terminée</h1>
+                <div class="final-score" id="final-score-display">0%</div>
+                <p id="final-msg" style="font-size:1.2rem; margin-bottom:30px;"></p>
+                <button class="btn-action" onclick="location.reload()">Nouvelle Expédition</button>
+            </div>
+        </div>`;
+
+
+        app.innerHTML = html;
+        document.getElementById('slide-indicator').innerText = `1 / ${s + 1}`;
+        
+        // Reset state for puzzle
+        state.currentPuzzle = [];
+    }
+
+
+    // --- LOGIQUE MODULE 1 ---
+    function checkBridge(el, isCorrect, reason, slideId) {
+        if (document.getElementById(`next-${slideId}`).classList.contains('hidden') === false) return;
+
+
+        const fb = document.getElementById(`fb-${slideId}`);
+        const btn = document.getElementById(`next-${slideId}`);
+        const opts = el.parentElement.children;
+
+
+        // Reset visual state
+        for (let opt of opts) opt.style.opacity = "0.5";
+        el.style.opacity = "1";
+
+
+        if (isCorrect) {
+            el.classList.add('selected');
+            el.style.borderColor = "var(--success)";
+            el.style.backgroundColor = "#d4edda";
+            fb.innerHTML = reason;
+            fb.className = "feedback-box fb-success";
+            addScore(1);
+        } else {
+            el.style.borderColor = "var(--error)";
+            el.style.backgroundColor = "#f8d7da";
+            fb.innerHTML = reason;
+            fb.className = "feedback-box fb-error";
+        }
+        fb.style.display = 'block';
+        btn.classList.remove('hidden');
+    }
+
+
+    // --- LOGIQUE MODULE 2 ---
+    function checkSyntax(el, isCorrect, reason, slideId) {
+        if (document.getElementById(`next-${slideId}`).classList.contains('hidden') === false) return;
+
+
+        const fb = document.getElementById(`fb-${slideId}`);
+        const btn = document.getElementById(`next-${slideId}`);
+
+
+        if (isCorrect) {
+            el.classList.add('correct');
+            fb.innerHTML = "Correct ! " + reason;
+            fb.className = "feedback-box fb-success";
+            addScore(1);
+        } else {
+            el.classList.add('wrong');
+            fb.innerHTML = "Incorrect. " + reason;
+            fb.className = "feedback-box fb-error";
+        }
+        fb.style.display = 'block';
+        btn.classList.remove('hidden');
+    }
+
+
+    // --- LOGIQUE MODULE 3 ---
+    function checkDiag(btn, userChoice, correctError, correction, slideId) {
+        if (document.getElementById(`next-${slideId}`).classList.contains('hidden') === false) return;
+
+
+        const fb = document.getElementById(`fb-${slideId}`);
+        const nextBtn = document.getElementById(`next-${slideId}`);
+        
+        // Highlight selection
+        const allBtns = btn.parentElement.querySelectorAll('.diag-btn');
+        allBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+
+        if (userChoice === correctError) {
+            fb.innerHTML = "Diagnostic exact. " + correction;
+            fb.className = "feedback-box fb-success";
+            addScore(1);
+        } else {
+            fb.innerHTML = `Erreur de diagnostic. Le problème était : <strong>${correctError}</strong>. ${correction}`;
+            fb.className = "feedback-box fb-error";
+        }
+        fb.style.display = 'block';
+        nextBtn.classList.remove('hidden');
+    }
+
+
+    // --- LOGIQUE MODULE 4 (PUZZLE) ---
+    function movePiece(slideId, pieceId, text, type) {
+        const dropZone = document.getElementById(`drop-zone-${slideId}`);
+        const placeholder = document.getElementById(`placeholder-${slideId}`);
+        const piece = document.getElementById(`piece-${slideId}-${pieceId}`);
+        
+        // Check if already in zone
+        if (piece.parentElement === dropZone) return;
+
+
+        if (placeholder) placeholder.style.display = 'none';
+        
+        dropZone.appendChild(piece);
+        piece.classList.add('in-slot');
+        
+        // Add to logic state
+        state.currentPuzzle.push({type: type, id: pieceId});
+    }
+
+
+    function resetPuzzle(slideId) {
+        const bank = document.getElementById(`bank-${slideId}`);
+        const dropZone = document.getElementById(`drop-zone-${slideId}`);
+        const placeholder = document.getElementById(`placeholder-${slideId}`);
+        const pieces = dropZone.querySelectorAll('.puzzle-piece');
+        
+        pieces.forEach(p => {
+            p.classList.remove('in-slot');
+            bank.appendChild(p);
+        });
+        
+        placeholder.style.display = 'block';
+        state.currentPuzzle = [];
+        document.getElementById(`fb-${slideId}`).style.display = 'none';
+        document.getElementById(`check-${slideId}`).classList.remove('hidden');
+        document.getElementById(`next-${slideId}`).classList.add('hidden');
+    }
+
+
+    function checkPuzzle(slideId) {
+        const currentTypes = state.currentPuzzle.map(p => p.type);
+        const fb = document.getElementById(`fb-${slideId}`);
+        
+        let valid = true;
+        let reason = "";
+
+
+        // Check length
+        if (currentTypes.length < 10) {
+            fb.innerHTML = "Le puzzle est incomplet.";
+            fb.className = "feedback-box fb-error";
+            fb.style.display = 'block';
+            return;
+        }
+
+
+        // 1. Check SA group (first 4 items must be 'sa')
+        for(let i=0; i<4; i++) {
+            if (currentTypes[i] !== 'sa') {
+                valid = false;
+                reason = "Le Sujet Amené (les premières phrases) est mélangé ou interrompu.";
+                break;
+            }
+        }
+
+
+        // 2. Check SP (index 4 and 5)
+        if (valid) {
+            if (currentTypes[4] !== 'sp_mark') { valid = false; reason = "Il manque le marqueur de relation avant le Sujet Posé."; }
+            else if (currentTypes[5] !== 'sp') { valid = false; reason = "Le Sujet Posé est mal placé."; }
+        }
+
+
+        // 3. Check SD (rest)
+        if (valid) {
+            if (currentTypes[6] !== 'sd_intro') { valid = false; reason = "L'introduction du Sujet Divisé est mal placée."; }
+            else if (currentTypes[7] !== 'sd1' || currentTypes[8] !== 'sd2' || currentTypes[9] !== 'sd3') {
+                valid = false; reason = "L'ordre des aspects dans le Sujet Divisé est incorrect ou la syntaxe est brisée.";
+            }
+        }
+
+
+        fb.style.display = 'block';
+        if (valid) {
+            fb.innerHTML = "Reconstruction parfaite ! Le texte est cohérent et bien structuré.";
+            fb.className = "feedback-box fb-success";
+            addScore(5);
+            document.getElementById(`check-${slideId}`).classList.add('hidden');
+            document.getElementById(`next-${slideId}`).classList.remove('hidden');
+        } else {
+            fb.innerHTML = reason + " Réinitialisez et réessayez.";
+            fb.className = "feedback-box fb-error";
+        }
+    }
+
+
+    // --- NAVIGATION ---
+    function nextSlide() {
+        const current = document.querySelector('.slide.active');
+        current.classList.remove('active');
+        state.slideIndex++;
+        
+        // Reset puzzle state for next slide
+        state.currentPuzzle = [];
+
+
+        const next = document.getElementById(`slide-${state.slideIndex}`);
+        if(next) {
+            next.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+            
+            if(state.slideIndex === state.totalSlides - 1) showFinal();
+        }
+    }
+
+
+    function prevSlide() {
+        if (state.slideIndex > 0) {
+            const current = document.querySelector('.slide.active');
+            current.classList.remove('active');
+            state.slideIndex--;
+            state.currentPuzzle = []; // Reset puzzle logic to prevent carry-over bugs
+            
+            const prev = document.getElementById(`slide-${state.slideIndex}`);
+            prev.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+        }
+    }
+
+
+    function forceNext() { nextSlide(); }
+
+
+    function addScore(pts) {
+        state.score += pts;
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        document.getElementById('score').innerText = percent;
+    }
+
+
+    function showFinal() {
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        document.getElementById('final-score-display').innerText = percent + "%";
+        
+        const msg = document.getElementById('final-msg');
+        if (percent >= 80) {
+            msg.innerHTML = "<strong>Explorateur Confirmé !</strong><br>Vous maîtrisez les nuances de l'introduction.";
+            msg.style.color = "var(--success)";
+        } else {
+            msg.innerHTML = "<strong>Explorateur en Herbe.</strong><br>Certains pièges vous ont échappé. Relisez votre carnet !";
+            msg.style.color = "var(--error)";
+        }
+    }
+
+
+    // Init
+    renderApp();
+
+
+</script>
+</body>
+</html>

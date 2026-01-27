@@ -1,0 +1,872 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier : Les Procédés Descriptifs - Niveau 3</title>
+    <!-- Google Fonts: Black Ops One (Militaire) & Rajdhani (Technique) -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Alerte Générale */
+            --bg-deep: #0a0202; /* Noir rougeâtre */
+            --bg-panel: #1f0505; /* Rouge sombre */
+            
+            --neon-primary: #ff3838; /* Rouge Alerte */
+            --neon-secondary: #ffb8b8; /* Rouge pâle */
+            --text-main: #f5f6fa;
+            
+            --accent-yellow: #f1c40f; /* Attention */
+            --accent-success: #2ecc71;
+            
+            --font-title: 'Black Ops One', cursive;
+            --font-text: 'Rajdhani', sans-serif;
+        }
+
+
+        * { box-sizing: border-box; }
+
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--bg-deep);
+            /* Grille tactique rouge */
+            background-image: 
+                linear-gradient(rgba(255, 56, 56, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 56, 56, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 1.1rem;
+        }
+
+
+        h1, h2, h3, h4 { font-family: var(--font-title); color: var(--neon-primary); margin-top: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+
+
+        /* HEADER */
+        header {
+            background: rgba(30, 0, 0, 0.95);
+            border-bottom: 4px solid var(--neon-primary);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .logo { font-size: 1.4rem; font-weight: 700; color: white; display:flex; align-items:center; gap:15px; }
+        .logo-sub { font-size: 0.8rem; color: var(--neon-primary); font-weight: 600; letter-spacing: 1px; }
+
+
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        
+        .nav-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 5px 10px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--font-title);
+            transition: 0.2s;
+        }
+        .nav-btn:hover { background: var(--neon-primary); color: black; }
+
+
+        .badge { 
+            background: rgba(50, 0, 0, 0.8); 
+            padding: 5px 15px; 
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--neon-primary);
+        }
+
+
+        /* CONTAINER */
+        main {
+            flex: 1;
+            max-width: 1100px; /* Plus large pour les textes longs */
+            margin: 30px auto;
+            padding: 0 20px 50px 20px;
+            width: 100%;
+        }
+
+
+        /* SLIDES */
+        .slide { display: none; animation: fadeIn 0.5s; }
+        .slide.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+        /* CARDS */
+        .card {
+            background: var(--bg-panel);
+            padding: 30px;
+            border: 1px solid var(--neon-primary);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        /* Barres de danger hachurées */
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 10px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--neon-primary),
+                var(--neon-primary) 10px,
+                #000 10px,
+                #000 20px
+            );
+            opacity: 0.5;
+        }
+
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 1px solid rgba(255,56,56,0.3); padding-bottom: 10px; margin-top: 10px;
+        }
+
+
+        /* TEXT ANALYSIS */
+        .text-analysis-box {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            background: rgba(0,0,0,0.4);
+            padding: 25px;
+            border: 1px solid #440000;
+            text-align: left;
+        }
+
+
+        .section-title {
+            color: var(--accent-yellow);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            display: block;
+            border-bottom: 1px dashed var(--accent-yellow);
+            width: fit-content;
+        }
+
+
+        /* INPUTS (Saisie Manuelle) */
+        .input-manual {
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid var(--neon-primary);
+            color: var(--accent-yellow);
+            padding: 5px 8px;
+            font-family: 'Rajdhani', monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 140px;
+            transition: 0.3s;
+            text-transform: capitalize; /* Aide visuelle */
+        }
+        .input-manual:focus { outline: none; background: rgba(255,0,0,0.2); box-shadow: 0 0 10px var(--neon-primary); }
+        .input-manual.valid { border-color: var(--accent-success); color: var(--accent-success); background: rgba(46, 204, 113, 0.1); }
+        .input-manual.invalid { border-color: var(--neon-primary); background: rgba(255, 0, 0, 0.2); animation: shake 0.4s; }
+
+
+        /* DROPDOWNS (Procédés) */
+        .select-proc {
+            background: #2b0000;
+            color: white;
+            border: 1px solid #777;
+            padding: 5px;
+            font-family: var(--font-text);
+            cursor: pointer;
+            margin: 0 3px;
+            max-width: 100%;
+        }
+        .select-proc:hover { border-color: var(--neon-primary); }
+        .select-proc.valid { border-color: var(--accent-success); background: rgba(46, 204, 113, 0.2); }
+        .select-proc.invalid { border-color: var(--neon-primary); background: rgba(255, 0, 0, 0.3); }
+
+
+        /* REFERENCE CARD (FAMILLES) */
+        .ref-card {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--accent-yellow);
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .ref-col { border-left: 2px solid var(--accent-yellow); padding-left: 10px; }
+        .ref-title { font-weight: bold; color: var(--accent-yellow); text-transform: uppercase; display: block; margin-bottom: 5px; }
+
+
+        /* FEEDBACK */
+        .feedback-area {
+            min-height: 40px;
+            margin-top: 15px;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .error-log { color: var(--neon-primary); font-size: 0.95rem; margin-top: 5px; }
+
+
+        /* BUTTONS */
+        .btn {
+            background: var(--neon-primary);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .btn:hover { background: white; box-shadow: 0 0 20px var(--neon-primary); }
+        
+        .hidden { display: none !important; }
+        .center-btn { text-align: center; margin-top: 30px; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ref-card { grid-template-columns: 1fr; }
+            .input-manual { width: 100%; margin-bottom: 5px; }
+            .select-proc { width: 100%; margin-bottom: 5px; display: block; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <i class="fas fa-biohazard fa-2x" style="color:var(--neon-primary);"></i>
+        <div style="display:flex; flex-direction:column;">
+            <span style="font-family: var(--font-title); letter-spacing: 2px;">DEFCON 1</span>
+            <span class="logo-sub">NIVEAU 3 : COMMANDANT</span>
+        </div>
+    </div>
+    <div class="header-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Reculer"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-btn" onclick="forceNext()" title="Avancer (Dev)"><i class="fas fa-chevron-right"></i></button>
+        <span class="badge" id="slide-indicator">1 / 4</span>
+        <span class="badge"><i class="fas fa-star"></i> <span id="score">0</span> pts</span>
+    </div>
+</header>
+
+
+<main id="app">
+    <!-- Contenu dynamique -->
+</main>
+
+
+<script>
+    // --- UTILS ---
+    
+    // Fonction pour générer le HTML des selects (Correction de l'erreur)
+    function createSelect(id, label, options) {
+        let html = `<select id="${id}" class="select-proc">
+            <option value="" disabled selected>${label}</option>`;
+        
+        options.forEach(opt => {
+            html += `<option value="${opt.f}">${opt.t}</option>`;
+        });
+
+
+        html += `</select>`;
+        return html;
+    }
+
+
+    // --- DONNÉES DE JEU ---
+
+
+    // Familles de marqueurs (Pour validation stricte)
+    const families = {
+        F1: ["Premièrement", "Deuxièmement", "Troisièmement"],
+        F2: ["En premier lieu", "En deuxième lieu", "En troisième lieu"],
+        F3: ["D'abord", "Ensuite", "Par la suite", "Enfin"], 
+        F4: ["Pour commencer", "Pour poursuivre", "Pour continuer", "Pour terminer"]
+    };
+
+
+    // Texte 1 : L'Attaque (Siège) - Version Enrichie & 3e Personne
+    const text1 = `
+        <div class="ref-card">
+            <div class="ref-col"><span class="ref-title">Famille 1</span>Premièrement, Deuxièmement, Troisièmement</div>
+            <div class="ref-col"><span class="ref-title">Famille 2</span>En premier lieu, En deuxième lieu, En troisième lieu</div>
+            <div class="ref-col"><span class="ref-title">Famille 3</span>D'abord, Ensuite, Par la suite, Enfin</div>
+            <div class="ref-col"><span class="ref-title">Famille 4</span>Pour commencer, Pour poursuivre, Pour continuer, Pour terminer</div>
+        </div>
+
+
+        <p><strong>RAPPORT D'INCIDENT : LE SIÈGE DE LA CITADELLE</strong></p>
+        
+        <p><em>Introduction</em></p>
+        <p>Depuis la fondation de la Fédération Galactique, la Citadelle d'Aegis n'avait jamais connu les affres de la guerre. Cette station, symbole de paix, orbitait calmement jusqu'à l'aube du quatrième cycle solaire. Soudain, une armada inconnue a émergé de l'hyperespace, brisant le silence des radars. Dans ce rapport prioritaire, il sera question de cette attaque brutale et inattendue. Seront alors élaborés les aspects des défenses orbitales, des forces d'invasion et des conséquences immédiates.</p>
+        
+        <hr style="border:0; border-top:1px dashed #550000; margin: 20px 0;">
+
+
+        <!-- ASPECT 1 -->
+        <p class="section-title">Aspect 1 : Les Défenses Orbitales</p>
+        
+        <p><input type="text" class="input-manual" data-role="org" data-pos="1" placeholder="[Org. Asp 1]">, il est nécessaire d'examiner l'état critique des protections planétaires.</p>
+        
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, le bouclier planétaire a fini par céder sous la pression. Ce champ de force, ${createSelect('T1-P1-1', '[Procédé : Définition]', [
+                {t: "une barrière d'énergie pure impénétrable", f: "CORRECT"}, 
+                {t: "qui est invisible à l'oeil nu", f: "C'est une relative."}, 
+                {t: "aussi dur que l'acier trempé", f: "C'est une comparaison."}
+            ])}, a été saturé par les tirs continus des vaisseaux ennemis. Il s'est effondré brusquement ${createSelect('T1-P1-2', '[Procédé : Comparaison]', [
+                {t: "comme un verre brisé par un choc", f: "CORRECT"}, 
+                {t: "très rapidement sous les tirs", f: "C'est un adverbe."}, 
+                {t: "en mille morceaux scintillants", f: "C'est une locution."}
+            ])}, laissant la surface exposée.</li>
+            
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, les plateformes de tir automatisées ont riposté avec violence. Elles sont équipées de canons cinétiques ${createSelect('T1-P1-3', '[Procédé : Comparaison]', [
+                {t: "puissants comme des orages magnétiques", f: "CORRECT"}, 
+                {t: "qui tirent extrêmement loin", f: "C'est une description."}, 
+                {t: "de très gros calibre militaire", f: "C'est une précision technique."}
+            ])}. Ces armes lourdes projettent une variété de munitions : ${createSelect('T1-P1-4', '[Procédé : Énumération]', [
+                {t: "du plasma, des missiles et des lasers", f: "CORRECT"}, 
+                {t: "beaucoup de projectiles dangereux", f: "Manque de détails."}, 
+                {t: "une salve mortelle et précise", f: "C'est un groupe nominal."}
+            ])}, tentant désespérément de repousser l'envahisseur.</li>
+        </ul>
+
+
+        <!-- ASPECT 2 -->
+        <p class="section-title">Aspect 2 : Les Forces d'Invasion</p>
+
+
+        <p><input type="text" class="input-manual" data-role="org" data-pos="2" placeholder="[Org. Asp 2]">, l'ennemi a immédiatement déployé ses troupes de choc au sol.</p>
+
+
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, l'infanterie adverse se compose de cyborgs redoutables. Ils sont faits d'un assemblage de chair et de métal, ${createSelect('T1-P2-1', '[Procédé : Définition]', [
+                {t: "un alliage synthétique vivant et froid", f: "CORRECT"}, 
+                {t: "tels que des robots de combat", f: "C'est un exemple."}, 
+                {t: "qui font peur à voir", f: "Jugement subjectif."}
+            ])}. Ils avancent sans peur ni hésitation, ${createSelect('T1-P2-2', '[Procédé : Comparaison]', [
+                {t: "telle une marée d'acier inarrêtable", f: "CORRECT"}, 
+                {t: "en rangs serrés et disciplinés", f: "C'est une description."}, 
+                {t: "très lentement sur le champ", f: "C'est un adverbe."}
+            ])}, écrasant toute résistance sur leur passage.</li>
+
+
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, ils utilisent des véhicules lourds pour percer les lignes. On note la présence d'unités massives, ${createSelect('T1-P2-3', '[Procédé : Exemple]', [
+                {t: "notamment le Char Ravageur MK-II", f: "CORRECT"}, 
+                {t: "qui écrasent tout sur la route", f: "C'est une relative."}, 
+                {t: "de très grande taille", f: "C'est un adjectif."}
+            ])}. Ces machines de guerre possèdent plusieurs atouts tactiques : ${createSelect('T1-P2-4', '[Procédé : Énumération]', [
+                {t: "blindage, vitesse et puissance de feu", f: "CORRECT"}, 
+                {t: "une grosse protection frontale", f: "Manque de détails."}, 
+                {t: "comme un mur mobile", f: "C'est une comparaison."}
+            ])}.</li>
+        </ul>
+
+
+        <!-- ASPECT 3 -->
+        <p class="section-title">Aspect 3 : Conséquences Immédiates</p>
+
+
+        <p><input type="text" class="input-manual" data-role="org" data-pos="3" placeholder="[Org. Asp 3]">, il faut évaluer l'étendue des dégâts sur les infrastructures et la population.</p>
+
+
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, la ville haute est désormais en ruine. De nombreux bâtiments historiques ont été détruits, ${createSelect('T1-P3-1', '[Procédé : Exemple]', [
+                {t: "comme la Grande Bibliothèque d'Archives", f: "CORRECT"}, 
+                {t: "qui étaient pourtant magnifiques", f: "C'est subjectif."}, 
+                {t: "réduits en poussière fine", f: "C'est un participe passé."}
+            ])}. Les rues principales sont encombrées de divers débris : ${createSelect('T1-P3-2', '[Procédé : Énumération]', [
+                {t: "verre brisé, béton armé et ferraille", f: "CORRECT"}, 
+                {t: "beaucoup de déchets toxiques", f: "Trop vague."}, 
+                {t: "tels que des pierres", f: "C'est un exemple unique."}
+            ])}, rendant toute évacuation difficile.</li>
+
+
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, les civils sont en fuite désordonnée. Ils se dirigent massivement vers les bunkers, ${createSelect('T1-P3-3', '[Procédé : Définition]', [
+                {t: "des abris souterrains ultra-sécurisés", f: "CORRECT"}, 
+                {t: "où il fait noir et froid", f: "Description de lieu."}, 
+                {t: "comme des fourmis affolées", f: "C'est une comparaison."}
+            ])}. La panique se répand dans la foule ${createSelect('T1-P3-4', '[Procédé : Comparaison]', [
+                {t: "aussi vite qu'un virus mortel", f: "CORRECT"}, 
+                {t: "partout dans la ville basse", f: "Complément de lieu."}, 
+                {t: "qui paralyse tout le monde", f: "Subordonnée relative."}
+            ])}.</li>
+        </ul>
+
+
+        <hr style="border:0; border-top:1px dashed #550000; margin: 20px 0;">
+        <p><em>Conclusion</em></p>
+        <p>Pour conclure, l'attaque sur Aegis s'avère catastrophique en raison de la faillite totale des défenses, de la puissance écrasante de l'envahisseur et des lourdes pertes civiles recensées. Il est impératif que la flotte de secours de la Fédération arrive avant la chute totale de la Citadelle.</p>
+    `;
+
+
+    // Texte 2 : La Contre-Attaque (Offensif) - Version Enrichie & 3e Personne
+    const text2 = `
+        <div class="ref-card">
+            <div class="ref-col"><span class="ref-title">Famille 1</span>Premièrement, Deuxièmement, Troisièmement</div>
+            <div class="ref-col"><span class="ref-title">Famille 2</span>En premier lieu, En deuxième lieu, En troisième lieu</div>
+            <div class="ref-col"><span class="ref-title">Famille 3</span>D'abord, Ensuite, Par la suite, Enfin</div>
+            <div class="ref-col"><span class="ref-title">Famille 4</span>Pour commencer, Pour poursuivre, Pour continuer, Pour terminer</div>
+        </div>
+
+
+        <p><strong>OPÉRATION VENGANCE : LA CONTRE-ATTAQUE</strong></p>
+        
+        <p><em>Introduction</em></p>
+        <p>Suite à la perte tragique de la Citadelle, le Haut Commandement a autorisé une frappe chirurgicale désespérée. L'objectif est de neutraliser le vaisseau-mère ennemi qui orbite encore autour de la planète. Dans ce plan de bataille confidentiel, il sera question de l'Opération Vengeance. Seront alors élaborés les aspects de l'infiltration furtive, du sabotage critique et de l'extraction d'urgence.</p>
+        
+        <hr style="border:0; border-top:1px dashed #550000; margin: 20px 0;">
+
+
+        <!-- ASPECT 1 -->
+        <p class="section-title">Aspect 1 : L'Infiltration Furtive</p>
+        
+        <p><input type="text" class="input-manual" data-role="org" data-pos="1" placeholder="[Org. Asp 1]">, l'équipe d'élite Ghost pénétrera le périmètre ennemi sans être détectée.</p>
+        
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, l'approche se fera via des navettes furtives. Ces vaisseaux sont conçus pour être indétectables, ${createSelect('T2-P1-1', '[Procédé : Comparaison]', [
+                {t: "tels des ombres glissant dans la nuit", f: "CORRECT"}, 
+                {t: "grâce à leur technologie de pointe", f: "C'est une cause."}, 
+                {t: "qui ne font pas de bruit moteur", f: "C'est une relative."}
+            ])}. Ils éviteront soigneusement les capteurs ennemis, ${createSelect('T2-P1-2', '[Procédé : Exemple]', [
+                {t: "par exemple les radars thermiques à longue portée", f: "CORRECT"}, 
+                {t: "pour ne pas être vus par les gardes", f: "C'est un but."}, 
+                {t: "comme des fantômes invisibles", f: "C'est une comparaison."}
+            ])}, afin de s'arrimer silencieusement à la coque.</li>
+            
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, les commandos porteront des combinaisons Caméléon, ${createSelect('T2-P1-3', '[Procédé : Définition]', [
+                {t: "un équipement optique qui imite l'environnement", f: "CORRECT"}, 
+                {t: "qui sont très chères à produire", f: "C'est un commentaire."}, 
+                {t: "aussi légères qu'une plume d'oiseau", f: "C'est une comparaison."}
+            ])}. Leur paquetage tactique inclut tout le matériel nécessaire à la mission : ${createSelect('T2-P1-4', '[Procédé : Énumération]', [
+                {t: "armes silencieuses, explosifs plastiques et outils de piratage", f: "CORRECT"}, 
+                {t: "beaucoup d'outils technologiques", f: "Trop vague."}, 
+                {t: "leur kit de survie standard", f: "Singulier."}
+            ])}.</li>
+        </ul>
+
+
+        <!-- ASPECT 2 -->
+        <p class="section-title">Aspect 2 : Le Sabotage Critique</p>
+
+
+        <p><input type="text" class="input-manual" data-role="org" data-pos="2" placeholder="[Org. Asp 2]">, la destruction des systèmes clés du vaisseau sera effectuée de l'intérieur.</p>
+
+
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, la cible principale est le noyau énergétique. Ce réacteur instable brille au centre de la salle des machines ${createSelect('T2-P2-1', '[Procédé : Comparaison]', [
+                {t: "comme une étoile captive prête à exploser", f: "CORRECT"}, 
+                {t: "très fort et très chaudement", f: "Adverbes."}, 
+                {t: "au centre du vaisseau amiral", f: "Complément de lieu."}
+            ])}. Il alimente plusieurs secteurs vitaux : ${createSelect('T2-P2-2', '[Procédé : Énumération]', [
+                {t: "la propulsion, l'armement et le support vie", f: "CORRECT"}, 
+                {t: "tout le vaisseau spatial", f: "Trop général."}, 
+                {t: "les moteurs principaux", f: "Exemple unique."}
+            ])}, rendant sa destruction prioritaire.</li>
+
+
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, un virus informatique militaire sera injecté dans le réseau. Le virus, ${createSelect('T2-P2-3', '[Procédé : Définition]', [
+                {t: "un programme destructeur autonome et rapide", f: "CORRECT"}, 
+                {t: "qui détruit toutes les données", f: "Relative."}, 
+                {t: "tel un poison dans les veines", f: "Comparaison."}
+            ])}, paralysera les défenses internes. Il ciblera des systèmes précis, ${createSelect('T2-P2-4', '[Procédé : Exemple]', [
+                {t: "tels que le verrouillage des portes blindées", f: "CORRECT"}, 
+                {t: "et fera tout exploser à distance", f: "Action future."}, 
+                {t: "comme une bombe à retardement", f: "Comparaison."}
+            ])}, pour semer le chaos.</li>
+        </ul>
+
+
+        <!-- ASPECT 3 -->
+        <p class="section-title">Aspect 3 : L'Extraction d'Urgence</p>
+
+
+        <p><input type="text" class="input-manual" data-role="org" data-pos="3" placeholder="[Org. Asp 3]">, le retrait des troupes devra être exécuté rapidement avant la détonation.</p>
+
+
+        <ul style="list-style:none; padding-left:15px; border-left: 2px solid var(--neon-primary);">
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="1" placeholder="[Marq. 1]">, le signal de repli immédiat sera donné à toutes les unités. Les soldats courront vers les sas d'évacuation ${createSelect('T2-P3-1', '[Procédé : Comparaison]', [
+                {t: "aussi vite que l'éclair", f: "CORRECT"}, 
+                {t: "pour ne pas mourir dans l'explosion", f: "But."}, 
+                {t: "en silence absolu", f: "Manière."}
+            ])}. Ils emporteront des preuves stratégiques, ${createSelect('T2-P3-2', '[Procédé : Exemple]', [
+                {t: "comme les plans secrets de l'ennemi", f: "CORRECT"}, 
+                {t: "qui sont secrètes et cryptées", f: "Relative."}, 
+                {t: "très importantes pour la suite", f: "Adjectif."}
+            ])}, avant de quitter le navire.</li>
+
+
+            <li><input type="text" class="input-manual" data-role="mark" data-pos="2" placeholder="[Marq. 2]">, les navettes décolleront sous le feu ennemi. Elles devront traverser un champ de débris spatiaux : ${createSelect('T2-P3-3', '[Procédé : Énumération]', [
+                {t: "coques brisées, astéroïdes et épaves", f: "CORRECT"}, 
+                {t: "le champ de bataille encombré", f: "Singulier."}, 
+                {t: "tels que des rochers flottants", f: "Exemple."}
+            ])}. Le retour vers la base sera une manœuvre délicate, ${createSelect('T2-P3-4', '[Procédé : Définition]', [
+                {t: "une opération de pilotage extrême et risquée", f: "CORRECT"}, 
+                {t: "qui est particulièrement difficile", f: "Relative."}, 
+                {t: "comme un ballet mortel", f: "Comparaison."}
+            ])}, mais nécessaire à la survie de l'escouade.</li>
+        </ul>
+
+
+        <hr style="border:0; border-top:1px dashed #550000; margin: 20px 0;">
+        <p><em>Conclusion</em></p>
+        <p>Pour conclure, l'Opération Vengeance se distingue par son audace, sa complexité tactique et ses risques élevés pour l'équipe Ghost. Il est à espérer que ce coup d'éclat décisif mettra fin à la guerre et sauvera le système d'Aegis.</p>
+    `;
+
+
+    // --- ÉTAT GLOBAL ---
+    let state = {
+        slideIndex: 0,
+        score: 0,
+        maxScore: 0,
+        totalSlides: 4 // Intro, Text 1, Text 2, Final
+    };
+
+
+    // --- MOTEUR ---
+
+
+    function renderApp() {
+        // Score Max = (Inputs Orgs + Inputs Mark + Selects) * 2 textes
+        // Text 1: 3 Orgs + 6 Marks + 8 Selects = 17 items * 2 pts = 34
+        // Text 2: 3 Orgs + 6 Marks + 8 Selects = 17 items * 2 pts = 34
+        // Total = 68
+        state.maxScore = 68;
+
+
+        const app = document.getElementById('app');
+        let html = '';
+        let s = 0;
+
+
+        // 1. INTRO
+        html += `
+        <div class="slide active" id="slide-${s}">
+            <div class="card" style="text-align:center; padding-top:50px;">
+                <i class="fas fa-radiation-alt" style="font-size:5rem; color:var(--neon-primary); margin-bottom:20px; animation: glitch 2s infinite;"></i>
+                <h1>ALERTE GÉNÉRALE</h1>
+                <p style="font-size:1.3rem; margin-bottom:30px;">
+                    NIVEAU COMMANDANT REQUIS.<br>
+                    L'ennemi est aux portes. Les rapports de guerre doivent être rédigés avec une précision absolue.<br>
+                    <strong>Mission :</strong> Structurer les textes (Orgs/Marqueurs manuels) et identifier les procédés tactiques (Menus).
+                </p>
+                <div style="background:rgba(255, 0, 0, 0.1); padding:20px; border:1px solid var(--neon-primary); display:inline-block; text-align:left;">
+                    <strong>Paramètres de Mission :</strong>
+                    <ul style="margin:10px 0 0 20px;">
+                        <li>Saisie manuelle des connecteurs (Attention à l'orthographe).</li>
+                        <li>Respect strict des familles (1 pour Org, 1 pour Marqueurs).</li>
+                        <li>Densité élevée : 2 procédés par sous-aspect.</li>
+                        <li>Utilisation exclusive de la 3e personne.</li>
+                    </ul>
+                </div>
+                <br>
+                <div class="center-btn">
+                    <button class="btn" onclick="nextSlide()">Ouvrir le Canal Sécurisé <i class="fas fa-lock-open"></i></button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 2. TEXTE 1
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Rapport Défensif</h2>
+                    <span class="badge">Cible : Citadelle</span>
+                </div>
+                <div class="text-analysis-box" id="container-t1">
+                    ${text1}
+                </div>
+                <div class="feedback-area" id="fb-${s}"></div>
+                <div class="center-btn">
+                    <button class="btn" onclick="validateSlide(${s}, 'container-t1')">Envoyer le Rapport</button>
+                    <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Suivant</button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 3. TEXTE 2
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Rapport Offensif</h2>
+                    <span class="badge">Cible : Vaisseau-Mère</span>
+                </div>
+                <div class="text-analysis-box" id="container-t2">
+                    ${text2}
+                </div>
+                <div class="feedback-area" id="fb-${s}"></div>
+                <div class="center-btn">
+                    <button class="btn" onclick="validateSlide(${s}, 'container-t2')">Lancer l'Opération</button>
+                    <button class="btn hidden" id="next-${s}" onclick="nextSlide()">Terminer</button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 4. FINAL
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="text-align:center;">
+                <div id="final-icon"></div>
+                <h1 id="final-title">Débriefing</h1>
+                <div style="font-size:3rem; margin:20px 0; font-family: var(--font-title);">
+                    <span id="final-score-val">0</span> / ${state.maxScore}
+                    <div id="final-percent" style="font-size:1.5rem; color:#aaa;">0%</div>
+                </div>
+                <p id="final-msg" style="font-size:1.2rem;"></p>
+                <br>
+                <button class="btn" onclick="location.reload()">Nouvelle Simulation</button>
+            </div>
+        </div>`;
+
+
+        app.innerHTML = html;
+        document.getElementById('slide-indicator').innerText = `1 / ${s + 1}`;
+    }
+
+
+    // --- LOGIQUE DE VALIDATION ---
+
+
+    function findFamily(val) {
+        val = val.toLowerCase().trim().replace(',', ''); // Nettoyage basique
+        for (const [famName, words] of Object.entries(families)) {
+            // Check si le mot est contenu dans une des entrées de la famille (ex: "Premièrement" match "Premièrement")
+            // On utilise un check lâche pour les majuscules/accents si besoin, mais ici on assume une saisie correcte ou proche
+            // Pour être robuste : on compare le début du mot
+            if (words.some(w => w.toLowerCase().startsWith(val.substring(0, 4)))) return famName;
+        }
+        return null;
+    }
+
+
+    function validateSlide(slideIndex, containerId) {
+        const container = document.getElementById(containerId);
+        const manualInputs = container.querySelectorAll('.input-manual');
+        const selects = container.querySelectorAll('.select-proc');
+        const feedback = document.getElementById(`fb-${slideIndex}`);
+        const nextBtn = document.getElementById(`next-${slideIndex}`);
+
+
+        let errors = 0;
+        let logs = [];
+
+
+        // 1. Validation Selects (Procédés)
+        selects.forEach(sel => {
+            if (sel.value === "CORRECT") {
+                sel.classList.remove('invalid');
+                sel.classList.add('valid');
+            } else {
+                sel.classList.add('invalid');
+                errors++;
+            }
+        });
+
+
+        // 2. Validation Manuelle (Structure)
+        let orgFamily = null;
+        let markFamily = null;
+        let orgsValid = true;
+        let marksValid = true;
+
+
+        // Phase A : Détecter les familles utilisées
+        manualInputs.forEach(inp => {
+            const role = inp.dataset.role;
+            const val = inp.value.trim();
+            const fam = findFamily(val);
+
+
+            // Reset
+            inp.classList.remove('valid', 'invalid');
+
+
+            if (!val) {
+                inp.classList.add('invalid');
+                errors++;
+                return; // Champ vide
+            }
+
+
+            if (!fam) {
+                inp.classList.add('invalid');
+                errors++;
+                // Ne pas loguer ici pour éviter le spam, juste visuel
+                return;
+            }
+
+
+            // Vérification de l'Ordre (Pos)
+            // Simplification : On vérifie juste si le mot correspond à sa position dans SA famille
+            // Pos 1 = index 0, Pos 2 = index 1, etc.
+            const expectedIndex = parseInt(inp.dataset.pos) - 1;
+            const wordInFamIndex = families[fam].findIndex(w => w.toLowerCase().startsWith(val.toLowerCase().substring(0, 4)));
+            
+            // Note : Famille 3 et 4 ont des variantes, c'est plus souple. 
+            // Pour ce niveau expert, on demande une correspondance stricte d'ordre.
+            
+            if (wordInFamIndex !== expectedIndex && wordInFamIndex !== -1) {
+                 inp.classList.add('invalid');
+                 errors++;
+                 logs.push(`Ordre incorrect pour "${val}"`);
+                 return;
+            }
+
+
+            if (role === 'org') {
+                if (orgFamily && orgFamily !== fam) orgsValid = false;
+                orgFamily = fam;
+            } else {
+                if (markFamily && markFamily !== fam) marksValid = false;
+                markFamily = fam;
+            }
+        });
+
+
+        // Phase B : Valider la cohérence
+        if (!orgsValid) {
+            logs.push("Incohérence : Vous changez de famille pour les Organisateurs.");
+            errors++;
+        }
+        if (!marksValid) {
+            logs.push("Incohérence : Vous changez de famille pour les Marqueurs.");
+            errors++;
+        }
+        if (orgFamily && markFamily && orgFamily === markFamily) {
+            logs.push("ERREUR CRITIQUE : Il faut deux familles différentes !");
+            errors += 5; // Grosse pénalité
+        }
+
+
+        // Appliquer style final aux inputs manuels si pas d'erreur spécifique dessus
+        manualInputs.forEach(inp => {
+            if (!inp.classList.contains('invalid') && inp.value) {
+                inp.classList.add('valid');
+            }
+        });
+
+
+        // Résultat
+        if (errors === 0) {
+            feedback.innerHTML = `<span style="color:var(--accent-success)">Rapport Validé. Transmission en cours...</span>`;
+            nextBtn.classList.remove('hidden');
+            // Calcul score partiel : 2 points par champ correct
+            const totalFields = manualInputs.length + selects.length;
+            updateScore(totalFields * 2);
+        } else {
+            let logHtml = logs.length > 0 ? `<div class="error-log">${logs[0]}</div>` : `<div class="error-log">Vérifiez l'orthographe et la logique des familles.</div>`;
+            feedback.innerHTML = `<span style="color:var(--neon-primary)">${errors} erreur(s) détectée(s). ${logHtml}</span>`;
+        }
+    }
+
+
+    function updateScore(pts) {
+        // On n'ajoute les points qu'une fois par slide validée
+        // Système simplifié : recalcul global à la fin ou ajout incrémental
+        // Ici on ajoute simplement, attention aux doubles clics (géré par btn hidden)
+        state.score += pts;
+        document.getElementById('score').innerText = state.score;
+    }
+
+
+    // --- NAVIGATION ---
+
+
+    function nextSlide() {
+        const current = document.querySelector('.slide.active');
+        current.classList.remove('active');
+        state.slideIndex++;
+        const next = document.getElementById(`slide-${state.slideIndex}`);
+        
+        if(next) {
+            next.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+            
+            if(state.slideIndex === state.totalSlides - 1) showFinal();
+        }
+    }
+
+
+    function prevSlide() {
+        if (state.slideIndex > 0) {
+            const current = document.querySelector('.slide.active');
+            current.classList.remove('active');
+            state.slideIndex--;
+            const prev = document.getElementById(`slide-${state.slideIndex}`);
+            prev.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+        }
+    }
+
+
+    function forceNext() {
+        nextSlide();
+    }
+
+
+    function showFinal() {
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        document.getElementById('final-score-val').innerText = state.score;
+        document.getElementById('final-max-score').innerText = state.maxScore;
+        document.getElementById('final-percent').innerText = percent + "%";
+        
+        const title = document.getElementById('final-title');
+        const icon = document.getElementById('final-icon');
+        const msg = document.getElementById('final-message'); // Corrigé ID
+
+
+        if (percent >= 80) {
+            icon.innerHTML = '<i class="fas fa-medal fa-4x" style="color:var(--accent-success)"></i>';
+            title.innerText = "MISSION ACCOMPLIE";
+            title.style.color = "var(--accent-success)";
+            // Use querySelector because ID might be dynamic or I missed adding it in HTML string above
+            document.querySelector('#final-msg').innerHTML = "Excellent travail, Commandant. La planète est sauvée.<br><strong>Grade Confirmé.</strong>";
+        } else {
+            icon.innerHTML = '<i class="fas fa-skull-crossbones fa-4x" style="color:var(--neon-primary)"></i>';
+            title.innerText = "ÉCHEC CRITIQUE";
+            title.style.color = "var(--neon-primary)";
+            document.querySelector('#final-msg').innerHTML = "Défenses brisées. Trop d'erreurs structurelles.<br><strong>Veuillez recommencer la formation.</strong>";
+        }
+    }
+
+
+    // Init
+    renderApp();
+
+
+</script>
+</body>
+</html>

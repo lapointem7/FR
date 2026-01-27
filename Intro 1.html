@@ -1,0 +1,1028 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier : L'Introduction - Niveau Débutant</title>
+    <!-- Google Fonts: Playfair Display (Élégance) & Poppins (Modernité) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Palette Aéropostale / Globe-trotter */
+            --bg-body: #f4f1ea; /* Couleur Papier Ancien */
+            --bg-card: #ffffff;
+            
+            --primary: #2c3e50; /* Bleu Nuit */
+            --secondary: #e67e22; /* Orange Cuir/Tampon */
+            --accent: #3498db; /* Bleu Ciel */
+            --success: #27ae60;
+            --error: #c0392b;
+            
+            --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+            
+            --font-title: 'Playfair Display', serif;
+            --font-text: 'Poppins', sans-serif;
+        }
+
+
+        * { box-sizing: border-box; }
+
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--bg-body);
+            background-image: radial-gradient(#dcd9d2 1.5px, transparent 1.5px), radial-gradient(#dcd9d2 1.5px, var(--bg-body) 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            color: var(--primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+
+        h1, h2, h3 { font-family: var(--font-title); margin-top: 0; color: var(--primary); }
+
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+
+        .logo { 
+            font-size: 1.5rem; font-weight: 700; 
+            display:flex; align-items:center; gap:12px; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:hover { background: var(--secondary); transform: scale(1.1); }
+
+
+        .badge { 
+            background: rgba(0,0,0,0.3); 
+            padding: 6px 18px; 
+            border-radius: 30px;
+            font-size: 0.9rem; 
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+
+        /* CONTAINER */
+        main {
+            flex: 1;
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 0 20px 60px 20px;
+            width: 100%;
+        }
+
+
+        /* SLIDES */
+        .slide { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slide.active { display: block; opacity: 1; transform: translateY(0); }
+
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px;
+            background: repeating-linear-gradient(45deg, #c0392b, #c0392b 20px, #ecf0f1 20px, #ecf0f1 40px, #2980b9 40px, #2980b9 60px, #ecf0f1 60px, #ecf0f1 80px);
+        }
+
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 15px;
+            border-bottom: 2px dashed #bdc3c7;
+        }
+        .card-header h2 { font-size: 2rem; margin: 0; display: flex; align-items: center; gap: 15px; }
+        
+        .tag-pill {
+            background: var(--primary); color: white;
+            padding: 5px 15px; border-radius: 4px;
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+        }
+
+
+        /* --- MODULE 1: ENTONNOIR --- */
+        .funnel-visual {
+            display: flex; flex-direction: column; align-items: center; gap: 0; margin: 20px 0;
+        }
+        .funnel-step {
+            padding: 15px;
+            border: 2px dashed #bdc3c7; background: #f8f9fa;
+            text-align: center; color: #95a5a6; font-style: italic;
+            transition: 0.3s;
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .f-step-1 { width: 100%; border-radius: 8px 8px 0 0; border-bottom: none; height: 60px; }
+        .f-step-2 { width: 80%; border-bottom: none; height: 60px; border-left: 2px dashed #bdc3c7; border-right: 2px dashed #bdc3c7; }
+        .f-step-3 { width: 60%; border-radius: 0 0 8px 8px; height: 60px; }
+
+
+        .funnel-step.filled {
+            background: #e1f5fe; border-color: var(--accent); border-style: solid;
+            color: var(--primary); font-style: normal; font-weight: 600;
+            box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.1);
+            justify-content: space-between; /* Pour placer le X à droite */
+            padding-right: 40px;
+        }
+
+
+        /* Bouton X pour retirer */
+        .remove-btn {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: var(--error); color: white; border: none;
+            width: 24px; height: 24px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; transition: 0.2s;
+        }
+        .remove-btn:hover { background: #a93226; transform: translateY(-50%) scale(1.1); }
+
+
+        .bank-container {
+            display: flex; flex-direction: column; gap: 12px; margin-top: 30px;
+            padding: 20px; background: #f1f2f6; border-radius: 10px;
+        }
+        .draggable {
+            background: white; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer;
+            border-left: 5px solid var(--secondary); transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .draggable:hover { transform: translateX(8px); border-left-color: var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .draggable.used { opacity: 0.4; pointer-events: none; background: #e0e0e0; border-color: #bdc3c7; transform: none; display:none; /* Cacher si utilisé */ }
+
+
+        /* --- MODULE 2: RADAR --- */
+        .radar-text {
+            font-size: 1.3rem; line-height: 1.8;
+            background: #fff; padding: 30px; border-radius: 8px;
+            border: 1px solid #eee; margin-bottom: 25px;
+            position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+        .radar-text::before {
+            content: '“'; position: absolute; top: 10px; left: 10px; font-size: 4rem; color: #ecf0f1; font-family: serif; line-height: 1;
+        }
+        
+        .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .strat-card {
+            background: white; border: 2px solid #ecf0f1; padding: 20px;
+            text-align: center; border-radius: 10px; cursor: pointer;
+            transition: all 0.3s; font-weight: 600; color: #7f8c8d;
+        }
+        .strat-card:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
+        .strat-card.correct { background: var(--success); border-color: var(--success); color: white; }
+        .strat-card.wrong { background: var(--error); border-color: var(--error); color: white; opacity: 0.6; }
+
+
+        /* --- MODULE 3: DOUANE --- */
+        .passport-wrapper {
+            display: flex; gap: 30px; align-items: stretch;
+        }
+        .passport-doc {
+            flex: 2; background: #fffcf5; padding: 30px;
+            border: 1px solid #dcd9d2; border-radius: 4px;
+            font-family: 'Courier New', monospace; line-height: 1.6;
+            position: relative; box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+        }
+        .passport-doc::after {
+            content: 'VISA APPLICATION'; position: absolute; bottom: 10px; right: 10px;
+            font-size: 2rem; color: rgba(0,0,0,0.03); font-weight: bold; transform: rotate(-5deg);
+        }
+        
+        .stamp-actions {
+            flex: 1; display: flex; flex-direction: column; gap: 15px; justify-content: center;
+        }
+        .stamp-btn {
+            padding: 18px; border: 3px solid; border-radius: 8px;
+            background: transparent; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 2px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .stamp-ok { color: var(--success); border-color: var(--success); }
+        .stamp-ok:hover { background: var(--success); color: white; }
+        .stamp-no { color: var(--error); border-color: var(--error); }
+        .stamp-no:hover { background: var(--error); color: white; }
+
+
+        /* --- MODULE 4: BUILDER --- */
+        .plan-step {
+            background: #f8f9fa; padding: 25px; border-radius: 8px;
+            margin-bottom: 20px; border-left: 4px solid #bdc3c7;
+            transition: 0.3s;
+        }
+        .plan-step:hover { border-left-color: var(--accent); background: #f0f8ff; }
+        
+        .step-title {
+            font-size: 0.9rem; text-transform: uppercase; color: #95a5a6; font-weight: 700; margin-bottom: 10px; display: block;
+        }
+        
+        .modern-select, .modern-input {
+            width: 100%; padding: 12px 15px; border: 1px solid #dcdde1; border-radius: 6px;
+            font-family: var(--font-text); font-size: 1rem; color: var(--primary);
+            background: white; transition: 0.3s;
+        }
+        .modern-input:focus, .modern-select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        
+        .inline-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .inline-input { min-width: 150px; flex: 1; }
+
+
+        /* TREE VISUAL FOR BUILDER */
+        .tree-container {
+            display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;
+            padding: 20px; background: white; border-radius: 8px; border: 1px dashed #ccc;
+        }
+        .tree-root { 
+            background: var(--primary); color: white; padding: 10px 20px; 
+            border-radius: 4px; font-weight: bold; margin-bottom: 20px; position: relative;
+        }
+        .tree-root::after {
+            content: ''; position: absolute; bottom: -20px; left: 50%; width: 2px; height: 20px; background: #ccc;
+        }
+        .tree-branches {
+            display: flex; gap: 20px; width: 100%; justify-content: center; position: relative;
+        }
+        .tree-branches::before {
+            content: ''; position: absolute; top: -20px; left: 20%; right: 20%; height: 2px; background: #ccc;
+        }
+        .tree-node {
+            background: #eaf6ff; padding: 10px; border: 1px solid #b3d9f3; border-radius: 4px;
+            font-size: 0.9rem; position: relative; flex: 1; text-align: center; max-width: 150px;
+        }
+        .tree-node::before {
+            content: ''; position: absolute; top: -20px; left: 50%; width: 2px; height: 20px; background: #ccc;
+        }
+
+
+        /* TIP BOX */
+        .tip-box {
+            background: #fff9c4; border-left: 5px solid #fbc02d; color: #5d4037;
+            padding: 15px; margin-bottom: 20px; border-radius: 4px;
+            font-size: 0.95rem; line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .tip-title { font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; color: #f57f17; }
+
+
+        /* FEEDBACK GENERAL */
+        .msg-box {
+            margin-top: 25px; padding: 20px; border-radius: 8px; text-align: center;
+            font-weight: 600; display: none; animation: slideUp 0.3s ease-out;
+        }
+        .msg-success { background: #d1f2eb; color: #0e6251; border: 1px solid #a2d9ce; }
+        .msg-error { background: #fadbd8; color: #78281f; border: 1px solid #e6b0aa; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+
+        /* BOUTONS */
+        .cta-btn {
+            background: linear-gradient(to right, var(--secondary), #d35400);
+            color: white; border: none; padding: 15px 40px; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+            transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;
+        }
+        .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230, 126, 34, 0.6); }
+        .center-wrap { text-align: center; margin-top: 40px; }
+        .hidden { display: none !important; }
+
+
+        /* FINAL STAMP */
+        .final-stamp {
+            width: 180px; height: 180px; border-radius: 50%;
+            border: 6px double; display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+            transform: rotate(-15deg); margin: 30px auto;
+            animation: stampBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .stamp-pass-final { color: var(--success); border-color: var(--success); background: rgba(39, 174, 96, 0.05); }
+        .stamp-fail-final { color: var(--error); border-color: var(--error); background: rgba(192, 57, 43, 0.05); }
+
+
+        @keyframes stampBounce { 0% { transform: scale(2) rotate(0deg); opacity: 0; } 100% { transform: scale(1) rotate(-15deg); opacity: 1; } }
+
+
+        @media (max-width: 768px) {
+            .passport-wrapper { flex-direction: column; }
+            .header-controls span { display: none; }
+            .card { padding: 25px; }
+            .inline-group { flex-direction: column; align-items: stretch; }
+            .tree-branches { flex-direction: column; align-items: center; gap: 10px; }
+            .tree-branches::before { display: none; }
+            .tree-node::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <i class="fas fa-paper-plane"></i> <span>Expédition Rédaction</span>
+    </div>
+    <div class="header-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent"><i class="fas fa-arrow-left"></i></button>
+        <button class="nav-btn" onclick="forceNext()" title="Suivant (Mode Prof)"><i class="fas fa-arrow-right"></i></button>
+        <span class="badge" id="slide-indicator">1 / 12</span>
+        <span class="badge"><i class="fas fa-trophy"></i> <span id="score">0</span>%</span>
+    </div>
+</header>
+
+
+<main id="app">
+    <!-- Contenu dynamique injecté ici -->
+</main>
+
+
+<script>
+    // --- DONNÉES ---
+
+
+    // MODULE 1: Entonnoir (Voyage/Destinations)
+    const funnelData = [
+        {
+            title: "Destination : L'Islande",
+            items: [
+                { id: 1, text: "La Terre regorge de paysages volcaniques spectaculaires, façonnés par les forces de la nature.", type: "General" },
+                { id: 2, text: "Dans l'Atlantique Nord, l'activité géothermique est particulièrement intense et crée des contrastes saisissants.", type: "Context" },
+                { id: 3, text: "Plus précisément, certaines terres dévoilent des lieux où geysers et glaciers cohabitent de manière impressionnante.", type: "Specific" }
+            ],
+            correctOrder: [1, 2, 3],
+            placeholders: ["1. Idée Générale (Planète/Nature)", "2. Lien Logique (Région)", "3. Vers le Sujet (Contexte précis)"]
+        },
+        {
+            title: "Destination : Venise",
+            items: [
+                { id: 1, text: "Depuis des siècles, l'Europe attire les touristes du monde entier grâce à son architecture historique.", type: "General" },
+                { id: 2, text: "L'Italie, en particulier, se distingue par l'adaptation de ses villes à leur environnement naturel.", type: "Context" },
+                { id: 3, text: "Des cités uniques y sont même construites directement sur l'eau, remplaçant les rues par des canaux.", type: "Specific" }
+            ],
+            correctOrder: [1, 2, 3],
+            placeholders: ["1. Idée Générale (Continent)", "2. Lien Logique (Pays)", "3. Vers le Sujet (Contexte précis)"]
+        }
+    ];
+
+
+    // MODULE 2: STRATÉGIES (Voyage/Climat)
+    const strategyData = [
+        {
+            text: "« Au 19e siècle, les grands explorateurs bravaient les océans inconnus avec des cartes imprécises et des navires en bois, guidés par la seule étoile polaire. »",
+            type: "Historique"
+        },
+        {
+            text: "« La curiosité est un trait fondamental de la nature humaine qui pousse les individus à quitter leur confort pour découvrir l'inconnu. »",
+            type: "Vision Élargie"
+        },
+        {
+            text: "« Actuellement, les préoccupations environnementales transforment radicalement la façon dont les vacanciers choisissent leurs destinations estivales. »",
+            type: "Actualité"
+        }
+    ];
+
+
+    // MODULE 3: Douane
+    const customsData = [
+        {
+            subject: "La Tour Eiffel",
+            text: "Je vais vous raconter ma visite de la Tour Eiffel. C'est un monument très haut à Paris que j'ai beaucoup aimé visiter avec ma famille.",
+            status: "reject",
+            reason: "Refusé ! L'auteur utilise 'Je', 'ma' et nomme le sujet dès le début. Le Sujet Amené doit rester impersonnel et progressif."
+        },
+        {
+            subject: "L'Amazonie",
+            text: "La Terre abrite des écosystèmes fragiles. En Amérique du Sud, une forêt immense produit une grande partie de l'oxygène mondial et abrite une biodiversité unique.",
+            status: "approve",
+            reason: "Approuvé ! L'entonnoir est respecté (Terre -> Amérique du Sud -> Forêt) et le sujet (L'Amazonie) n'est pas encore nommé."
+        },
+        {
+            subject: "L'Égypte",
+            text: "Il fait chaud, il y a des pyramides et des chameaux. Quel est ce pays ? C'est l'Égypte.",
+            status: "reject",
+            reason: "Refusé ! Le Sujet Amené ne doit jamais être une devinette ou une énigme."
+        }
+    ];
+
+
+    // MODULE 4: BUILDER (3 Scénarios)
+    const builderData = [
+        {
+            id: 1,
+            title: "Le Désert du Sahara",
+            tree: ["Climat", "Faune", "Flore"],
+            saOptions: [
+                { val: "bad1", text: "Je vais vous parler des déserts car il fait chaud." },
+                { val: "good", text: "Les zones arides occupent une grande place sur Terre." }, // Court et Bon
+                { val: "bad2", text: "Le Sahara est un grand désert en Afrique." }
+            ],
+            keywords: { sp: ["désert", "sahara"], sd: ["climat", "faune", "flore"] }
+        },
+        {
+            id: 2,
+            title: "Le Mont Everest",
+            tree: ["Altitude", "Dangers", "Ascension"],
+            saOptions: [
+                { val: "good", text: "Les sommets les plus hauts du monde fascinent les aventuriers." }, // Court et Bon
+                { val: "bad1", text: "L'Everest est une montagne très haute." },
+                { val: "bad2", text: "J'aime faire de l'escalade en montagne." }
+            ],
+            keywords: { sp: ["mont", "everest"], sd: ["altitude", "danger", "ascension"] }
+        },
+        {
+            id: 3,
+            title: "La Grande Barrière de Corail",
+            tree: ["Biodiversité", "Menaces", "Protection"],
+            saOptions: [
+                { val: "bad1", text: "Il y a beaucoup de poissons dans l'eau salée." },
+                { val: "bad2", text: "La Barrière de Corail est en Australie." },
+                { val: "good", text: "Les océans abritent des écosystèmes d'une richesse inestimable." } // Court et Bon
+            ],
+            keywords: { sp: ["barrière", "corail"], sd: ["biodiversité", "menace", "protection"] }
+        }
+    ];
+
+
+    // --- ÉTAT GLOBAL ---
+    let state = {
+        slideIndex: 0,
+        score: 0,
+        maxScore: 0,
+        totalSlides: 1 + funnelData.length + strategyData.length + customsData.length + builderData.length + 1,
+        answers: {}
+    };
+
+
+    // --- MOTEUR ---
+
+
+    function renderApp() {
+        state.maxScore = 33; // Funnel(6) + Strat(6) + Customs(6) + Builder(15)
+
+
+        const app = document.getElementById('app');
+        let html = '';
+        let s = 0;
+
+
+        // 1. INTRO
+        html += `
+        <div class="slide active" id="slide-${s}">
+            <div class="card" style="text-align:center; padding: 60px;">
+                <div style="width:100px; height:100px; background:var(--secondary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 30px auto; color:white; font-size:3rem; box-shadow:0 10px 20px rgba(230, 126, 34, 0.3);">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h1 style="font-size:2.5rem; margin-bottom:15px;">Passeport pour l'Introduction</h1>
+                <p style="font-size:1.2rem; color:#7f8c8d; max-width:600px; margin:0 auto 40px auto;">
+                    Préparez-vous à rédiger le début parfait. Maîtrisez l'art de l'entonnoir, choisissez les bonnes stratégies et passez la douane textuelle.
+                </p>
+                
+                <div class="center-wrap">
+                    <button class="cta-btn" onclick="nextSlide()">Composter mon billet <i class="fas fa-ticket-alt"></i></button>
+                </div>
+            </div>
+        </div>`;
+        s++;
+
+
+        // 2. MODULE 1: ENTONNOIR
+        funnelData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-filter" style="color:var(--secondary);"></i> L'Entonnoir</h2>
+                        <span class="tag-pill">Logique</span>
+                    </div>
+                    <p style="font-size:1.1rem; margin-bottom:20px;">Reconstituez le chemin logique pour <strong>${ex.title}</strong>. Cliquez sur les phrases dans l'ordre : du <strong>Général</strong> au <strong>Particulier</strong>.</p>
+                    
+                    <div class="funnel-visual" id="funnel-slots-${s}">
+                        ${ex.placeholders.map((ph, idx) => `
+                            <div class="funnel-step f-step-${idx+1}" id="slot-${s}-${idx}" data-idx="${idx}">
+                                <span class="placeholder-text">${ph}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div class="bank-container" id="bank-${s}">
+                        ${ex.items.sort(() => Math.random() - 0.5).map(item => `
+                            <div class="draggable" id="item-${s}-${item.id}" onclick="selectFunnelItem(${s}, ${item.id}, this)">
+                                ${item.text}
+                            </div>
+                        `).join('')}
+                    </div>
+
+
+                    <div class="center-wrap">
+                        <div id="fb-${s}" class="msg-box"></div>
+                        <button class="cta-btn hidden" id="next-${s}" onclick="nextSlide()">Continuer <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            state.answers[`funnel-${s}`] = { 
+                expected: ex.correctOrder, 
+                current: [null, null, null], 
+                filledCount: 0 
+            };
+            s++;
+        });
+
+
+        // 3. MODULE 2: STRATÉGIES
+        strategyData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-compass" style="color:var(--secondary);"></i> Le Radar</h2>
+                        <span class="tag-pill">Amorce</span>
+                    </div>
+                    <p style="margin-bottom:20px;">Identifiez la stratégie d'amorce utilisée dans ce texte.</p>
+                    
+                    <div class="radar-text">
+                        ${ex.text}
+                    </div>
+
+
+                    <div class="strategy-grid">
+                        <div class="strat-card" onclick="checkStrategy(this, '${ex.type}', 'Historique', ${s})"><i class="fas fa-hourglass-half"></i> Historique</div>
+                        <div class="strat-card" onclick="checkStrategy(this, '${ex.type}', 'Actualité', ${s})"><i class="fas fa-calendar-day"></i> Actualité</div>
+                        <div class="strat-card" onclick="checkStrategy(this, '${ex.type}', 'Vision Élargie', ${s})"><i class="fas fa-globe"></i> Vision Élargie</div>
+                    </div>
+
+
+                    <div class="center-wrap">
+                        <div id="fb-${s}" class="msg-box"></div>
+                        <button class="cta-btn hidden" id="next-${s}" onclick="nextSlide()">Suivant <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 4. MODULE 3: DOUANE
+        customsData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-shield" style="color:var(--secondary);"></i> La Douane</h2>
+                        <span class="tag-pill">Contrôle</span>
+                    </div>
+                    <p style="margin-bottom:20px;">
+                        Sujet du texte : <strong>${ex.subject}</strong><br>
+                        Inspectez ce Sujet Amené. Respecte-t-il les règles (Pas de 'Je', pas de devinette, entonnoir respecté, <strong>sujet non nommé</strong>) ?
+                    </p>
+                    
+                    <div class="passport-wrapper">
+                        <div class="passport-doc">
+                            ${ex.text}
+                        </div>
+                        <div class="stamp-actions">
+                            <button class="stamp-btn stamp-ok" onclick="checkCustoms('approve', '${ex.status}', '${ex.reason.replace(/'/g, "\\'")}', ${s})">
+                                <i class="fas fa-stamp"></i> APPROUVÉ
+                            </button>
+                            <button class="stamp-btn stamp-no" onclick="checkCustoms('reject', '${ex.status}', '${ex.reason.replace(/'/g, "\\'")}', ${s})">
+                                <i class="fas fa-ban"></i> REFUSÉ
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div id="stamp-fb-${s}" class="msg-box"></div>
+
+
+                    <div class="center-wrap">
+                        <button class="cta-btn hidden" id="next-${s}" onclick="nextSlide()">Dossier Suivant <i class="fas fa-folder-open"></i></button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 5. MODULE 4: BUILDER (Loop for 3 exercises)
+        builderData.forEach((ex, i) => {
+            html += `
+            <div class="slide" id="slide-${s}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-pencil-alt" style="color:var(--secondary);"></i> Plan de Vol</h2>
+                        <span class="tag-pill">Rédaction (${i+1}/3)</span>
+                    </div>
+                    <p>Construisez l'introduction complète pour un texte sur : <strong>${ex.title}</strong>.</p>
+                    
+                    <div class="builder-container">
+                        
+                        <!-- TREE VISUAL -->
+                        <div class="tree-container">
+                            <div class="tree-root"><i class="fas fa-search"></i> Sujet : ${ex.title}</div>
+                            <div class="tree-branches">
+                                <div class="tree-node">Aspect 1<br><strong>${ex.tree[0]}</strong></div>
+                                <div class="tree-node">Aspect 2<br><strong>${ex.tree[1]}</strong></div>
+                                <div class="tree-node">Aspect 3<br><strong>${ex.tree[2]}</strong></div>
+                            </div>
+                        </div>
+
+
+                        <!-- TIP BOX -->
+                        <div class="tip-box">
+                            <span class="tip-title"><i class="fas fa-lightbulb"></i> Astuce</span>
+                            Pour le Sujet Posé et Divisé, utilisez : <strong>Alors, Ainsi, Donc,</strong> (n'oubliez pas la virgule !)
+                        </div>
+
+
+                        <!-- SA -->
+                        <div class="plan-step">
+                            <span class="step-title">1. Sujet Amené (L'Amorce)</span>
+                            <select id="build-sa-${s}" class="modern-select">
+                                <option value="" disabled selected>Choisir une amorce valide...</option>
+                                ${ex.saOptions.map(opt => `<option value="${opt.val}">${opt.text}</option>`).join('')}
+                            </select>
+                        </div>
+
+
+                        <!-- SP -->
+                        <div class="plan-step">
+                            <span class="step-title">2. Sujet Posé (La Présentation)</span>
+                            <div class="inline-group">
+                                <input type="text" id="build-sp-rel-${s}" class="modern-input inline-input" placeholder="[Marqueur Relation]">
+                                <span>dans ce texte, il sera question du</span>
+                                <input type="text" id="build-sp-subj-${s}" class="modern-input inline-input" placeholder="[Sujet exact]">.
+                            </div>
+                        </div>
+
+
+                        <!-- SD -->
+                        <div class="plan-step">
+                            <span class="step-title">3. Sujet Divisé (Les Aspects)</span>
+                            <div class="inline-group">
+                                <span>Seront</span>
+                                <input type="text" id="build-sd-rel-${s}" class="modern-input inline-input" style="max-width:150px;" placeholder="[Marqueur]">
+                                <span>élaborés les aspects de</span>
+                                <input type="text" id="build-sd-1-${s}" class="modern-input inline-input" placeholder="[Aspect 1]">,
+                            </div>
+                            <div class="inline-group">
+                                <span>de</span>
+                                <input type="text" id="build-sd-2-${s}" class="modern-input inline-input" placeholder="[Aspect 2]">
+                                <span>et de</span>
+                                <input type="text" id="build-sd-3-${s}" class="modern-input inline-input" placeholder="[Aspect 3]">.
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="center-wrap">
+                        <div id="fb-${s}" class="msg-box"></div>
+                        <button class="cta-btn" id="check-build-${s}" onclick="validateBuilder(${s}, ${i})">Valider le Plan</button>
+                        <button class="cta-btn hidden" id="next-${s}" onclick="nextSlide()">Suivant</button>
+                    </div>
+                </div>
+            </div>`;
+            s++;
+        });
+
+
+        // 6. FINAL
+        html += `
+        <div class="slide" id="slide-${s}">
+            <div class="card" style="text-align:center;">
+                <div id="final-badge"></div>
+                <h1 id="final-title" style="font-size:2.5rem; margin-bottom:10px;"></h1>
+                <div style="font-size:4rem; margin:20px 0; font-family: var(--font-title); color:var(--primary);">
+                    <span id="final-score-val">0</span>%
+                </div>
+                <p id="final-msg" style="font-size:1.2rem; color:#7f8c8d;"></p>
+                <div class="center-wrap">
+                    <button class="cta-btn" onclick="location.reload()">Nouveau Voyage <i class="fas fa-redo"></i></button>
+                </div>
+            </div>
+        </div>`;
+
+
+        app.innerHTML = html;
+        document.getElementById('slide-indicator').innerText = `1 / ${s + 1}`;
+    }
+
+
+    // --- LOGIQUE METIER ---
+
+
+    // MODULE 1: FUNNEL MODIFIED (With remove logic)
+    function selectFunnelItem(slideId, itemId, element) {
+        const slideData = state.answers[`funnel-${slideId}`];
+        if (element.classList.contains('used') || slideData.filledCount >= 3) return;
+
+
+        // Find first empty slot
+        let slotIndex = -1;
+        for(let i=0; i<3; i++) {
+            if (slideData.current[i] === null) {
+                slotIndex = i;
+                break;
+            }
+        }
+        if (slotIndex === -1) return;
+
+
+        // Update Logic
+        slideData.current[slotIndex] = itemId;
+        slideData.filledCount++;
+
+
+        // Update Visuals (Add text and X button)
+        const slots = document.getElementById(`funnel-slots-${slideId}`).children;
+        slots[slotIndex].innerHTML = `
+            ${element.innerText}
+            <button class="remove-btn" onclick="removeFunnelItem(${slideId}, ${slotIndex}, ${itemId})"><i class="fas fa-times"></i></button>
+        `;
+        slots[slotIndex].classList.add('filled');
+        element.classList.add('used');
+
+
+        // Check if full to validate
+        if (slideData.filledCount === 3) checkFunnel(slideId);
+    }
+
+
+    function removeFunnelItem(slideId, slotIndex, itemId) {
+        const slideData = state.answers[`funnel-${slideId}`];
+        const fb = document.getElementById(`fb-${slideId}`);
+        const btn = document.getElementById(`next-${slideId}`);
+
+
+        // If already validated (success), prevent removal
+        if (fb.className.includes('msg-success')) return;
+
+
+        // Reset logic
+        slideData.current[slotIndex] = null;
+        slideData.filledCount--;
+
+
+        // Reset Visuals - Slot
+        const slots = document.getElementById(`funnel-slots-${slideId}`).children;
+        // Determine original placeholder text based on slotIndex
+        const placeholders = ["1. Idée Générale (Large)", "2. Lien Logique (Moyen)", "3. Vers le Sujet (Étroit)"];
+        slots[slotIndex].innerHTML = `<span class="placeholder-text">${placeholders[slotIndex]}</span>`;
+        slots[slotIndex].classList.remove('filled');
+
+
+        // Reset Visuals - Bank Item
+        const bankItem = document.getElementById(`item-${slideId}-${itemId}`);
+        if(bankItem) bankItem.classList.remove('used');
+
+
+        // Hide feedback if it was showing error
+        fb.style.display = 'none';
+        btn.classList.add('hidden');
+    }
+
+
+    function checkFunnel(slideId) {
+        const data = state.answers[`funnel-${slideId}`];
+        // data.current is [id, id, id]. Compare with expected array.
+        const isCorrect = JSON.stringify(data.current) === JSON.stringify(data.expected);
+        const fb = document.getElementById(`fb-${slideId}`);
+        const btn = document.getElementById(`next-${slideId}`);
+
+
+        fb.style.display = 'block';
+        if (isCorrect) {
+            fb.innerHTML = "Excellent ! L'entonnoir logique est respecté.";
+            fb.className = "msg-box msg-success";
+            addScore(3);
+            
+            // Disable remove buttons on success
+            const slots = document.getElementById(`funnel-slots-${slideId}`).children;
+            for(let slot of slots) {
+                const btn = slot.querySelector('.remove-btn');
+                if(btn) btn.style.display = 'none';
+            }
+            btn.classList.remove('hidden');
+        } else {
+            fb.innerHTML = "Ordre incorrect. Vérifiez la logique et utilisez les <strong>(X)</strong> pour corriger.";
+            fb.className = "msg-box msg-error";
+            // Don't show 'Continue' button yet
+        }
+    }
+
+
+    // [Rest of logic remains identical to previous version]
+    function checkStrategy(card, correctType, userType, slideId) {
+        if (card.parentElement.querySelector('.correct')) return;
+
+
+        const fb = document.getElementById(`fb-${slideId}`);
+        const nextBtn = document.getElementById(`next-${slideId}`);
+        const allCards = card.parentElement.querySelectorAll('.strat-card');
+
+
+        fb.style.display = 'block';
+
+
+        if (userType === correctType) {
+            card.classList.add('correct');
+            fb.innerHTML = "Bonne identification !";
+            fb.className = "msg-box msg-success";
+            addScore(2);
+        } else {
+            card.classList.add('wrong');
+            allCards.forEach(c => { if(c.innerText.includes(correctType)) c.classList.add('correct'); });
+            fb.innerHTML = `Erreur. C'était une amorce de type : ${correctType}.`;
+            fb.className = "msg-box msg-error";
+        }
+        nextBtn.classList.remove('hidden');
+    }
+
+
+    function checkCustoms(action, expectedStatus, reason, slideId) {
+        const fb = document.getElementById(`stamp-fb-${slideId}`);
+        if (fb.style.display === 'block') return;
+
+
+        const nextBtn = document.getElementById(`next-${slideId}`);
+        fb.style.display = 'block';
+
+
+        if (action === expectedStatus) {
+            fb.innerHTML = `<strong>Décision Correcte.</strong> ${reason}`;
+            fb.className = "msg-box msg-success";
+            addScore(2);
+        } else {
+            fb.innerHTML = `<strong>Erreur de Jugement.</strong> ${reason}`;
+            fb.className = "msg-box msg-error";
+        }
+        nextBtn.classList.remove('hidden');
+    }
+
+
+    // UPDATED VALIDATE BUILDER (Dynamic)
+    function validateBuilder(slideId, dataIndex) {
+        const data = builderData[dataIndex];
+        const sa = document.getElementById(`build-sa-${slideId}`).value;
+        const spRel = document.getElementById(`build-sp-rel-${slideId}`).value.trim();
+        const spSubj = document.getElementById(`build-sp-subj-${slideId}`).value.trim().toLowerCase();
+        const sdRel = document.getElementById(`build-sd-rel-${slideId}`).value.trim();
+        const sd1 = document.getElementById(`build-sd-1-${slideId}`).value.trim().toLowerCase();
+        const sd2 = document.getElementById(`build-sd-2-${slideId}`).value.trim().toLowerCase();
+        const sd3 = document.getElementById(`build-sd-3-${slideId}`).value.trim().toLowerCase();
+        
+        const fb = document.getElementById(`fb-${slideId}`);
+        const btnCheck = document.getElementById(`check-build-${slideId}`);
+        const btnNext = document.getElementById(`next-${slideId}`);
+
+
+        let errors = [];
+        // Check SA
+        if (sa !== 'good') errors.push("Amorce incorrecte (Mauvaise stratégie ou sujet nommé trop tôt).");
+        
+        // Check SP
+        if (spRel.length < 2) errors.push("Marqueur de relation manquant au Sujet Posé.");
+        // Check Subject keywords
+        const subjValid = data.keywords.sp.some(kw => spSubj.includes(kw));
+        if (!subjValid) errors.push(`Le Sujet Posé doit nommer '${data.title}'.`);
+        
+        // Check SD
+        if (sdRel.length < 2) errors.push("Marqueur de relation manquant au Sujet Divisé.");
+        // Check Aspects keywords
+        const sd1Valid = data.keywords.sd[0] && sd1.includes(data.keywords.sd[0]);
+        const sd2Valid = data.keywords.sd[1] && sd2.includes(data.keywords.sd[1]);
+        const sd3Valid = data.keywords.sd[2] && sd3.includes(data.keywords.sd[2]);
+        
+        // Loose validation for aspects (length check if keyword fails to be nice)
+        if (!sd1Valid && sd1.length < 3) errors.push(`Aspect 1 manquant ou incorrect (Attendu: ${data.tree[0]}).`);
+        if (!sd2Valid && sd2.length < 3) errors.push(`Aspect 2 manquant ou incorrect (Attendu: ${data.tree[1]}).`);
+        if (!sd3Valid && sd3.length < 3) errors.push(`Aspect 3 manquant ou incorrect (Attendu: ${data.tree[2]}).`);
+
+
+        fb.style.display = 'block';
+        if (errors.length === 0) {
+            fb.innerHTML = "Introduction impeccable ! Votre plan de vol est validé.";
+            fb.className = "msg-box msg-success";
+            addScore(5);
+            btnCheck.classList.add('hidden');
+            btnNext.classList.remove('hidden');
+        } else {
+            fb.innerHTML = errors.join('<br>');
+            fb.className = "msg-box msg-error";
+        }
+    }
+
+
+    // --- NAVIGATION ---
+    function nextSlide() {
+        const current = document.querySelector('.slide.active');
+        current.classList.remove('active');
+        state.slideIndex++;
+        const next = document.getElementById(`slide-${state.slideIndex}`);
+        if(next) {
+            next.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+            if(state.slideIndex === state.totalSlides - 1) showFinal();
+        }
+    }
+
+
+    function prevSlide() {
+        if (state.slideIndex > 0) {
+            const current = document.querySelector('.slide.active');
+            current.classList.remove('active');
+            state.slideIndex--;
+            const prev = document.getElementById(`slide-${state.slideIndex}`);
+            prev.classList.add('active');
+            document.getElementById('slide-indicator').innerText = `${state.slideIndex + 1} / ${state.totalSlides}`;
+            window.scrollTo(0,0);
+        }
+    }
+
+
+    function forceNext() { nextSlide(); }
+
+
+    function addScore(pts) {
+        state.score += pts;
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        document.getElementById('score').innerText = percent;
+    }
+
+
+    function showFinal() {
+        const percent = Math.round((state.score / state.maxScore) * 100);
+        document.getElementById('final-score-val').innerText = percent;
+        
+        const badge = document.getElementById('final-badge');
+        const title = document.getElementById('final-title');
+        const msg = document.getElementById('final-msg');
+
+
+        if (percent >= 80) {
+            badge.innerHTML = '<div class="final-stamp stamp-pass-final">VISA OK</div>';
+            title.innerHTML = "Voyage Autorisé";
+            title.style.color = "var(--success)";
+            msg.innerHTML = "Excellent travail ! Vous maîtrisez parfaitement la structure de l'introduction.<br>Bon voyage dans votre rédaction.";
+        } else {
+            badge.innerHTML = '<div class="final-stamp stamp-fail-final">REFUSÉ</div>';
+            title.innerHTML = "Voyage Annulé";
+            title.style.color = "var(--error)";
+            msg.innerHTML = "Votre dossier est incomplet (Note < 80%).<br>Veuillez réviser les procédures à la douane.";
+        }
+    }
+
+
+    // Init
+    renderApp();
+
+
+</script>
+</body>
+</html>

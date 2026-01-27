@@ -1,0 +1,1008 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chorégraphie des Conjonctions</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        :root {
+            /* Couleurs Vibrantes */
+            --bg-stage: #090014;
+            --spotlight-left: #ff0055; 
+            --spotlight-right: #00e5ff; 
+            --energy-yellow: #fff200;  
+            --deep-purple: #9d00ff; /* Pour les conjonctions composées */
+            
+            --panel-bg: rgba(20, 0, 40, 0.9);
+            --text-main: #ffffff;
+            
+            --success: #39ff14; /* Vert pour correct */
+            --error: #ff3333;   /* Rouge pour erreur */
+            --compound: #bc13fe; /* Violet distinct pour les locutions */
+        }
+
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-stage);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(255, 0, 85, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(0, 229, 255, 0.3) 0%, transparent 50%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
+        }
+
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(90deg, #1a0033 0%, #000000 100%);
+            padding: 15px 30px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            border-bottom: 3px solid var(--energy-yellow);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+
+        .dancer-icon {
+            font-size: 2rem;
+            color: var(--energy-yellow);
+            text-shadow: 0 0 15px var(--energy-yellow);
+        }
+
+
+        .brand-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--spotlight-right));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            margin: 0;
+            line-height: 1;
+        }
+
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--spotlight-left);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+
+        .nav-btn-header {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--text-main);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        .nav-btn-header:hover:not(:disabled) {
+            background: var(--energy-yellow);
+            color: #000;
+            border-color: var(--energy-yellow);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--energy-yellow);
+        }
+        .nav-btn-header:disabled {
+            opacity: 0.2;
+            cursor: default;
+            border-color: #555;
+        }
+
+
+        .score-display {
+            background: #000;
+            border: 2px solid var(--spotlight-right);
+            color: var(--spotlight-right);
+            padding: 5px 20px;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            text-shadow: 0 0 10px var(--spotlight-right);
+            min-width: 100px;
+            text-align: center;
+            transform: skew(-10deg);
+        }
+        .score-label {
+            font-size: 0.7rem;
+            color: #fff;
+            text-align: right;
+            margin-right: 5px;
+            transform: skew(-10deg);
+        }
+
+
+        /* --- MAIN STAGE --- */
+        main {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+
+        .stage-container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 
+                0 0 0 2px rgba(255, 255, 255, 0.05),
+                0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+
+        /* --- CONTENU --- */
+        h2 {
+            font-family: 'Russo One', sans-serif;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 2rem;
+            margin: 10px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        h2 i { color: var(--energy-yellow); }
+
+
+        .module-badge {
+            display: inline-block;
+            background: var(--spotlight-left);
+            color: #fff;
+            padding: 5px 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transform: skew(-15deg);
+            margin-bottom: 10px;
+        }
+        .module-badge span { display: block; transform: skew(15deg); }
+
+
+        .theory-card {
+            background: rgba(255,255,255,0.05);
+            border-left: 5px solid var(--spotlight-right);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+        .theory-card h3 { color: var(--spotlight-right); margin-top: 0; text-transform: uppercase; font-weight: 800; }
+        .theory-card strong { color: var(--energy-yellow); }
+
+
+        /* --- EXERCICES --- */
+        
+        /* Module 1: Analyse */
+        .text-box {
+            font-size: 1.4rem;
+            line-height: 2.2;
+            padding: 30px;
+            background: #000;
+            border-radius: 10px;
+            border: 2px solid #333;
+            color: #ddd;
+            text-align: justify;
+        }
+
+
+        .word {
+            display: inline-block;
+            padding: 3px 6px;
+            margin: 0 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 2px solid transparent;
+        }
+        .word:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        /* Sélection de l'utilisateur (avant validation) */
+        .word.selected { 
+            background: var(--spotlight-right); 
+            color: #000; 
+            font-weight: 800;
+            box-shadow: 0 0 15px var(--spotlight-right);
+        }
+
+
+        /* Feedback Après Validation */
+        .word.correct-simple { 
+            background: var(--success); color: #000; 
+            border: 2px solid #fff; font-weight: 800;
+        }
+        .word.correct-compound { 
+            background: var(--compound); color: #fff; /* VIOLET pour locutions */
+            border: 2px solid #fff; font-weight: 800;
+        }
+        .word.missed {
+            border: 2px dashed #fff; /* Encadré pour les oublis */
+            opacity: 0.8;
+        }
+        .word.user-error {
+            background: var(--error);
+            color: #fff;
+            text-decoration: line-through;
+        }
+
+
+        /* Module 2: Substitution */
+        .sub-container { text-align: center; }
+        .sub-sentence {
+            font-size: 1.6rem;
+            padding: 30px;
+            background: radial-gradient(circle, #2a0040 0%, #000 100%);
+            border-radius: 15px;
+            border: 1px solid var(--spotlight-left);
+            margin-bottom: 30px;
+        }
+        .highlight-conj {
+            color: var(--energy-yellow);
+            border-bottom: 3px solid var(--energy-yellow);
+            padding-bottom: 2px;
+        }
+
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+
+        .option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 20px;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--spotlight-right);
+            color: var(--spotlight-right);
+        }
+        
+        .option-btn.selected {
+            background: var(--spotlight-right);
+            color: #000;
+            border-color: #fff;
+        }
+        
+        .option-btn.validated-correct {
+            background: var(--success) !important;
+            color: #000 !important;
+            border-color: #fff;
+        }
+        .option-btn.validated-wrong {
+            background: var(--error) !important;
+            color: #fff !important;
+            opacity: 0.7;
+        }
+
+
+        /* Module 3: Cloze */
+        select.cloze-select {
+            background: #000;
+            color: var(--energy-yellow);
+            border: 2px solid var(--energy-yellow);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+
+        /* --- UI ELEMENTS --- */
+        .btn-action {
+            background: linear-gradient(45deg, var(--spotlight-left), #ff5e00);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 30px;
+            clip-path: polygon(10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20%);
+        }
+        .btn-action:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+
+        .feedback {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            border-left: 5px solid;
+            font-size: 1.1rem;
+            display: none;
+        }
+        .feedback.correct { border-color: var(--success); color: var(--success); }
+        .feedback.wrong { border-color: var(--error); color: var(--error); }
+
+
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+
+        .visual-accent {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--energy-yellow);
+            text-shadow: 0 0 20px var(--energy-yellow);
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo-container">
+        <i class="fas fa-person-dancing dancer-icon"></i>
+        <div>
+            <h1 class="brand-title">DANSE & GRAMMAIRE</h1>
+            <div class="subtitle">La Chorégraphie des Conjonctions</div>
+        </div>
+    </div>
+    
+    <div class="nav-controls">
+        <button class="nav-btn-header" id="header-prev" onclick="prevActivity()" title="Précédent"><i class="fas fa-step-backward"></i></button>
+        <button class="nav-btn-header" id="header-next" onclick="nextActivity()" title="Suivant"><i class="fas fa-step-forward"></i></button>
+    </div>
+
+
+    <div>
+        <div class="score-label">POINTS</div>
+        <div class="score-display" id="score-display">0</div>
+    </div>
+</header>
+
+
+<main>
+    <div class="stage-container fade-in" id="app">
+        <!-- Content injected by JS -->
+    </div>
+</main>
+
+
+<script>
+    /* --- DATA AVEC CONSIGNES CLAIRES --- */
+    const data = {
+        module1: {
+            title: "Observation du Mouvement",
+            icon: "fa-eye",
+            theory: `
+                <h3><i class="fas fa-shoe-prints"></i> La Conjonction : Le Lien du Mouvement</h3>
+                <p>En danse, on ne saute pas d'une pose à l'autre sans transition. En grammaire, c'est pareil !</p>
+                <ul>
+                    <li>La <strong>conjonction</strong> est ce pas de liaison indispensable qui connecte deux mouvements (deux phrases) pour créer un enchaînement fluide.</li>
+                    <li>Parfois c'est un pas simple (<em>mais, ou, et</em>).</li>
+                    <li>Parfois c'est une combinaison complexe, une "locution" (<em>de sorte que, bien que</em>).</li>
+                </ul>
+            `,
+            activities: [
+                {
+                    type: "recognition",
+                    textId: 1,
+                    hint: "Trouvez les 4 conjonctions (dont 2 locutions) dans le texte ci-dessous.",
+                    structuredWords: [
+                        {txt:"Le", isC:false}, {txt:"rideau", isC:false}, {txt:"se", isC:false}, {txt:"lève", isC:false}, 
+                        {txt:"et", isC:true, type:"simple"}, {txt:"le", isC:false}, {txt:"silence", isC:false}, 
+                        {txt:"envahit", isC:false}, {txt:"la", isC:false}, {txt:"salle.", isC:false},
+                        {txt:"Pourtant,", isC:true, type:"simple"}, {txt:"dans", isC:false}, {txt:"les", isC:false}, 
+                        {txt:"coulisses,", isC:false}, {txt:"l'agitation", isC:false}, {txt:"règne", isC:false}, 
+                        {txt:"encore", isC:false}, {txt:"bien que", isC:true, type:"compound"}, 
+                        {txt:"les", isC:false}, {txt:"danseurs", isC:false}, {txt:"paraissent", isC:false}, 
+                        {txt:"calmes.", isC:false}, {txt:"Tout", isC:false}, {txt:"est", isC:false}, 
+                        {txt:"prêt", isC:false}, {txt:"pour que", isC:true, type:"compound"}, 
+                        {txt:"le", isC:false}, {txt:"spectacle", isC:false}, {txt:"commence.", isC:false}
+                    ]
+                },
+                {
+                    type: "recognition",
+                    textId: 2,
+                    hint: "Identifiez les 5 conjonctions présentes dans ce paragraphe.",
+                    structuredWords: [
+                        {txt:"Il", isC:false}, {txt:"faut", isC:false}, {txt:"répéter", isC:false}, 
+                        {txt:"le", isC:false}, {txt:"mouvement", isC:false}, {txt:"jusqu'à ce que", isC:true, type:"compound"}, 
+                        {txt:"le", isC:false}, {txt:"corps", isC:false}, {txt:"l'assimile.", isC:false}, 
+                        {txt:"Or,", isC:true, type:"simple"}, {txt:"la", isC:false}, {txt:"fatigue", isC:false}, 
+                        {txt:"s'installe", isC:false}, {txt:"si", isC:true, type:"simple"}, 
+                        {txt:"on", isC:false}, {txt:"ne", isC:false}, {txt:"se", isC:false}, 
+                        {txt:"repose", isC:false}, {txt:"pas.", isC:false}, {txt:"Néanmoins,", isC:true, type:"simple"}, 
+                        {txt:"il", isC:false}, {txt:"continue", isC:false}, {txt:"car", isC:true, type:"simple"}, 
+                        {txt:"la", isC:false}, {txt:"première", isC:false}, {txt:"approche.", isC:false}
+                    ]
+                },
+                {
+                    type: "recognition",
+                    textId: 3,
+                    hint: "Repérez les 4 conjonctions (simples ou composées) dans ce passage.",
+                    structuredWords: [
+                        {txt:"Non seulement", isC:true, type:"compound"}, {txt:"la", isC:false}, {txt:"chorégraphie", isC:false}, 
+                        {txt:"est", isC:false}, {txt:"technique,", isC:false}, {txt:"mais encore", isC:true, type:"compound"}, 
+                        {txt:"elle", isC:false}, {txt:"demande", isC:false}, {txt:"une", isC:false}, 
+                        {txt:"grande", isC:false}, {txt:"émotion.", isC:false}, {txt:"Ainsi,", isC:true, type:"simple"}, 
+                        {txt:"chaque", isC:false}, {txt:"geste", isC:false}, {txt:"compte,", isC:false}, 
+                        {txt:"à condition que", isC:true, type:"compound"}, {txt:"l'intention", isC:false}, 
+                        {txt:"soit", isC:false}, {txt:"juste.", isC:false}
+                    ]
+                }
+            ]
+        },
+        module2: {
+            title: "Variations de Style",
+            icon: "fa-random",
+            theory: `
+                <h3><i class="fas fa-random"></i> Changer le Style, Garder le Rythme</h3>
+                <p>En danse, on peut exprimer la même émotion avec des gestes différents. En grammaire, on utilise des <strong>synonymes</strong>.</p>
+                <ul>
+                    <li>Pour éviter de répéter toujours le même pas ("Mais, mais, mais..."), variez votre répertoire !</li>
+                    <li>Utilisez <em>"Pourtant"</em> ou <em>"Cependant"</em> pour une touche plus élégante.</li>
+                    <li>Attention : changer de liaison peut changer le mode du verbe (le "tempo") qui suit !</li>
+                </ul>
+            `,
+            activities: [
+                {
+                    type: "substitution",
+                    sentence: "Le spectacle aura lieu en extérieur, <span class='highlight-conj'>à condition qu'</span>il ne pleuve pas.",
+                    target: "à condition qu'",
+                    options: ["pourvu qu'", "puisque", "alors que"],
+                    correctIndex: 0,
+                    explanation: "'Pourvu que' impose la même condition stricte (avec subjonctif) que 'à condition que'."
+                },
+                {
+                    type: "substitution",
+                    sentence: "Il danse avec passion, <span class='highlight-conj'>bien qu'</span>il soit blessé au genou.",
+                    target: "bien qu'",
+                    options: ["parce qu'", "quoiqu'", "dès qu'"],
+                    correctIndex: 1,
+                    explanation: "'Quoique' est la variation parfaite pour exprimer la concession (opposition) ici."
+                },
+                {
+                    type: "substitution",
+                    sentence: "La salle est comble, <span class='highlight-conj'>c'est pourquoi</span> nous devons être excellents.",
+                    target: "c'est pourquoi",
+                    options: ["or", "par conséquent", "car"],
+                    correctIndex: 1,
+                    explanation: "'Par conséquent' marque la suite logique du mouvement, tout comme 'c'est pourquoi'."
+                },
+                {
+                    type: "substitution",
+                    sentence: "Je te préviens <span class='highlight-conj'>afin que</span> tu ne sois pas surpris.",
+                    target: "afin que",
+                    options: ["de sorte que", "bien que", "tandis que"],
+                    correctIndex: 0,
+                    explanation: "'De sorte que' permet d'introduire le but visé, la finalité du geste."
+                }
+            ]
+        },
+        module3: {
+            title: "Création du Spectacle",
+            icon: "fa-pen-nib",
+            theory: `
+                <h3><i class="fas fa-pencil-alt"></i> La Grande Composition</h3>
+                <p>C'est le moment de créer votre propre enchaînement. Vous avez les mouvements (les phrases), il manque les liens !</p>
+                <ul>
+                    <li>Écoutez la "musique" du texte : est-ce une opposition brutale (<em>Mais</em>) ? Une explication fluide (<em>Car</em>) ?</li>
+                    <li>Regardez les indices : la ponctuation est comme le marquage au sol.</li>
+                </ul>
+            `,
+            activities: [
+                {
+                    type: "cloze",
+                    text: "La danse contemporaine brise les codes classiques. [OPPOSITION] ___, elle conserve une exigence technique extrême. Le danseur doit être libre [CONDITION] ___ il maîtrise ses bases. [CONSÉQUENCE] ___, l'entraînement reste quotidien.",
+                    segments: [
+                        {options: ["Pourtant", "Car", "Et"], correct: "Pourtant", hint: "Contraste fort"},
+                        {options: ["pourvu qu'", "bien qu'", "puisqu'"], correct: "pourvu qu'", hint: "Condition nécessaire"},
+                        {options: ["En effet", "Par conséquent", "Or"], correct: "Par conséquent", hint: "Résultat logique"}
+                    ],
+                    withHints: true
+                },
+                {
+                    type: "cloze",
+                    text: "Le chorégraphe hésitait. [CAUSE] ___ la musique était trop lente, il craignait que le public s'ennuie. Il a [DONC] ___ décidé d'accélérer le tempo, [BUT] ___ les danseurs puissent exprimer plus de rage.",
+                    segments: [
+                        {options: ["Comme", "Car", "Donc"], correct: "Comme", hint: "Cause en tête de phrase"},
+                        {options: ["or", "alors", "mais"], correct: "alors", hint: "Conséquence"},
+                        {options: ["de sorte que", "bien que", "tandis que"], correct: "de sorte que", hint: "Objectif visé"}
+                    ],
+                    withHints: true
+                },
+                {
+                    type: "cloze",
+                    text: "Le spectacle est un triomphe, ___ quelques erreurs techniques. ___ le rideau tombe, les applaudissements ne cessent pas. C'est un moment magique, ___ éphémère.",
+                    segments: [
+                        {options: ["malgré", "puisque", "car"], correct: "malgré", hint: "Concession"},
+                        {options: ["Tandis que", "Lorsque", "Si"], correct: "Lorsque", hint: "Temps"},
+                        {options: ["quoique", "donc", "ni"], correct: "quoique", hint: "Opposition subtile"}
+                    ],
+                    withHints: false // Challenge
+                }
+            ]
+        }
+    };
+
+
+    /* --- STATE --- */
+    let state = {
+        currentModuleId: 'module1',
+        currentActivityIndex: 0,
+        score: 0,
+        theoryShown: false,
+        selectedOption: null 
+    };
+
+
+    const modulesOrder = ['module1', 'module2', 'module3'];
+
+
+    /* --- RENDER FUNCTIONS --- */
+    
+    function init() {
+        renderStage();
+        updateNavButtons();
+    }
+
+
+    function renderStage() {
+        const app = document.getElementById('app');
+        app.classList.remove('fade-in');
+        void app.offsetWidth; 
+        app.classList.add('fade-in');
+
+
+        app.innerHTML = ''; 
+
+
+        const modData = data[state.currentModuleId];
+        const activity = modData.activities[state.currentActivityIndex];
+
+
+        app.innerHTML += `<i class="fas ${modData.icon} deco-icon deco-top-right"></i>`;
+        app.innerHTML += `<i class="fas fa-music deco-icon deco-bottom-left"></i>`;
+
+
+        if (state.currentActivityIndex === 0 && !state.theoryShown) {
+            app.innerHTML += `
+                <div class="visual-accent"><i class="fas ${modData.icon}"></i></div>
+                <div class="module-badge"><span>${state.currentModuleId.replace('module', 'Module ')}</span></div>
+                <h2>${modData.title}</h2>
+                <div class="theory-card">${modData.theory}</div>
+                <div style="text-align:center;">
+                    <button class="btn-action" onclick="startModule()">Commencer</button>
+                </div>
+            `;
+            updateNavButtons(true);
+            return;
+        }
+
+
+        let html = `
+            <div class="module-badge"><span>${state.currentModuleId.replace('module', 'Module ')} • Acte ${state.currentActivityIndex + 1}/${modData.activities.length}</span></div>
+            <h2><i class="fas ${modData.icon}"></i> ${modData.title}</h2>
+        `;
+
+
+        if (activity.type === 'recognition') {
+            html += renderRecognition(activity);
+        } else if (activity.type === 'substitution') {
+            html += renderSubstitution(activity);
+        } else if (activity.type === 'cloze') {
+            html += renderCloze(activity);
+        }
+
+
+        html += `<div id="feedback-area" class="feedback"></div>`;
+        html += `<div style="text-align:center;">
+            <button id="check-btn" class="btn-action" onclick="checkAnswer()">Valider</button>
+            <button id="next-btn" class="btn-action hidden" onclick="nextActivity()">Exercice Suivant <i class="fas fa-arrow-right"></i></button>
+        </div>`;
+
+
+        app.innerHTML += html; 
+        updateHeader();
+        updateNavButtons();
+    }
+
+
+    function startModule() {
+        state.theoryShown = true;
+        renderStage();
+    }
+
+
+    /* --- ACTIVITY RENDERERS --- */
+
+
+    function renderRecognition(act) {
+        let wordsHtml = `<div class="text-box">`;
+        act.structuredWords.forEach((w, idx) => {
+            wordsHtml += `<span class="word" data-index="${idx}" onclick="toggleWord(this)">${w.txt}</span> `;
+        });
+        // Consigne claire et pédagogique
+        wordsHtml += `</div><p class="instruction" style="margin-top:15px; font-size:0.9rem; color:var(--energy-yellow);"><i class="fas fa-search"></i> <strong>Consigne :</strong> ${act.hint}</p>`;
+        return wordsHtml;
+    }
+
+
+    function renderSubstitution(act) {
+        state.selectedOption = null; 
+        let html = `<div class="sub-container">`;
+        html += `<div class="sub-sentence">${act.sentence}</div>`;
+        // Consigne claire et pédagogique
+        html += `<p class="instruction">Quelle autre conjonction pourrait remplacer <strong>"${act.target}"</strong> tout en conservant son sens exact ?</p>`;
+        
+        html += `<div class="options-grid">`;
+        act.options.forEach((opt, idx) => {
+            html += `<button class="option-btn" id="opt-${idx}" onclick="selectOption(${idx})">${opt}</button>`;
+        });
+        html += `</div></div>`;
+        return html;
+    }
+
+
+    function renderCloze(act) {
+        // Consigne claire et pédagogique
+        let html = `<p class="instruction">Complétez le texte avec la bonne conjonction. ${act.withHints ? 'Aidez-vous des indices de sens.' : ''}</p>`;
+        html += `<div class="text-box cloze-text">`;
+        
+        let parts = act.text.split("___");
+        parts.forEach((part, idx) => {
+            html += part;
+            if (idx < parts.length - 1) {
+                const seg = act.segments[idx];
+                html += `<select class="cloze-select" id="select-${idx}">
+                    <option value="">...</option>`;
+                seg.options.sort(() => Math.random() - 0.5).forEach(opt => {
+                    html += `<option value="${opt}">${opt}</option>`;
+                });
+                html += `</select>`;
+            }
+        });
+        
+        html += `</div>`;
+        return html;
+    }
+
+
+    /* --- INTERACTIONS --- */
+
+
+    function toggleWord(el) {
+        if(document.getElementById('next-btn').classList.contains('hidden') === false) return; 
+        el.classList.toggle('selected');
+    }
+
+
+    function selectOption(idx) {
+        if(document.getElementById('next-btn').classList.contains('hidden') === false) return; 
+        
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+        document.getElementById(`opt-${idx}`).classList.add('selected');
+        
+        state.selectedOption = idx;
+    }
+
+
+    /* --- VALIDATION LOGIC --- */
+
+
+    function checkAnswer() {
+        const modData = data[state.currentModuleId];
+        const act = modData.activities[state.currentActivityIndex];
+        const feedbackEl = document.getElementById('feedback-area');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+
+        let isCorrect = false;
+        let msg = "";
+
+
+        // --- RECOGNITION ---
+        if (act.type === 'recognition') {
+            const selectedEls = Array.from(document.querySelectorAll('.word.selected'));
+            const selectedIndices = selectedEls.map(el => parseInt(el.dataset.index));
+            
+            let targetIndices = [];
+            act.structuredWords.forEach((w, i) => { if(w.isC) targetIndices.push(i); });
+
+
+            // Analyse
+            const allTargetsFound = targetIndices.every(t => selectedIndices.includes(t));
+            const noWrongSelections = selectedIndices.every(s => targetIndices.includes(s));
+
+
+            if (allTargetsFound && noWrongSelections) {
+                isCorrect = true;
+                msg = "Parfait ! Toutes les conjonctions ont été identifiées.";
+                state.score += 10;
+            } else {
+                msg = "Regardez les corrections : Vert pour les simples, Violet pour les composées.";
+            }
+
+
+            // VISUAL FEEDBACK (PERSISTENT)
+            // 1. Mark missed targets
+            targetIndices.forEach(idx => {
+                const el = document.querySelector(`.word[data-index="${idx}"]`);
+                let type = act.structuredWords[idx].type;
+                
+                // Si trouvé par l'utilisateur
+                if (selectedIndices.includes(idx)) {
+                    el.classList.remove('selected'); // Remove selection style
+                    el.classList.add(type === 'compound' ? 'correct-compound' : 'correct-simple');
+                } else {
+                    // Si manqué : contour + style 'missed'
+                    el.classList.add(type === 'compound' ? 'correct-compound' : 'correct-simple');
+                    el.classList.add('missed');
+                }
+            });
+
+
+            // 2. Mark user errors (selected but not target)
+            selectedIndices.forEach(idx => {
+                if (!targetIndices.includes(idx)) {
+                    const el = document.querySelector(`.word[data-index="${idx}"]`);
+                    el.classList.remove('selected');
+                    el.classList.add('user-error');
+                }
+            });
+        } 
+        
+        // --- SUBSTITUTION ---
+        else if (act.type === 'substitution') {
+            if (state.selectedOption === null) {
+                feedbackEl.innerHTML = "Veuillez sélectionner une réponse.";
+                feedbackEl.className = 'feedback wrong';
+                feedbackEl.style.display = 'block';
+                return;
+            }
+
+
+            if (state.selectedOption === act.correctIndex) {
+                isCorrect = true;
+                msg = "Exact ! " + act.explanation;
+                state.score += 10;
+                document.getElementById(`opt-${act.correctIndex}`).classList.add('validated-correct');
+            } else {
+                msg = "Incorrect. " + act.explanation;
+                document.getElementById(`opt-${state.selectedOption}`).classList.add('validated-wrong'); // Keep user error visible
+                document.getElementById(`opt-${act.correctIndex}`).classList.add('validated-correct'); // Show correct answer
+            }
+            
+            // Disable buttons visual only
+            document.querySelectorAll('.option-btn').forEach(btn => btn.style.cursor = 'default');
+        } 
+        
+        // --- CLOZE ---
+        else if (act.type === 'cloze') {
+            let correctCount = 0;
+            act.segments.forEach((seg, idx) => {
+                const el = document.getElementById(`select-${idx}`);
+                const val = el.value;
+                if(val === seg.correct) {
+                    correctCount++;
+                    el.style.border = "2px solid var(--success)";
+                    el.style.color = "var(--success)";
+                } else {
+                    el.style.border = "2px solid var(--error)";
+                    el.style.color = "var(--error)";
+                    // Optionnel : afficher la bonne réponse à côté ou en tooltip pourrait être ajouté ici
+                }
+            });
+
+
+            if (correctCount === act.segments.length) {
+                isCorrect = true;
+                msg = "Texte complété correctement !";
+                state.score += 10;
+            } else {
+                msg = "Certaines réponses sont incorrectes.";
+            }
+        }
+
+
+        feedbackEl.innerHTML = (isCorrect ? '<i class="fas fa-check-circle"></i> ' : '<i class="fas fa-times-circle"></i> ') + msg;
+        feedbackEl.className = isCorrect ? 'feedback correct' : 'feedback wrong';
+        feedbackEl.style.display = 'block';
+        
+        if (isCorrect || true) { // Allow next even if wrong to prevent getting stuck? Yes generally.
+            checkBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            updateHeader();
+        }
+    }
+
+
+    /* --- NAVIGATION --- */
+
+
+    function nextActivity() {
+        const modData = data[state.currentModuleId];
+        
+        if (state.currentActivityIndex < modData.activities.length - 1) {
+            state.currentActivityIndex++;
+            renderStage();
+        } else {
+            const currentModIdx = modulesOrder.indexOf(state.currentModuleId);
+            if (currentModIdx < modulesOrder.length - 1) {
+                state.currentModuleId = modulesOrder[currentModIdx + 1];
+                state.currentActivityIndex = 0;
+                state.theoryShown = false; 
+                renderStage();
+            } else {
+                showFinalScreen();
+            }
+        }
+    }
+
+
+    function prevActivity() {
+        if (state.currentActivityIndex > 0) {
+            state.currentActivityIndex--;
+            renderStage();
+        } else {
+            const currentModIdx = modulesOrder.indexOf(state.currentModuleId);
+            if (currentModIdx > 0) {
+                state.currentModuleId = modulesOrder[currentModIdx - 1];
+                state.currentActivityIndex = data[state.currentModuleId].activities.length - 1;
+                state.theoryShown = true; 
+                renderStage();
+            }
+        }
+    }
+
+
+    function updateNavButtons(isTheory = false) {
+        const prevBtn = document.getElementById('header-prev');
+        const nextBtn = document.getElementById('header-next');
+
+
+        if(isTheory) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            return;
+        }
+
+
+        const isFirst = state.currentModuleId === 'module1' && state.currentActivityIndex === 0;
+        prevBtn.disabled = isFirst;
+
+
+        const bottomNextHidden = document.getElementById('next-btn') ? document.getElementById('next-btn').classList.contains('hidden') : true;
+        nextBtn.disabled = bottomNextHidden;
+    }
+
+
+    /* --- FINAL SCREEN --- */
+
+
+    function showFinalScreen() {
+        const app = document.getElementById('app');
+        const maxScore = calculateMaxScore();
+        const percentage = Math.round((state.score / maxScore) * 100);
+        
+        let color, title, msg, btnText;
+        
+        if (percentage > 80) {
+            color = 'var(--success)';
+            title = "MAÎTRISE EXCELLENTE !";
+            msg = "Votre compréhension des conjonctions est solide.";
+            btnText = "Recommencer";
+        } else {
+            color = '#ff0055';
+            title = "ENTRAÎNEMENT REQUIS";
+            msg = `Score : ${percentage}%. Recommencez pour améliorer votre précision.`;
+            btnText = "Réessayer";
+        }
+        
+        app.innerHTML = `
+            <div style="text-align:center;">
+                <div class="visual-accent" style="color:${color}"><i class="fas fa-trophy"></i></div>
+                <h1 style="font-size:3rem; color:${color}; text-shadow:0 0 25px ${color}; font-family:'Russo One', sans-serif;">${title}</h1>
+                <p class="instruction" style="font-size:1.3rem;">${msg}</p>
+                
+                <div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:20px; margin:40px 0; border: 2px solid ${color}; box-shadow: 0 0 30px ${color}40; transform: skew(-5deg);">
+                    <h3 style="margin:0; color:#fff; transform: skew(5deg);">SCORE FINAL</h3>
+                    <div style="font-size:5rem; font-weight:800; color:${color}; transform: skew(5deg);">${state.score} / ${maxScore}</div>
+                </div>
+
+
+                <button class="btn-action" style="background:${color}" onclick="location.reload()"><i class="fas fa-redo"></i> ${btnText}</button>
+            </div>
+        `;
+        
+        document.getElementById('header-prev').disabled = true;
+        document.getElementById('header-next').disabled = true;
+    }
+
+
+    function calculateMaxScore() {
+        let total = 0;
+        Object.keys(data).forEach(mod => {
+            total += data[mod].activities.length * 10;
+        });
+        return total;
+    }
+
+
+    function updateHeader() {
+        document.getElementById('score-display').innerText = state.score;
+    }
+
+
+    // Start
+    init();
+
+
+</script>
+</body>
+</html>
