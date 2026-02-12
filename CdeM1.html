@@ -1,0 +1,1297 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeux Olympiques : L'Épreuve de Bronze</title>
+    
+    <!-- Polices modernes et percutantes -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Palette Gamifiée Olympique - Thème Bronze */
+            --bg-dark: #001233;
+            --bg-light: #005F9E;
+            --primary: #00A6FB;     /* Bleu néon */
+            --secondary: #00E676;   /* Vert succès */
+            --accent: #CD7F32;      /* Bronze Olympique */
+            --accent-dark: #8C5A17; /* Ombre du bronze */
+            --danger: #FF3366;      /* Rouge erreur */
+            --text-main: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+
+        /* --- EFFET DE NEIGE (Background) --- */
+        #snow-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .snowflake {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) translateX(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110vh) translateX(20px) scale(1.5); opacity: 0; }
+        }
+
+
+        /* --- HEADER (Scoreboard) --- */
+        header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--glass-border);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 166, 251, 0.5);
+        }
+
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+
+        .stat-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        }
+        .stat-badge i { color: var(--accent); }
+
+
+        /* --- MAIN CONTAINER & GLASSMORPHISM CARDS --- */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            width: 100%;
+            max-width: 850px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 0 0 2px rgba(255,255,255,0.5);
+            padding: 40px;
+            display: none;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        .card.active {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+            animation: popIn 0.5s forwards;
+        }
+
+
+        @keyframes popIn {
+            0% { transform: translateY(30px) scale(0.9); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+
+        .slide-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--bg-dark);
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+
+        .instruction-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--accent), #e39649);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(205, 127, 50, 0.4);
+            border: 2px solid white;
+            text-transform: uppercase;
+        }
+
+
+        /* --- BOUTONS 3D GAMIFIÉS --- */
+        .btn-container { text-align: center; margin-top: 35px; }
+
+
+        button {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, #00B4DB, #0083B0);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 0 #005A7A, 0 10px 15px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        button:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 #005A7A, 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+
+        button:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+
+        button:disabled {
+            background: #cccccc;
+            box-shadow: 0 6px 0 #999999;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+
+        /* --- TYPE A : RADAR (Pilules lumineuses) --- */
+        .sentence-box {
+            font-size: 1.6rem;
+            line-height: 2.4;
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(0, 166, 251, 0.05);
+            border: 2px dashed var(--primary);
+            border-radius: 20px;
+        }
+
+
+        .radar-word {
+            display: inline-block;
+            margin: 4px;
+            padding: 5px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 700;
+            background: white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+
+        .radar-word:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+            border-color: var(--primary);
+        }
+
+
+        .radar-word.found {
+            background: var(--secondary);
+            color: white;
+            border-color: #00C853;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.6);
+            transform: scale(1.1);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+
+        .radar-word.error {
+            background: var(--danger);
+            color: white;
+            border-color: #D50000;
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
+            animation: shake 0.4s;
+        }
+
+
+        /* Tooltips modernes */
+        .radar-word::after {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'Nunito', sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.2s;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+
+        .radar-word.found::after {
+            content: attr(data-explanation);
+            background: var(--bg-dark);
+            color: white;
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
+        
+        .radar-word.error::after {
+            content: "❌ " attr(data-wrong);
+            background: var(--bg-dark);
+            color: white;
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
+
+
+        /* --- TYPE B : ASSOCIATION & C: SUBSTITUTION --- */
+        .assoc-container, .subst-sentence {
+            font-size: 1.4rem;
+            margin: 30px 0;
+        }
+        
+        .assoc-sentence {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border-left: 6px solid var(--primary);
+        }
+
+
+        .assoc-target {
+            font-weight: 900;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 2px;
+        }
+
+
+        .assoc-word {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: 0.2s;
+            display: inline-block;
+        }
+        .assoc-word:hover { background: #e0f2fe; transform: scale(1.05); }
+        .assoc-word.correct { background: var(--secondary); color: white; font-weight: bold; pointer-events: none; box-shadow: 0 0 10px rgba(0,230,118,0.5);}
+        .assoc-word.wrong { background: var(--danger); color: white; animation: shake 0.3s;}
+
+
+        select.subst-select {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 8px 15px;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            background-color: white;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            color: var(--primary);
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        select.subst-select:focus { box-shadow: 0 0 0 4px rgba(0, 166, 251, 0.3); }
+        select.subst-select.correct { border-color: var(--secondary); background: var(--secondary); color: white; pointer-events: none;}
+        select.subst-select.wrong { border-color: var(--danger); color: var(--danger); animation: shake 0.3s;}
+
+
+        .feedback-box {
+            display: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            animation: popIn 0.3s;
+        }
+        .feedback-box.success { background: #E8F5E9; color: #2E7D32; display: block; border: 2px solid var(--secondary);}
+        .feedback-box.fail { background: #FFEBEE; color: #C62828; display: block; border: 2px solid var(--danger);}
+
+
+        /* --- TYPE D : ULTIME (TAP & DROP) --- */
+        .ultime-container { display: flex; flex-direction: column; gap: 30px; }
+        
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 25px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            border: 2px dashed #ccc;
+            min-height: 100px;
+        }
+        
+        .draggable-word {
+            background: white;
+            border: 3px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .draggable-word:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+        
+        .draggable-word.selected {
+            background: var(--accent);
+            border-color: var(--accent-dark);
+            color: white;
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.6);
+            z-index: 10;
+        }
+        
+        .columns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        
+        .drop-column {
+            background: rgba(255,255,255,0.8);
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 15px 10px;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+        }
+        
+        .drop-column:hover {
+            background: #f0f9ff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 166, 251, 0.2);
+        }
+        
+        .drop-column h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--bg-dark);
+            text-transform: uppercase;
+            width: 100%;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .draggable-word.placed {
+            background: var(--secondary);
+            border-color: #00C853;
+            color: white;
+            cursor: default;
+            pointer-events: none;
+            font-size: 1rem;
+            padding: 8px 15px;
+            box-shadow: none;
+            transform: none;
+            animation: popIn 0.3s;
+        }
+
+
+        /* --- FINAL SLIDE --- */
+        .results-container { text-align: center; position: relative;}
+        
+        .final-score {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            margin: 10px 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .score-green { color: var(--secondary); text-shadow: 0 0 20px rgba(0,230,118,0.4); }
+        .score-bronze { color: var(--accent); text-shadow: 0 0 20px rgba(205,127,50,0.4); }
+        .score-red { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.4); }
+        
+        .result-message {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: 700;
+        }
+        .msg-success { background: #E8F5E9; color: #2E7D32; border: 3px solid var(--secondary); }
+        .msg-fail { background: #FFEBEE; color: #C62828; border: 3px solid var(--danger); }
+
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .stat-box i { font-size: 2.5rem; color: var(--primary); }
+        .stat-box strong { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: var(--bg-dark); }
+        
+        .details-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .details-table th, .details-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            background: white;
+        }
+        .details-table th { 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Montserrat', sans-serif; 
+            text-transform: uppercase;
+        }
+        .details-table tr:last-child td { border-bottom: none; }
+        .details-table td:last-child { font-weight: bold; text-align: right; font-family: 'Montserrat', sans-serif; font-size: 1.1rem;}
+
+
+        /* --- ANIMATIONS --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+
+        /* Confettis générés en JS */
+        .confetti {
+            position: absolute;
+            width: 10px; height: 20px;
+            background: var(--accent);
+            z-index: 1000;
+            animation: fallConfetti linear forwards;
+        }
+        @keyframes fallConfetti {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-title { font-size: 1.1rem; }
+            .card { padding: 25px 15px; border-radius: 15px; }
+            .slide-header h2 { font-size: 1.5rem; }
+            .sentence-box, .subst-sentence { font-size: 1.2rem; padding: 15px; }
+            .radar-word { padding: 4px 8px; font-size: 1.1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .columns-grid { grid-template-columns: 1fr 1fr; }
+            .final-score { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Animation Neige Background -->
+    <div id="snow-container"></div>
+
+
+    <header>
+        <div class="header-title">
+            <i class="fas fa-medal" style="color: var(--accent); filter: drop-shadow(0 0 5px rgba(205,127,50,0.8));"></i>
+            Édition Bronze : Les mots
+        </div>
+        <div class="stats-container">
+            <div class="stat-badge"><i class="fas fa-flag-checkered"></i> <span id="progress-display">Départ</span></div>
+            <div class="stat-badge"><i class="fas fa-star"></i> <span id="score-display">0 / 21</span></div>
+        </div>
+    </header>
+
+
+    <main>
+        <!-- SLIDE 0 : INTRO -->
+        <div class="card active" id="slide-0">
+            <div class="slide-header">
+                <h2>Prêt pour la piste ? 🎿</h2>
+            </div>
+            <div style="text-align: center; font-size: 1.2rem; line-height: 1.7; margin-bottom: 20px;">
+                <p>Bienvenue dans l'arène olympique de la grammaire !</p>
+                <br>
+                <div style="background: rgba(205,127,50,0.1); padding: 15px; border-radius: 15px; border: 2px dashed var(--accent);">
+                    <p><strong>RÈGLE DE BRONZE :</strong> Tu dois obtenir au moins <strong>60%</strong> de réussite pour décrocher ta première médaille.</p>
+                </div>
+                <br>
+                <p>Ouvre bien l'œil, concentre-toi, et vise le podium.</p>
+            </div>
+            <div class="btn-container">
+                <button onclick="startGame()">Lancer l'épreuve <i class="fas fa-play-circle"></i></button>
+            </div>
+        </div>
+
+
+        <!-- ================= TYPE A : RADAR ================= -->
+        <div class="card" id="slide-1">
+            <div class="slide-header">
+                <h2>Le Radar d'Analyse</h2>
+                <div class="instruction-badge" id="badge-1">Cible : 3 Noms (0/3)</div>
+            </div>
+            <p style="text-align: center; color: #555; font-weight: bold;">Touche les mots pour les révéler.</p>
+            <div class="sentence-box" id="radar-1">
+                <span class="radar-word" data-wrong="Déterminant">La</span>
+                <span class="radar-word target" data-class="Nom" data-explanation="Personne">skieuse</span>
+                <span class="radar-word" data-wrong="Verbe">remporte</span>
+                <span class="radar-word" data-wrong="Déterminant">une</span>
+                <span class="radar-word target" data-class="Nom" data-explanation="Objet">médaille</span>
+                <span class="radar-word" data-wrong="Préposition">de</span>
+                <span class="radar-word target" data-class="Nom" data-explanation="Matière">bronze</span>.
+            </div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(1)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-2">
+            <div class="slide-header">
+                <h2>Le Radar d'Analyse</h2>
+                <div class="instruction-badge" id="badge-2">Cible : 2 Adjectifs (0/2)</div>
+            </div>
+            <div class="sentence-box" id="radar-2">
+                <span class="radar-word" data-wrong="Déterminant">Le</span>
+                <span class="radar-word target" data-class="Adjectif" data-explanation="Qualifie le patineur">jeune</span>
+                <span class="radar-word" data-wrong="Nom">patineur</span>
+                <span class="radar-word" data-wrong="Verbe">exécute</span>
+                <span class="radar-word" data-wrong="Déterminant">un</span>
+                <span class="radar-word" data-wrong="Nom">saut</span>
+                <span class="radar-word target" data-class="Adjectif" data-explanation="Qualifie le saut">parfait</span>.
+            </div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(2)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-3">
+            <div class="slide-header">
+                <h2>Le Radar d'Analyse</h2>
+                <div class="instruction-badge" id="badge-3">Cible : 2 Verbes Conjugués (0/2)</div>
+            </div>
+            <div class="sentence-box" id="radar-3">
+                <span class="radar-word" data-wrong="Déterminant">Les</span>
+                <span class="radar-word" data-wrong="Nom">athlètes</span>
+                <span class="radar-word target" data-class="Verbe" data-explanation="Action">célèbrent</span>
+                <span class="radar-word" data-wrong="Conjonction">quand</span>
+                <span class="radar-word" data-wrong="Pronom">ils</span>
+                <span class="radar-word target" data-class="Verbe" data-explanation="Action">franchissent</span>
+                <span class="radar-word" data-wrong="Déterminant">la</span>
+                <span class="radar-word" data-wrong="Nom">ligne</span>.
+            </div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(3)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <!-- ================= TYPE B : ASSOCIATION ================= -->
+        <div class="card" id="slide-4">
+            <div class="slide-header">
+                <h2>Tir de précision (Lien)</h2>
+                <div class="instruction-badge">Trouve l'antécédent</div>
+            </div>
+            <p style="text-align: center; color: #555; font-weight: bold; margin-bottom: 15px;">Dans la boîte blanche, touche le nom remplacé par le pronom souligné.</p>
+            <div class="assoc-container">
+                <div class="assoc-sentence" id="assoc-1">
+                    <span class="assoc-word" data-wrong="Déterminant">Le</span>
+                    <span class="assoc-word target" data-class="Nom">gardien</span>
+                    <span class="assoc-word" data-wrong="Verbe">bloque</span>
+                    <span class="assoc-word" data-wrong="Déterminant">la</span>
+                    <span class="assoc-word" data-wrong="Nom">rondelle</span>.
+                </div>
+                <div style="text-align: center; font-size: 1.4rem;">
+                    👉 <span class="assoc-target">Il</span> est très rapide ce soir.
+                </div>
+            </div>
+            <div class="feedback-box" id="feedback-4"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(4)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-5">
+            <div class="slide-header">
+                <h2>Tir de précision (Lien)</h2>
+                <div class="instruction-badge">Trouve l'antécédent</div>
+            </div>
+            <div class="assoc-container">
+                <div class="assoc-sentence" id="assoc-2">
+                    <span class="assoc-word" data-wrong="Déterminant">Les</span>
+                    <span class="assoc-word target" data-class="Nom">skis</span>
+                    <span class="assoc-word" data-wrong="Préposition">de</span>
+                    <span class="assoc-word" data-wrong="Déterminant">mon</span>
+                    <span class="assoc-word" data-wrong="Nom">frère</span>
+                    <span class="assoc-word" data-wrong="Verbe">sont</span>
+                    <span class="assoc-word" data-wrong="Adjectif">neufs</span>.
+                </div>
+                <div style="text-align: center; font-size: 1.4rem;">
+                    👉 Je <span class="assoc-target">les</span> emprunte souvent.
+                </div>
+            </div>
+            <div class="feedback-box" id="feedback-5"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(5)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-6">
+            <div class="slide-header">
+                <h2>Tir de précision (Lien)</h2>
+                <div class="instruction-badge">Le donneur d'accord</div>
+            </div>
+            <p style="text-align: center; color: #555; font-weight: bold; margin-bottom: 15px;">Touche le mot qui donne son genre et son nombre à l'adjectif souligné.</p>
+            <div class="assoc-container">
+                <div class="assoc-sentence" id="assoc-3">
+                    <span class="assoc-word" data-wrong="Déterminant">La</span>
+                    <span class="assoc-word target" data-class="Nom">piste</span>
+                    <span class="assoc-word" data-wrong="Préposition">de</span>
+                    <span class="assoc-word" data-wrong="Nom">slalom</span>
+                    <span class="assoc-word" data-wrong="Verbe">semble</span>
+                    <span class="assoc-word" data-wrong="Adverbe">très</span>
+                    <span class="assoc-target">dangereuse</span>.
+                </div>
+            </div>
+            <div class="feedback-box" id="feedback-6"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(6)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <!-- ================= TYPE C : SUBSTITUTION ================= -->
+        <div class="card" id="slide-7">
+            <div class="slide-header">
+                <h2>L'Équipementier (Choix)</h2>
+                <div class="instruction-badge">Construis avec un Adverbe</div>
+            </div>
+            <p style="text-align: center; color: #555; font-weight: bold;">Sélectionne le bon mot pour que la phrase ait du sens.</p>
+            <div class="subst-sentence" style="text-align: center; background: white; padding: 25px; border-radius: 15px; border: 2px solid #eee;">
+                La patineuse artistique tourne <br><br>
+                <select class="subst-select" id="subst-1">
+                    <option value="" disabled selected>--- Choisir ---</option>
+                    <option value="gracieuse" data-wrong="C'est un adjectif.">gracieuse</option>
+                    <option value="grâce" data-wrong="C'est un nom.">grâce</option>
+                    <option value="gracieusement" data-correct="true">gracieusement</option>
+                </select>
+                <br><br> sur la glace.
+            </div>
+            <div class="feedback-box" id="feedback-7"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(7)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-8">
+            <div class="slide-header">
+                <h2>L'Équipementier (Choix)</h2>
+                <div class="instruction-badge">Construis avec une Préposition</div>
+            </div>
+            <div class="subst-sentence" style="text-align: center; background: white; padding: 25px; border-radius: 15px; border: 2px solid #eee;">
+                La grande finale de hockey aura lieu <br><br>
+                <select class="subst-select" id="subst-2">
+                    <option value="" disabled selected>--- Choisir ---</option>
+                    <option value="et" data-wrong="C'est une conjonction.">et</option>
+                    <option value="dans" data-correct="true">dans</option>
+                    <option value="le" data-wrong="C'est un déterminant.">le</option>
+                </select>
+                <br><br> le stade principal.
+            </div>
+            <div class="feedback-box" id="feedback-8"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(8)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-9">
+            <div class="slide-header">
+                <h2>L'Équipementier (Choix)</h2>
+                <div class="instruction-badge">Construis avec une Conjonction</div>
+            </div>
+            <div class="subst-sentence" style="text-align: center; background: white; padding: 25px; border-radius: 15px; border: 2px solid #eee;">
+                Le fondeur a chuté au départ, <br><br>
+                <select class="subst-select" id="subst-3">
+                    <option value="" disabled selected>--- Choisir ---</option>
+                    <option value="pour" data-wrong="C'est une préposition.">pour</option>
+                    <option value="souvent" data-wrong="C'est un adverbe.">souvent</option>
+                    <option value="mais" data-correct="true">mais</option>
+                </select>
+                <br><br> il a terminé la course.
+            </div>
+            <div class="feedback-box" id="feedback-9"></div>
+            <div class="btn-container">
+                <button class="next-btn" disabled onclick="nextSlide(9)">Suivant <i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+
+
+        <!-- ================= TYPE D : L'ÉPREUVE ULTIME ================= -->
+        <div class="card" id="slide-10" style="max-width: 950px;">
+            <div class="slide-header">
+                <h2>L'Épreuve Ultime <i class="fas fa-trophy" style="color:var(--accent);"></i></h2>
+                <div class="instruction-badge">Classe les 8 mots</div>
+            </div>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 25px;">
+                <span style="background: var(--primary); color: white; padding: 3px 10px; border-radius: 5px; font-weight: bold;">1</span> Touche un mot en haut. <br class="mobile-break">
+                <span style="background: var(--primary); color: white; padding: 3px 10px; border-radius: 5px; font-weight: bold;">2</span> Touche la bonne catégorie en bas pour l'insérer.
+            </p>
+            
+            <div class="ultime-container">
+                <!-- Banque de mots (Mélangés par défaut en HTML) -->
+                <div class="word-bank" id="word-bank">
+                    <div class="draggable-word" data-class="Verbe">patiner</div>
+                    <div class="draggable-word" data-class="Préposition">sans</div>
+                    <div class="draggable-word" data-class="Adjectif">olympique</div>
+                    <div class="draggable-word" data-class="Conjonction">car</div>
+                    <div class="draggable-word" data-class="Nom">neige</div>
+                    <div class="draggable-word" data-class="Adverbe">rapidement</div>
+                    <div class="draggable-word" data-class="Déterminant">la</div>
+                    <div class="draggable-word" data-class="Pronom">nous</div>
+                </div>
+
+
+                <!-- Colonnes -->
+                <div class="columns-grid">
+                    <div class="drop-column" data-class="Nom"><h3>Nom</h3></div>
+                    <div class="drop-column" data-class="Déterminant"><h3>Déterminant</h3></div>
+                    <div class="drop-column" data-class="Adjectif"><h3>Adjectif</h3></div>
+                    <div class="drop-column" data-class="Pronom"><h3>Pronom</h3></div>
+                    <div class="drop-column" data-class="Verbe"><h3>Verbe</h3></div>
+                    <div class="drop-column" data-class="Adverbe"><h3>Adverbe</h3></div>
+                    <div class="drop-column" data-class="Préposition"><h3>Préposition</h3></div>
+                    <div class="drop-column" data-class="Conjonction"><h3>Conjonction</h3></div>
+                </div>
+            </div>
+
+
+            <div class="btn-container">
+                <button class="next-btn" id="btn-ultime" disabled onclick="finishGame()" style="background: linear-gradient(to bottom, #CD7F32, #A0522D); color: white; box-shadow: 0 6px 0 #5C3317;">
+                    Afficher mon résultat <i class="fas fa-flag-checkered"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- ================= SLIDE 11 : RÉSULTATS ================= -->
+        <div class="card" id="slide-11" style="max-width: 800px;">
+            <div class="slide-header">
+                <h2>Le Podium Officiel 🏅</h2>
+            </div>
+            <div class="results-container">
+                <div class="final-score" id="final-percentage">0%</div>
+                
+                <div class="result-message" id="final-message">
+                    <!-- Message dynamique -->
+                </div>
+
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <i class="fas fa-bullseye"></i>
+                        <span style="font-size: 0.9rem; color: #666; font-weight: bold; text-transform: uppercase;">Score Final</span>
+                        <strong id="final-score-text">0 / 21</strong>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-stopwatch"></i>
+                        <span style="font-size: 0.9rem; color: #666; font-weight: bold; text-transform: uppercase;">Chrono</span>
+                        <strong id="final-time">00:00</strong>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-calendar-check"></i>
+                        <span style="font-size: 0.9rem; color: #666; font-weight: bold; text-transform: uppercase;">Heure locale</span>
+                        <strong id="final-clock">12h00</strong>
+                    </div>
+                </div>
+
+
+                <table class="details-table">
+                    <tr>
+                        <th>Épreuve</th>
+                        <th style="text-align: right;">Points</th>
+                    </tr>
+                    <tr>
+                        <td>Le Radar (Identification)</td>
+                        <td id="score-radar">0 / 7</td>
+                    </tr>
+                    <tr>
+                        <td>Tir de Précision (Logique)</td>
+                        <td id="score-assoc">0 / 3</td>
+                    </tr>
+                    <tr>
+                        <td>L'Équipementier (Substitution)</td>
+                        <td id="score-subst">0 / 3</td>
+                    </tr>
+                    <tr>
+                        <td>L'Épreuve Ultime (Classement)</td>
+                        <td id="score-ultime">0 / 8</td>
+                    </tr>
+                </table>
+
+
+                <button onclick="location.reload()" style="font-size: 1.2rem; padding: 15px 40px; margin-top: 10px; background: linear-gradient(to bottom, #CD7F32, #A0522D); box-shadow: 0 6px 0 #5C3317;">
+                    <i class="fas fa-redo"></i> Rejouer la partie
+                </button>
+            </div>
+        </div>
+
+
+    </main>
+
+
+    <script>
+        // --- GÉNÉRATION DE LA NEIGE ---
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            for(let i=0; i<30; i++) {
+                let flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                flake.style.animationDelay = (Math.random() * 5) + 's';
+                flake.style.opacity = Math.random();
+                let size = Math.random() * 6 + 4;
+                flake.style.width = size + 'px';
+                flake.style.height = size + 'px';
+                container.appendChild(flake);
+            }
+        }
+        createSnow();
+
+
+        // --- GÉNÉRATION DE CONFETTIS ---
+        function fireConfetti() {
+            const container = document.body;
+            const colors = ['#CD7F32', '#A0522D', '#00A6FB', '#FFFFFF', '#00E676'];
+            for(let i=0; i<100; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = '-20px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                conf.style.animationDelay = (Math.random() * 0.5) + 's';
+                container.appendChild(conf);
+                
+                setTimeout(() => conf.remove(), 3500);
+            }
+        }
+
+
+        // --- MÉLANGE ALÉATOIRE DES MOTS (ÉPREUVE ULTIME) ---
+        function shuffleUltimeWords() {
+            const wordBank = document.getElementById('word-bank');
+            const wordsArray = Array.from(wordBank.children);
+            
+            // Algorithme de mélange (Fisher-Yates)
+            for (let i = wordsArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [wordsArray[i], wordsArray[j]] = [wordsArray[j], wordsArray[i]];
+            }
+            
+            // Réinsertion des mots mélangés
+            wordsArray.forEach(word => wordBank.appendChild(word));
+        }
+        // Exécuter le mélange au chargement
+        shuffleUltimeWords();
+
+
+        // --- VARIABLES GLOBALES ---
+        let currentSlide = 0;
+        const totalSlides = 11; 
+        const maxScore = 21;
+        let globalScore = 0;
+        let scores = { radar: 0, assoc: 0, subst: 0, ultime: 0 };
+        let startTime = null;
+        let timerInterval = null;
+        let timeElapsed = 0; 
+
+
+        // --- NAVIGATION & HEADER ---
+        function startGame() {
+            document.getElementById('slide-0').classList.remove('active');
+            currentSlide = 1;
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+            updateHeader();
+            
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+            }, 1000);
+        }
+
+
+        function nextSlide(slideIndex) {
+            document.getElementById(`slide-${slideIndex}`).classList.remove('active');
+            currentSlide++;
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+            updateHeader();
+        }
+
+
+        function updateHeader() {
+            if (currentSlide > 0 && currentSlide <= 10) {
+                document.getElementById('progress-display').innerText = `Étape ${currentSlide}/10`;
+            } else if (currentSlide == 11) {
+                document.getElementById('progress-display').innerText = `Terminé`;
+            }
+            document.getElementById('score-display').innerText = `${globalScore} / ${maxScore}`;
+        }
+
+
+        function addPoint(section) {
+            globalScore++;
+            scores[section]++;
+            updateHeader();
+            
+            const scoreDisp = document.getElementById('score-display');
+            scoreDisp.style.transform = 'scale(1.3) translateY(-2px)';
+            scoreDisp.style.color = 'var(--secondary)';
+            setTimeout(() => {
+                scoreDisp.style.transform = 'none';
+                scoreDisp.style.color = 'inherit';
+            }, 300);
+        }
+
+
+        // --- LOGIQUE TYPE A : RADAR ---
+        function setupRadar(slideId, expectedCount, sectionKey) {
+            const container = document.getElementById(slideId);
+            const words = container.querySelectorAll('.radar-word');
+            const btn = document.getElementById(`slide-${slideId.split('-')[1]}`).querySelector('.next-btn');
+            const badge = document.getElementById(`badge-${slideId.split('-')[1]}`);
+            
+            let foundCount = 0;
+
+
+            words.forEach(word => {
+                word.addEventListener('click', function() {
+                    if (this.classList.contains('found') || this.classList.contains('error')) return;
+
+
+                    if (this.classList.contains('target')) {
+                        this.classList.add('found');
+                        foundCount++;
+                        addPoint(sectionKey);
+                        badge.innerHTML = `<i class="fas fa-check"></i> Trouvé : ${foundCount}/${expectedCount}`;
+                        
+                        if (foundCount === expectedCount) {
+                            btn.disabled = false;
+                            badge.style.background = 'var(--secondary)';
+                            badge.style.color = 'white';
+                        }
+                    } else {
+                        this.classList.add('error');
+                        setTimeout(() => this.classList.remove('error'), 2000);
+                    }
+                });
+            });
+        }
+        setupRadar('radar-1', 3, 'radar');
+        setupRadar('radar-2', 2, 'radar');
+        setupRadar('radar-3', 2, 'radar');
+
+
+        // --- LOGIQUE TYPE B : ASSOCIATION ---
+        function setupAssoc(slideIdNum, sectionKey) {
+            const container = document.getElementById(`assoc-${slideIdNum}`);
+            const words = container.querySelectorAll('.assoc-word');
+            const btn = document.getElementById(`slide-${slideIdNum + 3}`).querySelector('.next-btn');
+            const feedbackBox = document.getElementById(`feedback-${slideIdNum + 3}`);
+            let attempted = false; 
+
+
+            words.forEach(word => {
+                word.addEventListener('click', function() {
+                    if (btn.disabled === false) return;
+
+
+                    if (this.classList.contains('target')) {
+                        this.classList.add('correct');
+                        btn.disabled = false;
+                        feedbackBox.className = 'feedback-box success';
+                        feedbackBox.innerHTML = `<i class="fas fa-check-circle" style="font-size:1.2rem; vertical-align:middle;"></i> <strong>C'est exact !</strong> Le mot "${this.innerText}" est bien la cible.`;
+                        if (!attempted) addPoint(sectionKey);
+                    } else {
+                        this.classList.add('wrong');
+                        attempted = true; 
+                        feedbackBox.className = 'feedback-box fail';
+                        feedbackBox.innerHTML = `<i class="fas fa-times-circle" style="font-size:1.2rem; vertical-align:middle;"></i> <strong>Attention !</strong> C'est un(e) ${this.dataset.wrong}. Cherche encore.`;
+                        setTimeout(() => this.classList.remove('wrong'), 1000);
+                    }
+                });
+            });
+        }
+        setupAssoc(1, 'assoc'); 
+        setupAssoc(2, 'assoc'); 
+        setupAssoc(3, 'assoc'); 
+
+
+        // --- LOGIQUE TYPE C : SUBSTITUTION ---
+        function setupSubst(slideIdNum, sectionKey) {
+            const select = document.getElementById(`subst-${slideIdNum}`);
+            const btn = document.getElementById(`slide-${slideIdNum + 6}`).querySelector('.next-btn');
+            const feedbackBox = document.getElementById(`feedback-${slideIdNum + 6}`);
+            let attempted = false;
+
+
+            select.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                
+                if (selectedOption.dataset.correct === "true") {
+                    this.className = "subst-select correct";
+                    btn.disabled = false;
+                    feedbackBox.className = 'feedback-box success';
+                    feedbackBox.innerHTML = `<i class="fas fa-check-circle"></i> <strong>Parfait !</strong> La phrase est correcte.`;
+                    if (!attempted) addPoint(sectionKey);
+                } else {
+                    this.className = "subst-select wrong";
+                    attempted = true;
+                    feedbackBox.className = 'feedback-box fail';
+                    feedbackBox.innerHTML = `<i class="fas fa-times-circle"></i> <strong>Erreur :</strong> ${selectedOption.dataset.wrong}`;
+                    setTimeout(() => this.classList.remove('wrong'), 400); 
+                }
+            });
+        }
+        setupSubst(1, 'subst'); 
+        setupSubst(2, 'subst');
+        setupSubst(3, 'subst');
+
+
+        // --- LOGIQUE TYPE D : ULTIME (TAP & DROP) ---
+        let selectedWordForDrop = null;
+        let ultimePlacedCount = 0;
+        const draggableWords = document.querySelectorAll('.draggable-word');
+        const dropColumns = document.querySelectorAll('.drop-column');
+        const btnUltime = document.getElementById('btn-ultime');
+
+
+        draggableWords.forEach(word => {
+            word.addEventListener('click', function() {
+                if (this.classList.contains('placed')) return; 
+                draggableWords.forEach(w => w.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedWordForDrop = this;
+            });
+            word.dataset.attempted = "false";
+        });
+
+
+        dropColumns.forEach(column => {
+            column.addEventListener('click', function() {
+                if (!selectedWordForDrop) return; 
+
+
+                const expectedClass = this.dataset.class;
+                const actualClass = selectedWordForDrop.dataset.class;
+
+
+                if (expectedClass === actualClass) {
+                    selectedWordForDrop.classList.remove('selected');
+                    selectedWordForDrop.classList.add('placed');
+                    this.appendChild(selectedWordForDrop); 
+                    
+                    if (selectedWordForDrop.dataset.attempted === "false") {
+                        addPoint('ultime');
+                    }
+                    
+                    selectedWordForDrop = null;
+                    ultimePlacedCount++;
+
+
+                    if (ultimePlacedCount === 8) {
+                        btnUltime.disabled = false;
+                    }
+                } else {
+                    const tempWord = selectedWordForDrop;
+                    tempWord.style.animation = 'shake 0.4s';
+                    tempWord.style.background = 'var(--danger)';
+                    tempWord.style.color = 'white';
+                    tempWord.dataset.attempted = "true"; 
+                    setTimeout(() => {
+                        tempWord.style.animation = 'none';
+                        tempWord.style.background = 'white';
+                        tempWord.style.color = 'var(--primary)';
+                    }, 400);
+                }
+            });
+        });
+
+
+        // --- LOGIQUE FIN DE JEU ---
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+
+        function finishGame() {
+            clearInterval(timerInterval);
+            
+            document.getElementById(`slide-10`).classList.remove('active');
+            currentSlide = 11;
+            document.getElementById(`slide-11`).classList.add('active');
+            
+            document.querySelector('.stats-container').style.display = 'none';
+
+
+            const percentage = Math.round((globalScore / maxScore) * 100);
+            
+            const isSuccess = percentage >= 60;
+
+
+            const pctEl = document.getElementById('final-percentage');
+            pctEl.innerText = `${percentage}%`;
+            
+            const msgEl = document.getElementById('final-message');
+
+
+            if (isSuccess) {
+                if (percentage >= 80) {
+                    pctEl.className = "final-score score-green";
+                } else {
+                    pctEl.className = "final-score score-bronze";
+                }
+                msgEl.className = "result-message msg-success";
+                msgEl.innerHTML = `<div style="font-size:2rem; margin-bottom:10px;">🥉</div><strong>Mission accomplie !</strong> Tu as dépassé la barre des 60% et remporté la médaille de bronze ! <br><br>👉 Prends vite une <strong>capture d'écran</strong> de ce tableau et envoie-la à ton enseignant(e).`;
+                setTimeout(fireConfetti, 300);
+            } else {
+                pctEl.className = "final-score score-red";
+                msgEl.className = "result-message msg-fail";
+                msgEl.innerHTML = `<div style="font-size:2rem; margin-bottom:10px;">📉</div><strong>Presque !</strong> Ton résultat est inférieur aux 60% requis. <br><br>👉 Clique sur le bouton en bas pour <strong>rejouer la partie</strong> et décrocher ta médaille.`;
+            }
+
+
+            document.getElementById('final-score-text').innerText = `${globalScore} / ${maxScore}`;
+            document.getElementById('final-time').innerText = formatTime(timeElapsed);
+            
+            const now = new Date();
+            document.getElementById('final-clock').innerText = `${now.getHours()}h${now.getMinutes().toString().padStart(2, '0')}`;
+
+
+            document.getElementById('score-radar').innerText = `${scores.radar} / 7`;
+            document.getElementById('score-assoc').innerText = `${scores.assoc} / 3`;
+            document.getElementById('score-subst').innerText = `${scores.subst} / 3`;
+            document.getElementById('score-ultime').innerText = `${scores.ultime} / 8`;
+        }
+    </script>
+</body>
+</html>

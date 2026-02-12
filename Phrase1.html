@@ -1,0 +1,893 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Microcosme - Types et Formes de phrases</title>
+    <style>
+        /* --- CSS Thème Insectes / Forêt --- */
+        :root {
+            --primary: #2d6a4f;
+            --primary-hover: #1b4332;
+            --secondary: #ffb703; /* Jaune luciole / Ambre */
+            --secondary-hover: #ff9e00;
+            --bg-top: #1e3a29; /* Vert forêt sombre */
+            --bg-bottom: #08120b; /* Sous-bois très sombre */
+            --text-color: #e9edc9;
+            --text-dark: #283618;
+            --correct: #52b788;
+            --correct-light: #d8f3dc;
+            --incorrect: #e63946;
+            --incorrect-light: #ffe5d9;
+            --card-bg: rgba(20, 35, 20, 0.85);
+            --highlight: #ffb703;
+        }
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+
+        /* --- Animations de Lucioles --- */
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+        .particle { 
+            position: absolute; 
+            background: var(--secondary); 
+            border-radius: 50%; 
+            box-shadow: 0 0 8px var(--secondary), 0 0 15px var(--secondary); 
+            animation: fly linear infinite; 
+            opacity: 0.8;
+        }
+        @keyframes fly { 
+            0% { transform: translateY(110vh) translateX(0) scale(0.5); opacity: 0; } 
+            10% { opacity: 1; }
+            50% { transform: translateY(50vh) translateX(40px) scale(1.2); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) translateX(-30px) scale(0.5); opacity: 0; } 
+        }
+        .particle:nth-child(1) { left: 15%; width: 4px; height: 4px; animation-duration: 12s; }
+        .particle:nth-child(2) { left: 35%; width: 5px; height: 5px; animation-duration: 16s; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 55%; width: 6px; height: 6px; animation-duration: 14s; animation-delay: 5s; background: #ccd5ae; box-shadow: 0 0 10px #ccd5ae;}
+        .particle:nth-child(4) { left: 75%; width: 4px; height: 4px; animation-duration: 10s; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 85%; width: 5px; height: 5px; animation-duration: 18s; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 25%; width: 3px; height: 3px; animation-duration: 15s; animation-delay: 6s; }
+
+
+        header {
+            color: var(--secondary);
+            text-align: center;
+            padding: 30px 20px;
+            text-shadow: 0 0 10px rgba(255, 183, 3, 0.4);
+        }
+
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+        }
+
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            color: #ccd5ae;
+            opacity: 0.9;
+        }
+
+
+        .container {
+            max-width: 900px;
+            margin: 10px auto 40px auto;
+            padding: 0 20px;
+        }
+
+
+        /* Menu de navigation */
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+
+        .nav-btn {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 183, 3, 0.3);
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+
+        .nav-btn:hover {
+            background-color: rgba(255, 183, 3, 0.1);
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(255, 183, 3, 0.2);
+        }
+
+
+        .nav-btn.active {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(255, 183, 3, 0.5);
+        }
+
+
+        /* Sections des jeux */
+        .game-section {
+            display: none;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 183, 3, 0.2);
+            animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        .game-section.active {
+            display: block;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px dashed rgba(255, 183, 3, 0.4);
+            padding-bottom: 15px;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 5px rgba(255, 183, 3, 0.3);
+        }
+
+
+        .instructions {
+            background-color: rgba(255, 183, 3, 0.1);
+            color: #ccd5ae;
+            padding: 15px 20px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+
+        /* Éléments de formulaire */
+        select {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            font-family: inherit;
+            margin: 10px 0;
+            background-color: #283618;
+            color: #fff;
+            transition: all 0.2s;
+            outline: none;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+        }
+        
+        select:focus {
+            box-shadow: 0 0 8px rgba(255, 183, 3, 0.6);
+        }
+        select:disabled {
+            background-color: #1e2e1a;
+            color: #aeb8c7;
+            border-color: #606c38;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+
+        .action-btn {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
+        }
+
+
+        .action-btn:hover {
+            background-color: var(--secondary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.6);
+        }
+        
+        .action-btn:disabled {
+            background-color: #283618;
+            color: #8d99ae;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+
+        .next-btn {
+            background-color: var(--primary);
+            color: var(--text-color);
+            border: 2px solid var(--secondary);
+            margin-left: 15px;
+        }
+
+
+        .next-btn:hover {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+        }
+
+
+        /* Structure des phrases */
+        .j-sentence {
+            margin-bottom: 25px;
+            font-size: 1.15rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 3px solid rgba(255, 183, 3, 0.5);
+        }
+
+
+        .phrase-text {
+            font-weight: 500;
+            color: #fefae0;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+
+        /* Mots cliquables (Mission 3) */
+        .text-block {
+            font-size: 1.25rem;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(255, 183, 3, 0.3);
+            border-radius: 12px;
+        }
+
+
+        .word {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: transparent;
+        }
+
+
+        .word:hover {
+            background-color: rgba(255, 183, 3, 0.2);
+            transform: scale(1.05);
+        }
+
+
+        .word.selected {
+            background-color: var(--highlight);
+            color: var(--text-dark);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 183, 3, 0.6);
+        }
+
+
+        /* Rétroaction */
+        .feedback {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+
+        .feedback.success {
+            display: block;
+            background-color: var(--correct-light);
+            color: var(--correct);
+            border: 2px solid var(--correct);
+        }
+
+
+        .feedback.error {
+            display: block;
+            background-color: var(--incorrect-light);
+            color: var(--incorrect);
+            border: 2px solid var(--incorrect);
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Particules (Lucioles) en arrière-plan -->
+    <div class="particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    </div>
+
+
+    <header>
+        <h1>🦋 Le Microcosme 🌿</h1>
+        <p>Laboratoire d'entomologie : Types et Formes de phrases</p>
+    </header>
+
+
+    <div class="container">
+        
+        <!-- Navigation -->
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="showGame('jeu0')">M0: Déf. Types</button>
+            <button class="nav-btn" onclick="showGame('jeu1')">M1: Les 4 Types</button>
+            <button class="nav-btn" onclick="showGame('jeu1b')">M2: Déf. Formes</button>
+            <button class="nav-btn" onclick="showGame('jeu2')">M3: Aff / Nég</button>
+            <button class="nav-btn" onclick="showGame('jeu3')">M4: Chasse Négation</button>
+            <button class="nav-btn" onclick="showGame('jeu4')">M5: Active / Passive</button>
+            <button class="nav-btn" onclick="showGame('jeu5')">M6: Formes Spéciales</button>
+            <button class="nav-btn" onclick="showGame('jeu6')">M7: Le Grand Labo</button>
+            <button id="btn-resultats" class="nav-btn" style="display: none; background-color: var(--highlight); color: var(--text-dark);" onclick="showResultats()">🏆 Bilan</button>
+        </div>
+
+
+        <!-- JEU 0 : Définitions (NOUVEAU) -->
+        <div id="jeu0" class="game-section active">
+            <h2>📖 Mission 0 : Le Manuel de l'Explorateur</h2>
+            <div class="instructions">
+                Avant de partir sur le terrain, révisons notre manuel ! Lis attentivement chaque définition et associe-la au type de phrase correspondant.
+            </div>
+            <div id="jeu0-content"></div>
+            <button id="btn-valider-j0" class="action-btn" onclick="validerJeu0()">Valider les connaissances</button>
+            <button id="btn-next-j0" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu1')">Mission suivante ➡️</button>
+            <div id="feedback-jeu0" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 1 : Types de phrases -->
+        <div id="jeu1" class="game-section">
+            <h2>🔍 Mission 1 : Identifier les 4 Types</h2>
+            <div class="instructions">
+                Maintenant que tu connais les définitions, passe à la pratique ! Identifie le type de chacune de ces phrases.
+            </div>
+            <div id="jeu1-content"></div>
+            <button id="btn-valider-j1" class="action-btn" onclick="validerJeu1()">Analyser les spécimens</button>
+            <button id="btn-next-j1" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu1b')">Mission suivante ➡️</button>
+            <div id="feedback-jeu1" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 1b : Définitions Formes (NOUVEAU) -->
+        <div id="jeu1b" class="game-section">
+            <h2>📖 Mission 2 : Le Manuel des Formes</h2>
+            <div class="instructions">
+                Avant d'étudier les différentes formes de phrases en détail, vérifions le manuel ! Associe chaque définition à la forme correspondante.
+            </div>
+            <div id="jeu1b-content"></div>
+            <button id="btn-valider-j1b" class="action-btn" onclick="validerJeu1b()">Valider les connaissances</button>
+            <button id="btn-next-j1b" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu2')">Mission suivante ➡️</button>
+            <div id="feedback-jeu1b" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 2 : Forme Affirmative ou Négative -->
+        <div id="jeu2" class="game-section">
+            <h2>⚖️ Mission 3 : L'ombre et la lumière</h2>
+            <div class="instructions">
+                Toutes les phrases ont une forme de base. Indique si l'action se fait (<strong>Forme Affirmative</strong>) ou si elle ne se fait pas (<strong>Forme Négative</strong>, avec l'utilisation de ne...pas, ne...jamais, etc.).
+            </div>
+            <div id="jeu2-content"></div>
+            <button id="btn-valider-j2" class="action-btn" onclick="validerJeu2()">Vérifier les observations</button>
+            <button id="btn-next-j2" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu3')">Mission suivante ➡️</button>
+            <div id="feedback-jeu2" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 3 : Chasse à la négation -->
+        <div id="jeu3" class="game-section">
+            <h2>🕸️ Mission 4 : La toile de la Négation</h2>
+            <div class="instructions">
+                Maintenant que tu reconnais une phrase négative, traquons ses indices ! <br>
+                Clique sur <strong>tous les mots marqueurs de négation</strong> cachés dans ce texte (ex: ne, pas, jamais, aucun...).
+            </div>
+            <div id="jeu3-content"></div>
+            <button id="btn-valider-j3" class="action-btn" onclick="validerJeu3()">Vérifier la toile</button>
+            <button id="btn-next-j3" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu4')">Mission suivante ➡️</button>
+            <div id="feedback-jeu3" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 4 : Forme active ou passive -->
+        <div id="jeu4" class="game-section">
+            <h2>🦗 Mission 5 : La voix des insectes</h2>
+            <div class="instructions">
+                Le sujet fait-il l'action (<strong>Forme Active</strong>) ou subit-il l'action (<strong>Forme Passive</strong>, souvent suivie de "par") ? Identifie la forme de chaque phrase.
+            </div>
+            <div id="jeu4-content"></div>
+            <button id="btn-valider-j4" class="action-btn" onclick="validerJeu4()">Confirmer l'observation</button>
+            <button id="btn-next-j4" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu5')">Mission suivante ➡️</button>
+            <div id="feedback-jeu4" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 5 : Forme Impersonnelle ou Emphatique -->
+        <div id="jeu5" class="game-section">
+            <h2>🎭 Mission 6 : Les Formes Spéciales</h2>
+            <div class="instructions">
+                Découvrons deux nouvelles formes ! <br>
+                - <strong>Forme Impersonnelle</strong> : Le sujet "Il" ne représente personne (ex: Il pleut, Il faut...).<br>
+                - <strong>Forme Emphatique</strong> : On met un élément en valeur avec "C'est ... qui/que" (ex: C'est la fourmi qui travaille).
+            </div>
+            <div id="jeu5-content"></div>
+            <button id="btn-valider-j5" class="action-btn" onclick="validerJeu5()">Vérifier les hypothèses</button>
+            <button id="btn-next-j5" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu6')">Mission suivante ➡️</button>
+            <div id="feedback-jeu5" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 6 : Le Grand Labo -->
+        <div id="jeu6" class="game-section">
+            <h2>🔬 Mission 7 : Le Grand Laboratoire</h2>
+            <div class="instructions">
+                Mélangeons toutes les formes étudiées ! Pour chaque phrase, identifie sa forme particulière : <strong>Négative</strong>, <strong>Passive</strong>, <strong>Impersonnelle</strong> ou <strong>Emphatique</strong>.
+            </div>
+            <div id="jeu6-content"></div>
+            <button id="btn-valider-j6" class="action-btn" onclick="validerJeu6()">Publier les résultats</button>
+            <button id="btn-next-j6" class="action-btn next-btn" style="display: none;" onclick="showResultats()">Voir le Bilan 🏆</button>
+            <div id="feedback-jeu6" class="feedback"></div>
+        </div>
+
+
+        <!-- RÉSULTATS -->
+        <div id="resultats" class="game-section">
+            <h2>🏆 Bilan de l'Étude Entomologique</h2>
+            <div id="resultats-content"></div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // --- ÉTAT DU JEU ET SCORES ---
+        let gameStatus = {
+            jeu0: { done: false, score: 0, max: 4 }, // Définitions
+            jeu1: { done: false, score: 0, max: 5 }, // Types
+            jeu1b: { done: false, score: 0, max: 4 }, // Def Formes
+            jeu2: { done: false, score: 0, max: 4 }, // Aff/Neg
+            jeu3: { done: false, score: 0, max: 0 }, // Clic Négation (max calculé dynamiquement)
+            jeu4: { done: false, score: 0, max: 4 }, // Active/Passive
+            jeu5: { done: false, score: 0, max: 4 }, // Impersonnelle/Emphatique
+            jeu6: { done: false, score: 0, max: 5 }  // Grand labo
+        };
+
+
+        // --- DONNÉES DES JEUX ---
+
+
+        // Jeu 0 : Définitions
+        const dataJeu0 = [
+            { text: "Je sers à raconter un événement, donner une information ou décrire un fait. Je me termine par un point (.).", correct: "Déclarative" },
+            { text: "Je sers à poser une question pour obtenir une information. Je me termine par un point d'interrogation (?).", correct: "Interrogative" },
+            { text: "Je sers à exprimer une émotion forte comme la surprise, la joie ou la colère. Je me termine par un point d'exclamation (!).", correct: "Exclamative" },
+            { text: "Je sers à donner un ordre, un conseil ou une interdiction. Je peux me terminer par un point (.) ou un point d'exclamation (!).", correct: "Impérative" }
+        ];
+
+
+        // Jeu 1 : Types
+        const dataJeu1 = [
+            { text: "Le scarabée rhinocéros possède une force incroyable.", correct: "Déclarative" },
+            { text: "Quelle magnifique chrysalide !", correct: "Exclamative" },
+            { text: "Ne touchez pas à ce nid de frelons asiatiques.", correct: "Impérative" },
+            { text: "Comment l'abeille fabrique-t-elle son miel ?", correct: "Interrogative" },
+            { text: "Observe attentivement le trajet de ces fourmis.", correct: "Impérative" }
+        ];
+
+
+        // Jeu 1b : Définitions Formes
+        const dataJeu1b = [
+            { text: "J'exprime qu'une action ne se fait pas (ex: ne... pas, ne... jamais).", correct: "Négative" },
+            { text: "Dans ma phrase, le sujet subit l'action au lieu de la faire. On trouve souvent le mot 'par'.", correct: "Passive" },
+            { text: "Mon sujet est un 'il' qui ne représente personne ni rien de précis (ex: Il pleut).", correct: "Impersonnelle" },
+            { text: "Je sers à mettre en valeur un mot ou un groupe de mots, souvent encadré par 'c'est... qui/que'.", correct: "Emphatique" }
+        ];
+
+
+        // Jeu 2 : Affirmative / Négative
+        const dataJeu2 = [
+            { text: "Les coccinelles dévorent rapidement les pucerons.", correct: "Affirmative" },
+            { text: "Le phasme ne se fait jamais repérer sur sa branche.", correct: "Négative" },
+            { text: "Personne n'a vu la mante religieuse s'approcher.", correct: "Négative" },
+            { text: "Les abeilles communiquent entre elles en dansant.", correct: "Affirmative" }
+        ];
+
+
+        // Jeu 3 : Mots entourés de * * sont les marqueurs de négation à trouver.
+        const textJeu3 = [
+            "La cigale *ne* chantera *plus* cet hiver. *Aucun* prédateur *n'* est visible sur le sol gelé. Les fourmis, elles, *ne* manquent de *rien*."
+        ];
+
+
+        // Jeu 4 : Active / Passive
+        const dataJeu4 = [
+            { text: "La sève de ce rosier est aspirée par les pucerons.", correct: "Passive" },
+            { text: "L'araignée venimeuse paralyse rapidement sa proie.", correct: "Active" },
+            { text: "Ce grand cocon de soie a été tissé par une chenille.", correct: "Passive" },
+            { text: "Les ouvrières nourrissent la reine de la colonie.", correct: "Active" }
+        ];
+
+
+        // Jeu 5 : Impersonnelle / Emphatique
+        const dataJeu5 = [
+            { text: "Il est indispensable de préserver ces pollinisateurs.", correct: "Impersonnelle" },
+            { text: "C'est le bourdon qui butine cette fleur bleue.", correct: "Emphatique" },
+            { text: "Il existe plus de 350 000 espèces de coléoptères.", correct: "Impersonnelle" },
+            { text: "Ce sont les libellules qui chassent près de l'étang.", correct: "Emphatique" }
+        ];
+
+
+        // Jeu 6 : Grand Labo
+        const dataJeu6 = [
+            { text: "Il manque des ouvrières pour protéger la fourmilière.", correct: "Impersonnelle" },
+            { text: "Ce sont les termites qui rongent le bois mort.", correct: "Emphatique" },
+            { text: "La mante religieuse n'a pas été effrayée par l'oiseau.", correct: "Négative" },
+            { text: "Ce terrier a été creusé par une très grosse mygale.", correct: "Passive" },
+            { text: "Il est strictement interdit de détruire les nids d'hirondelles.", correct: "Impersonnelle" }
+        ];
+
+
+        // --- FONCTIONS UTILITAIRES ---
+
+
+        function showGame(gameId) {
+            document.querySelectorAll('.game-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(gameId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(gameId === 'resultats' ? 'showResultats' : gameId)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+
+        function checkAllCompleted() {
+            if (gameStatus.jeu0.done && gameStatus.jeu1.done && gameStatus.jeu1b.done && gameStatus.jeu2.done && 
+                gameStatus.jeu3.done && gameStatus.jeu4.done && gameStatus.jeu5.done && 
+                gameStatus.jeu6.done) {
+                document.getElementById('btn-resultats').style.display = 'inline-block';
+            }
+        }
+
+
+        // --- GÉNÉRATEUR DE QUESTIONS QCM ---
+        function genererQCM(dataArray, containerId, selectIdPrefix, defaultText, optionsHtml) {
+            const container = document.getElementById(containerId);
+            dataArray.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'j-sentence';
+                div.innerHTML = `
+                    <span class="phrase-text">"${item.text}"</span>
+                    <select id="${selectIdPrefix}-q${index}">
+                        <option value="">-- ${defaultText} --</option>
+                        ${optionsHtml}
+                    </select>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+
+        // --- INITIALISATION DES JEUX ---
+
+
+        function initJeu0() {
+            genererQCM(dataJeu0, 'jeu0-content', 'j0', 'Choisir le Type', `
+                <option value="Déclarative">Type Déclaratif</option>
+                <option value="Interrogative">Type Interrogatif</option>
+                <option value="Exclamative">Type Exclamatif</option>
+                <option value="Impérative">Type Impératif</option>
+            `);
+        }
+
+
+        function initJeu1() {
+            genererQCM(dataJeu1, 'jeu1-content', 'j1', 'Choisir le Type', `
+                <option value="Déclarative">Phrase Déclarative</option>
+                <option value="Interrogative">Phrase Interrogative</option>
+                <option value="Exclamative">Phrase Exclamative</option>
+                <option value="Impérative">Phrase Impérative</option>
+            `);
+        }
+
+
+        function initJeu1b() {
+            genererQCM(dataJeu1b, 'jeu1b-content', 'j1b', 'Choisir la Forme', `
+                <option value="Négative">Forme Négative</option>
+                <option value="Passive">Forme Passive</option>
+                <option value="Impersonnelle">Forme Impersonnelle</option>
+                <option value="Emphatique">Forme Emphatique</option>
+            `);
+        }
+
+
+        function initJeu2() {
+            genererQCM(dataJeu2, 'jeu2-content', 'j2', 'Choisir la Forme', `
+                <option value="Affirmative">Forme Affirmative</option>
+                <option value="Négative">Forme Négative</option>
+            `);
+        }
+
+
+        function initJeu3() {
+            const container = document.getElementById('jeu3-content');
+            let totalNeg = 0;
+
+
+            textJeu3.forEach((text, index) => {
+                let resultHtml = [];
+                let words = text.split(' ');
+                
+                words.forEach(chunk => {
+                    let punct = "";
+                    let word = chunk;
+
+
+                    if (/[.,;!?]$/.test(word)) {
+                        punct = word.slice(-1);
+                        word = word.slice(0, -1);
+                    }
+
+
+                    let isNeg = false;
+                    if (word.startsWith('*') && word.endsWith('*')) {
+                        isNeg = true;
+                        word = word.slice(1, -1);
+                        totalNeg++;
+                    }
+
+
+                    resultHtml.push(`<span class="word" data-neg="${isNeg}">${word}</span>${punct}`);
+                });
+
+
+                const div = document.createElement('div');
+                div.className = 'text-block';
+                div.innerHTML = resultHtml.join(' ').replace(/(>n'<\/span>)\s+(<span)/gi, "$1$2");
+                container.appendChild(div);
+            });
+
+
+            gameStatus.jeu3.max = totalNeg;
+
+
+            container.querySelectorAll('.word').forEach(wordEl => {
+                wordEl.addEventListener('click', function() {
+                    if(!gameStatus.jeu3.done) this.classList.toggle('selected');
+                });
+            });
+        }
+
+
+        function initJeu4() {
+            genererQCM(dataJeu4, 'jeu4-content', 'j4', 'Choisir la Forme', `
+                <option value="Active">Forme Active</option>
+                <option value="Passive">Forme Passive</option>
+            `);
+        }
+
+
+        function initJeu5() {
+            genererQCM(dataJeu5, 'jeu5-content', 'j5', 'Choisir la Forme', `
+                <option value="Impersonnelle">Forme Impersonnelle</option>
+                <option value="Emphatique">Forme Emphatique</option>
+            `);
+        }
+
+
+        function initJeu6() {
+            genererQCM(dataJeu6, 'jeu6-content', 'j6', 'Identifier la Forme', `
+                <option value="Impersonnelle">Forme Impersonnelle</option>
+                <option value="Emphatique">Forme Emphatique</option>
+                <option value="Négative">Forme Négative</option>
+                <option value="Passive">Forme Passive</option>
+            `);
+        }
+
+
+        // --- VALIDATIONS & SCORES ---
+
+
+        function validerQuestionsSelect(dataArray, gamePrefix, statusObj, fbId, successMsg) {
+            if(statusObj.done) return;
+            statusObj.done = true;
+
+
+            let score = 0;
+            dataArray.forEach((item, index) => {
+                const selectEl = document.getElementById(`${gamePrefix}-q${index}`);
+                selectEl.disabled = true; 
+                if (selectEl.value === item.correct) {
+                    score++;
+                    selectEl.style.borderColor = "var(--correct)";
+                    selectEl.style.color = "var(--correct)";
+                } else {
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.color = "var(--incorrect)";
+                    let optionText = Array.from(selectEl.options).find(opt => opt.value === item.correct)?.text || item.correct;
+                    const correctSpan = document.createElement('span');
+                    correctSpan.style.color = "var(--incorrect)";
+                    correctSpan.style.marginLeft = "10px";
+                    correctSpan.style.fontWeight = "bold";
+                    correctSpan.innerHTML = `(Attendu : ${optionText})`;
+                    selectEl.parentNode.appendChild(correctSpan);
+                }
+            });
+
+
+            statusObj.score = score;
+            document.getElementById(`btn-valider-${gamePrefix}`).style.display = 'none';
+            document.getElementById(`btn-next-${gamePrefix}`).style.display = 'inline-block';
+
+
+            const fb = document.getElementById(fbId);
+            fb.innerHTML = `${successMsg} Score : ${score} / ${statusObj.max}`;
+            fb.className = score === statusObj.max ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function validerJeu0() { validerQuestionsSelect(dataJeu0, 'j0', gameStatus.jeu0, 'feedback-jeu0', "Manuel révisé avec succès !"); }
+        function validerJeu1() { validerQuestionsSelect(dataJeu1, 'j1', gameStatus.jeu1, 'feedback-jeu1', "Spécimens analysés !"); }
+        function validerJeu1b() { validerQuestionsSelect(dataJeu1b, 'j1b', gameStatus.jeu1b, 'feedback-jeu1b', "Manuel des formes maîtrisé !"); }
+        function validerJeu2() { validerQuestionsSelect(dataJeu2, 'j2', gameStatus.jeu2, 'feedback-jeu2', "Observations confirmées !"); }
+        function validerJeu4() { validerQuestionsSelect(dataJeu4, 'j4', gameStatus.jeu4, 'feedback-jeu4', "Voix identifiées !"); }
+        function validerJeu5() { validerQuestionsSelect(dataJeu5, 'j5', gameStatus.jeu5, 'feedback-jeu5', "Hypothèses validées !"); }
+        function validerJeu6() { validerQuestionsSelect(dataJeu6, 'j6', gameStatus.jeu6, 'feedback-jeu6', "Résultats finaux publiés !"); }
+
+
+        function validerJeu3() {
+            if(gameStatus.jeu3.done) return;
+            gameStatus.jeu3.done = true;
+
+
+            const allWords = document.querySelectorAll('#jeu3-content .word');
+            let correctCount = 0;
+            let errorsCount = 0;
+
+
+            allWords.forEach(wordEl => {
+                wordEl.style.pointerEvents = 'none';
+                
+                const isNeg = wordEl.getAttribute('data-neg') === "true";
+                const isSelected = wordEl.classList.contains('selected');
+
+
+                if (isSelected && isNeg) {
+                    correctCount++;
+                    wordEl.style.color = "var(--correct)";
+                    wordEl.style.borderBottom = "2px solid var(--correct)";
+                    wordEl.style.backgroundColor = "rgba(82, 183, 136, 0.2)";
+                } else if (isSelected && !isNeg) {
+                    errorsCount++;
+                    wordEl.style.color = "var(--incorrect)";
+                    wordEl.style.borderBottom = "2px solid var(--incorrect)";
+                    wordEl.style.backgroundColor = "rgba(230, 57, 70, 0.2)";
+                } else if (!isSelected && isNeg) {
+                    wordEl.style.borderBottom = "2px dashed var(--incorrect)";
+                }
+            });
+
+
+            let score = Math.max(0, correctCount - errorsCount);
+            gameStatus.jeu3.score = score;
+            document.getElementById('btn-valider-j3').style.display = 'none';
+            document.getElementById('btn-next-j3').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu3');
+            fb.innerHTML = `Toile inspectée ! Mots trouvés : ${correctCount}/${gameStatus.jeu3.max}. Erreurs : ${errorsCount}. Score : ${score} / ${gameStatus.jeu3.max}`;
+            fb.className = score >= gameStatus.jeu3.max * 0.8 ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function showResultats() {
+            showGame('resultats');
+            
+            let totalScore = gameStatus.jeu0.score + gameStatus.jeu1.score + gameStatus.jeu1b.score + gameStatus.jeu2.score + gameStatus.jeu3.score + 
+                             gameStatus.jeu4.score + gameStatus.jeu5.score + gameStatus.jeu6.score;
+            let totalMax = gameStatus.jeu0.max + gameStatus.jeu1.max + gameStatus.jeu1b.max + gameStatus.jeu2.max + gameStatus.jeu3.max + 
+                           gameStatus.jeu4.max + gameStatus.jeu5.max + gameStatus.jeu6.max;
+            let percentage = Math.round((totalScore / totalMax) * 100);
+
+
+            let resContainer = document.getElementById('resultats-content');
+            
+            let html = `
+                <div style="text-align:center; padding: 20px;">
+                    <h3 style="font-size: 2.2rem; margin-bottom: 5px; color: var(--text-color);">Score Final : ${totalScore} / ${totalMax}</h3>
+                    <h4 style="font-size: 2rem; margin-top: 0; color: ${percentage >= 80 ? 'var(--correct)' : 'var(--incorrect)'}">${percentage}%</h4>
+                </div>
+            `;
+
+
+            if (percentage >= 80) {
+                html += `
+                    <div class="feedback success" style="display:block; text-align:center; font-size: 1.2rem; margin-bottom: 20px;">
+                        Brillant ! Tu as parfaitement analysé la colonie. Les types et formes de phrases n'ont plus de secret pour toi.<br><br>
+                        📸 <strong>Mission accomplie : Fais une capture d'écran de ce résultat et envoie-la à ton enseignant(e) !</strong> 🦋🔬
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback error" style="display:block; text-align:center; font-size: 1.2rem;">
+                        Tu as obtenu moins de 80%. Il te faut encore un peu d'entraînement pour maîtriser tous les types et les formes de phrases.<br><br>
+                        Ne te décourage pas, la reine des fourmis t'invite à <strong>recommencer l'observation</strong> ! 🐜📖
+                    </div>
+                    <div style="text-align:center; margin-top: 30px;">
+                        <button class="action-btn" style="background-color: var(--incorrect); color: white;" onclick="location.reload()">Recommencer l'expédition</button>
+                    </div>
+                `;
+            }
+
+
+            resContainer.innerHTML = html;
+        }
+
+
+        window.onload = () => {
+            initJeu0();
+            initJeu1();
+            initJeu1b();
+            initJeu2();
+            initJeu3();
+            initJeu4();
+            initJeu5();
+            initJeu6();
+        };
+
+
+    </script>
+</body>
+</html>

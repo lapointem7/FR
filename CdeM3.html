@@ -1,0 +1,492 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marathon Olympique d'Hiver : 30 Défis</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --olympic-blue: #0081C8;
+            --olympic-yellow: #FCB131;
+            --olympic-black: #000000;
+            --olympic-green: #00A651;
+            --olympic-red: #EE334E;
+            --ice-blue: #e1f5fe;
+            --snow-white: #ffffff;
+            --primary-gold: #D4AF37;
+        }
+
+
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f0f8ff 0%, #c1d5e0 100%);
+            color: #1a202c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* Progress Bar */
+        .marathon-progress {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 10px;
+            background: rgba(255,255,255,0.3);
+            z-index: 1000;
+        }
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--olympic-blue), var(--olympic-green), var(--olympic-red));
+            transition: width 0.4s ease;
+        }
+
+
+        header {
+            background: var(--snow-white);
+            border-bottom: 5px solid var(--olympic-blue);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .olympic-rings-mini { display: flex; gap: 4px; }
+        .ring-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+
+        .stat-badge {
+            background: var(--olympic-black);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 800;
+            box-shadow: 0 4px 0 var(--primary-gold);
+        }
+
+
+        main {
+            flex-grow: 1;
+            padding: 40px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.98);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(to right, 
+                var(--olympic-blue) 20%, 
+                var(--olympic-yellow) 20%, var(--olympic-yellow) 40%, 
+                var(--olympic-black) 40%, var(--olympic-black) 60%, 
+                var(--olympic-green) 60%, var(--olympic-green) 80%, 
+                var(--olympic-red) 80%);
+        }
+
+
+        .instruction-badge {
+            background: var(--ice-blue);
+            border: 2px solid var(--olympic-blue);
+            color: var(--olympic-blue);
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+
+        .sentence-display {
+            font-size: 1.8rem;
+            margin: 25px 0;
+            font-weight: 800;
+            color: var(--olympic-black);
+            line-height: 1.4;
+        }
+
+
+        .target-word {
+            background: rgba(238, 51, 78, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border-bottom: 3px solid var(--olympic-red);
+            color: var(--olympic-red);
+        }
+
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+
+        .opt-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: var(--olympic-blue);
+            background: #f0f7ff;
+        }
+
+
+        .opt-btn.correct { background: var(--olympic-green) !important; color: white; border-color: var(--olympic-green); }
+        .opt-btn.wrong { background: var(--olympic-red) !important; color: white; border-color: var(--olympic-red); }
+
+
+        /* Feedback Section */
+        #feedback-container {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+            animation: slideUp 0.4s ease-out;
+        }
+
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+
+        .explanation-box {
+            background: #fdfdfd;
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+
+        .explanation-box.success { border-left-color: var(--olympic-green); background: #f0fff4; }
+        .explanation-box.error { border-left-color: var(--olympic-red); background: #fff5f5; }
+
+
+        .tip-box {
+            background: #fffaf0;
+            border: 1px dashed var(--olympic-yellow);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+
+        .tip-box i { color: var(--olympic-yellow); margin-top: 3px; }
+
+
+        .main-btn {
+            background: var(--olympic-black);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--primary-gold);
+            margin: 20px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .main-btn:active { transform: translateY(3px); box-shadow: none; }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 32, 63, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+            text-align: center;
+        }
+
+
+        #final-screen { display: none; }
+    </style>
+</head>
+<body>
+
+
+    <div class="marathon-progress"><div id="progress-fill"></div></div>
+
+
+    <header>
+        <div class="header-title">
+            <div class="olympic-rings-mini">
+                <div class="ring-dot" style="background: var(--olympic-blue)"></div>
+                <div class="ring-dot" style="background: var(--olympic-yellow)"></div>
+                <div class="ring-dot" style="background: var(--olympic-black)"></div>
+                <div class="ring-dot" style="background: var(--olympic-green)"></div>
+                <div class="ring-dot" style="background: var(--olympic-red)"></div>
+            </div>
+            DÉFI OLYMPIQUE : 30 KM
+        </div>
+        <div class="stat-badge"><span id="km-text">0</span> / 30 KM</div>
+    </header>
+
+
+    <main>
+        <!-- Start Screen -->
+        <div id="start-screen" class="modal-overlay">
+            <div>
+                <div style="font-size: 4rem; margin-bottom: 20px;">🎿</div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 15px; font-family: Montserrat;">LE MARATHON DES CLASSES</h1>
+                <p style="max-width: 500px; margin: 0 auto 30px; font-size: 1.1rem;">
+                    Identifie correctement les classes de mots pour avancer vers la ligne d'arrivée. Chaque erreur te donnera une astuce pour t'améliorer !
+                </p>
+                <button class="main-btn" onclick="startMarathon()">TOP DÉPART</button>
+            </div>
+        </div>
+
+
+        <!-- Game Area -->
+        <div class="game-card" id="game-container" style="display:none;">
+            <div class="instruction-badge">Kilomètre <span id="current-step">1</span></div>
+            <div id="sentence" class="sentence-display"></div>
+            
+            <div class="options-grid" id="options"></div>
+            
+            <div id="feedback-container">
+                <div id="explanation" class="explanation-box"></div>
+                <div id="tip" class="tip-box"></div>
+                <button id="btn-next" class="main-btn" onclick="nextQuestion()">
+                    KILOMÈTRE SUIVANT <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Final Screen -->
+        <div class="game-card" id="final-screen">
+            <div id="medal-icon" style="font-size: 5rem; margin-bottom: 20px;">🥈</div>
+            <h2 id="final-title" style="font-size: 2.5rem; font-family: Montserrat;">BRAVO !</h2>
+            <div id="final-score" style="font-size: 4rem; font-weight: 900; color: var(--olympic-blue); margin: 15px 0;">0 / 30</div>
+            <p id="final-msg" style="margin-bottom: 30px; font-weight: 700;"></p>
+            <button class="main-btn" onclick="location.reload()">RECOMMENCER LE PARCOURS</button>
+        </div>
+    </main>
+
+
+    <script>
+        const database = [
+            { s: "Le <span class='target-word'>skieur</span> s'élance.", c: "Nom", r: "Il désigne une personne pratiquant le ski.", t: "Le nom est souvent précédé d'un déterminant (le, la, un...)." },
+            { s: "La neige est <span class='target-word'>poudreuse</span>.", c: "Adjectif", r: "Il donne une caractéristique de la neige.", t: "Essaie d'ajouter 'très' devant : 'très poudreuse'. Si ça marche, c'est souvent un adjectif." },
+            { s: "Il glisse <span class='target-word'>rapidement</span>.", c: "Adverbe", r: "Il modifie le verbe glisser.", t: "Les mots finissant par '-ment' sont très souvent des adverbes de manière." },
+            { s: "Elle <span class='target-word'>remporte</span> l'or.", c: "Verbe", r: "C'est l'action principale de la phrase.", t: "Change le temps ! 'Elle remportait'. Si le mot change, c'est un verbe." },
+            { s: "Regarde <span class='target-word'>ce</span> tremplin.", c: "Déterminant", r: "Il introduit et détermine le nom tremplin.", t: "Il est toujours placé avant un nom. On ne peut pas le supprimer seul." },
+            { s: "Le coach <span class='target-word'>leur</span> parle.", c: "Pronom", r: "Il remplace 'aux athlètes'.", t: "S'il est devant un verbe et qu'il remplace quelqu'un, c'est un pronom." },
+            { s: "Il s'entraîne <span class='target-word'>depuis</span> l'aube.", c: "Préposition", r: "Elle introduit le moment du départ.", t: "Une préposition est invariable et introduit un complément (Adam part pour Anvers...)." },
+            { s: "Il gèle, <span class='target-word'>donc</span> la glace tient.", c: "Conjonction", r: "Elle lie deux idées avec un rapport de conséquence.", t: "Mais, où, et, donc, or, ni, car : ce sont les conjonctions de coordination." },
+            { s: "Un <span class='target-word'>froid</span> intense.", c: "Nom", r: "Ici, 'froid' désigne la sensation, c'est un nom.", t: "Attention, 'froid' peut être adjectif (un vent froid), mais ici il y a un déterminant 'un'." },
+            { s: "Nous <span class='target-word'>patinons</span>.", c: "Verbe", r: "C'est l'action de se déplacer sur la glace.", t: "On peut mettre 'ne... pas' autour : 'Nous ne patinons pas'." },
+            { s: "Le patineur est <span class='target-word'>agile</span>.", c: "Adjectif", r: "Il qualifie le patineur.", t: "Il s'accorde en genre et en nombre avec le nom." },
+            { s: "Elle s'entraîne <span class='target-word'>souvent</span>.", c: "Adverbe", r: "Il précise la fréquence de l'action.", t: "Un adverbe est invariable, il ne change jamais d'orthographe." },
+            { s: "C'est <span class='target-word'>sa</span> victoire.", c: "Déterminant", r: "Il indique la possession du nom victoire.", t: "C'est un déterminant possessif." },
+            { s: "Je <span class='target-word'>le</span> vois gagner.", c: "Pronom", r: "Il remplace l'athlète (le).", t: "Placé devant un verbe, 'le/la/les' sont souvent des pronoms." },
+            { s: "Il tombe <span class='target-word'>dans</span> la neige.", c: "Préposition", r: "Elle introduit le lieu.", t: "Elle sert de pont entre le verbe et le lieu." },
+            { s: "Vite <span class='target-word'>mais</span> prudemment.", c: "Conjonction", r: "Elle lie deux adverbes.", t: "Elle sert à nuancer ou opposer deux éléments." },
+            { s: "La <span class='target-word'>piste</span> est verglacée.", c: "Nom", r: "Il désigne l'endroit où l'on skie.", t: "Peut être remplacé par un autre nom comme 'la route'." },
+            { s: "Il fait <span class='target-word'>très</span> chaud.", c: "Adverbe", r: "Il renforce l'intensité de l'adjectif.", t: "Il modifie le sens d'un adjectif." },
+            { s: "Une <span class='target-word'>belle</span> descente.", c: "Adjectif", r: "Il qualifie la descente.", t: "Il peut être placé avant ou après le nom." },
+            { s: "Ils <span class='target-word'>écoutent</span> l'hymne.", c: "Verbe", r: "C'est l'action de percevoir les sons.", t: "On peut le conjuguer à d'autres personnes : 'J'écoute'." },
+            { s: "Il pleut <span class='target-word'>car</span> il fait doux.", c: "Conjonction", r: "Elle explique la raison.", t: "Elle répond souvent à la question 'Pourquoi ?'." },
+            { s: "Derrière <span class='target-word'>toi</span> !", c: "Pronom", r: "Il remplace la personne à qui on parle.", t: "C'est un pronom personnel tonique." },
+            { s: "Monter <span class='target-word'>sur</span> le podium.", c: "Préposition", r: "Elle introduit la position.", t: "Un petit mot invariable qui crée un lien." },
+            { s: "C'est <span class='target-word'>votre</span> tour.", c: "Déterminant", r: "Il accompagne le nom 'tour'.", t: "Indique à qui appartient la chose." },
+            { s: "Le vent souffle <span class='target-word'>fort</span>.", c: "Adverbe", r: "Il précise comment le vent souffle.", t: "Ici 'fort' ne s'accorde pas, c'est un adverbe de manière." },
+            { s: "Un <span class='target-word'>effort</span> herculéen.", c: "Nom", r: "Il désigne l'action de forcer.", t: "Précédé du déterminant 'un'." },
+            { s: "C'est un saut <span class='target-word'>haut</span>.", c: "Adjectif", r: "Il qualifie le saut.", t: "On peut dire 'des sauts hauts', il s'accorde." },
+            { s: "Elle court <span class='target-word'>et</span> elle saute.", c: "Conjonction", r: "Elle additionne deux actions.", t: "C'est la conjonction de coordination 'et'." },
+            { s: "Il <span class='target-word'>se</span> prépare.", c: "Pronom", r: "Il indique que l'action revient sur le sujet.", t: "C'est un pronom réfléchi accompagnant un verbe pronominal." },
+            { s: "Partir <span class='target-word'>avant</span> midi.", c: "Préposition", r: "Elle introduit une notion de temps.", t: "Invariable, elle introduit un groupe nominal." }
+        ];
+
+
+        let currentIndex = 0;
+        let score = 0;
+        const classes = ["Nom", "Verbe", "Adjectif", "Déterminant", "Pronom", "Adverbe", "Préposition", "Conjonction"];
+
+
+        function startMarathon() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            showQuestion();
+        }
+
+
+        function showQuestion() {
+            const data = database[currentIndex];
+            document.getElementById('current-step').innerText = currentIndex + 1;
+            document.getElementById('sentence').innerHTML = data.s;
+            document.getElementById('feedback-container').style.display = 'none';
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+
+
+            let opts = [data.c];
+            while(opts.length < 4) {
+                let randomC = classes[Math.floor(Math.random() * classes.length)];
+                if(!opts.includes(randomC)) opts.push(randomC);
+            }
+            opts.sort(() => Math.random() - 0.5);
+
+
+            opts.forEach(o => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = o;
+                btn.onclick = () => checkAnswer(btn, o);
+                optionsDiv.appendChild(btn);
+            });
+            window.scrollTo(0, 0);
+        }
+
+
+        function checkAnswer(btn, choice) {
+            const data = database[currentIndex];
+            const allBtns = document.querySelectorAll('.opt-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+
+            const expBox = document.getElementById('explanation');
+            const tipBox = document.getElementById('tip');
+            const container = document.getElementById('feedback-container');
+
+
+            container.style.display = 'block';
+
+
+            if(choice === data.c) {
+                btn.classList.add('correct');
+                expBox.className = "explanation-box success";
+                expBox.innerHTML = `<strong><i class="fas fa-medal"></i> EXCELLENT !</strong><br>${data.r}`;
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                expBox.className = "explanation-box error";
+                expBox.innerHTML = `<strong><i class="fas fa-exclamation-triangle"></i> ERREUR...</strong><br>C'est un(e) <strong>${data.c}</strong>. ${data.r}`;
+                allBtns.forEach(b => { if(b.innerText === data.c) b.classList.add('correct'); });
+            }
+
+
+            tipBox.innerHTML = `<i class="fas fa-lightbulb"></i> <div><strong>Astuce :</strong> ${data.t}</div>`;
+            
+            updateProgress();
+
+
+            // Défilement automatique vers le feedback
+            setTimeout(() => {
+                const target = document.getElementById('btn-next');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / 30) * 100;
+            document.getElementById('progress-fill').style.width = progress + "%";
+            document.getElementById('km-text').innerText = currentIndex + 1;
+        }
+
+
+        function nextQuestion() {
+            currentIndex++;
+            if(currentIndex < 30) {
+                showQuestion();
+            } else {
+                showFinal();
+            }
+        }
+
+
+        function showFinal() {
+            document.getElementById('game-container').style.display = 'none';
+            const screen = document.getElementById('final-screen');
+            screen.style.display = 'block';
+            document.getElementById('final-score').innerText = `${score} / 30`;
+            
+            const title = document.getElementById('final-title');
+            const icon = document.getElementById('medal-icon');
+            const msg = document.getElementById('final-msg');
+
+
+            if(score === 30) {
+                icon.innerText = "🥇";
+                title.innerText = "LÉGENDE OLYMPIQUE";
+                msg.innerText = "Un sans-faute historique ! Tu maîtrises la langue française comme personne.";
+            } else if(score >= 25) {
+                icon.innerText = "🥈";
+                title.innerText = "MÉDAILLE D'ARGENT";
+                msg.innerText = "Quelle performance ! Tu es monté sur le podium avec brio.";
+            } else if(score >= 15) {
+                icon.innerText = "🥉";
+                title.innerText = "MÉDAILLE DE BRONZE";
+                msg.innerText = "Beau parcours ! Quelques glissades sur la glace, mais tu as fini la course.";
+            } else {
+                icon.innerText = "❄️";
+                title.innerText = "ESPRIT SPORTIF";
+                msg.innerText = "Le plus important est de participer. Révise les astuces et reviens plus fort !";
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

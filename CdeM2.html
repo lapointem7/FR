@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeux Olympiques : L'Épreuve d'Argent</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #1F2937;     
+            --bg-light: #374151;
+            --primary: #0081C8;     
+            --secondary: #00A651;   
+            --accent: #FCB131;      
+            --accent-dark: #000000; 
+            --danger: #EE334E;      
+            --text-main: #FFFFFF;
+            --text-dark: #111827;
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --silver: #C0C0C0;      
+        }
+
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+        html { scroll-behavior: smooth; }
+
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+
+        header {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--glass-border);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+
+        .stats-container { display: flex; gap: 15px; }
+        .stat-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            max-width: 850px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            padding: 40px;
+            display: none;
+            margin-bottom: 40px;
+        }
+
+
+        .card.active { display: block; animation: popIn 0.5s forwards; }
+
+
+        @keyframes popIn {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+
+        .instruction-badge {
+            display: inline-block;
+            background: var(--accent-dark);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+
+        .slalom-sentence { font-size: 1.6rem; text-align: center; font-weight: bold; margin-bottom: 30px; }
+        .highlight-word { color: var(--primary); text-decoration: underline; text-decoration-color: var(--accent); }
+
+
+        .gate {
+            width: 45%;
+            background: white;
+            border: 4px solid var(--accent-dark);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.2s;
+        }
+        .gate.correct { background: var(--secondary); color: white; border-color: #007A3D; }
+        .gate.wrong { background: var(--danger); color: white; border-color: #B3263A; }
+        .gate.disabled { opacity: 0.5; pointer-events: none; }
+
+
+        .feedback-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+            line-height: 1.5;
+        }
+        .feedback-box.show { display: block; animation: fadeIn 0.4s; }
+        .feedback-box.success { background: #DCFCE7; border-left: 5px solid var(--secondary); color: #166534; }
+        .feedback-box.error { background: #FEE2E2; border-left: 5px solid var(--danger); color: #991B1B; }
+
+
+        .curling-sentence {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+
+        .curling-chunk { 
+            display: inline-block; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            background: #f0f0f0; 
+            border: 1px solid #ccc; 
+            transition: 0.2s; 
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .curling-chunk:hover { background: #e0e0e0; }
+        .curling-chunk.correct { background: var(--secondary) !important; color: white; border-color: #007A3D; }
+        .curling-chunk.wrong { background: var(--danger) !important; color: white; border-color: #B3263A; }
+
+
+        .builder-area { min-height: 80px; background: #F3F4F6; border: 3px dashed #999; border-radius: 15px; margin-bottom: 20px; padding: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .build-word { background: white; border: 2px solid var(--primary); padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+
+        .btn-container { text-align: center; margin-top: 30px; min-height: 60px; }
+        .next-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+    </style>
+</head>
+<body>
+
+
+    <header>
+        <div class="header-title">🥇 Argent : Grammaire</div>
+        <div class="stats-container">
+            <div class="stat-badge"><i class="fas fa-star"></i> <span id="score-display">0 / 10</span></div>
+        </div>
+    </header>
+
+
+    <main>
+        <!-- INTRO -->
+        <div class="card active" id="slide-0">
+            <h2 style="text-align: center; margin-bottom: 20px;">Prêt pour le Podium ?</h2>
+            <p style="text-align: center;">Identifie chaque mot avec précision. Rappelle-toi les <strong>trucs de pro</strong> pour ne pas tomber dans les pièges !</p>
+            <div class="btn-container">
+                <button class="next-btn" onclick="nextSlide(0)">C'est parti !</button>
+            </div>
+        </div>
+
+
+        <!-- JEU 1 : SLALOM -->
+        <div class="card" id="slide-1">
+            <div class="instruction-badge">Déterminant ou Pronom ?</div>
+            <div class="slalom-sentence">"L'arbitre <span class="highlight-word">les</span> surveille attentivement."</div>
+            <div style="text-align:center;">
+                <button class="gate" data-type="pronom" onclick="checkGate(this, 1, 'pronom', 'le pronom remplace un nom et se place généralement devant un verbe. On peut le remplacer par un nom propre (ex: surveille Marc).')">Pronom</button>
+                <button class="gate" data-type="determinant" onclick="checkGate(this, 1, 'pronom', 'le pronom remplace un nom et se place généralement devant un verbe. On peut le remplacer par un nom propre (ex: surveille Marc).')">Déterminant</button>
+            </div>
+            <div id="fb-1" class="feedback-box"></div>
+            <div class="btn-container"><button class="next-btn" disabled id="next-1" onclick="nextSlide(1)">Suivant</button></div>
+        </div>
+
+
+        <div class="card" id="slide-2">
+            <div class="instruction-badge">Déterminant ou Pronom ?</div>
+            <div class="slalom-sentence">"<span class="highlight-word">Leur</span> courage est immense."</div>
+            <div style="text-align:center;">
+                <button class="gate" data-type="determinant" onclick="checkGate(this, 2, 'determinant', 'le déterminant possède un nom à sa droite (courage). Truc : Remplace-le par « un » ou « mon ».')">Déterminant</button>
+                <button class="gate" data-type="pronom" onclick="checkGate(this, 2, 'determinant', 'le déterminant possède un nom à sa droite (courage). Truc : Remplace-le par « un » ou « mon ».')">Pronom</button>
+            </div>
+            <div id="fb-2" class="feedback-box"></div>
+            <div class="btn-container"><button class="next-btn" disabled id="next-2" onclick="nextSlide(2)">Suivant</button></div>
+        </div>
+
+
+        <!-- JEU 2 : CURLING (MOTS INDIVIDUELS) -->
+        <div class="card" id="slide-3">
+            <div class="instruction-badge">Cible : La Préposition</div>
+            <p style="text-align:center; margin-bottom: 20px;">Touche la <strong>préposition</strong> dans cette phrase :</p>
+            <div class="curling-sentence">
+                <span class="curling-chunk" onclick="checkCurling(this, 3, false)">Le</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 3, false)">skieur</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 3, false)">glisse</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 3, true, 'une préposition est un mot de liaison invariable. Truc : Utilise l\'acronyme « Adam part pour Anvers... » (à, dans, par, pour, en, vers, avec, de, sans...).')">sur</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 3, false)">la</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 3, false)">glace.</span>
+            </div>
+            <div id="fb-3" class="feedback-box"></div>
+            <div class="btn-container"><button class="next-btn" disabled id="next-3" onclick="nextSlide(3)">Suivant</button></div>
+        </div>
+
+
+        <div class="card" id="slide-4">
+            <div class="instruction-badge">Cible : La Conjonction</div>
+            <p style="text-align:center; margin-bottom: 20px;">Touche la <strong>conjonction de coordination</strong> :</p>
+            <div class="curling-sentence">
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">Il</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">veut</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">gagner</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, true, 'la conjonction unit deux mots ou phrases. Truc : Rappelle-toi la phrase « Mais où est donc Ornicar ? » (mais, ou, et, donc, or, ni, car).')">car</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">il</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">a</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">travaillé</span>
+                <span class="curling-chunk" onclick="checkCurling(this, 4, false)">fort.</span>
+            </div>
+            <div id="fb-4" class="feedback-box"></div>
+            <div class="btn-container"><button class="next-btn" disabled id="next-4" onclick="nextSlide(4)">Suivant</button></div>
+        </div>
+
+
+        <!-- JEU 3 : TRI -->
+        <div class="card" id="slide-5">
+            <div class="instruction-badge">Tri : Les Adjectifs</div>
+            <p style="text-align:center; margin-bottom: 10px;">Ajoute les 2 adjectifs au bac :</p>
+            <div class="builder-area" id="area-5"></div>
+            <div style="display:flex; justify-content:center; gap:10px;">
+                <div class="build-word" onclick="toggleBuild(this, 5)">médaille</div>
+                <div class="build-word" onclick="toggleBuild(this, 5)">brillante</div>
+                <div class="build-word" onclick="toggleBuild(this, 5)">vif</div>
+                <div class="build-word" onclick="toggleBuild(this, 5)">courir</div>
+            </div>
+            <div id="fb-5" class="feedback-box"></div>
+            <div class="btn-container">
+                <button class="next-btn" id="check-5" onclick="checkTri(5, ['brillante', 'vif'], 'l\'adjectif donne une caractéristique au nom. Truc : Tu peux placer « très » devant (ex: très brillante, très vif).')">Vérifier</button>
+                <button class="next-btn" style="display:none;" id="next-5" onclick="nextSlide(5)">Suivant</button>
+            </div>
+        </div>
+
+
+        <div class="card" id="slide-6">
+            <div class="instruction-badge">Tri : Les Verbes</div>
+            <p style="text-align:center; margin-bottom: 10px;">Ajoute les 2 verbes (conjugués ou non) :</p>
+            <div class="builder-area" id="area-6"></div>
+            <div style="display:flex; justify-content:center; gap:10px;">
+                <div class="build-word" onclick="toggleBuild(this, 6)">saute</div>
+                <div class="build-word" onclick="toggleBuild(this, 6)">hauteur</div>
+                <div class="build-word" onclick="toggleBuild(this, 6)">souvent</div>
+                <div class="build-word" onclick="toggleBuild(this, 6)">réussir</div>
+            </div>
+            <div id="fb-6" class="feedback-box"></div>
+            <div class="btn-container">
+                <button class="next-btn" id="check-6" onclick="checkTri(6, ['saute', 'réussir'], 'le verbe exprime une action ou un état. Truc : Encadre-le par « ne... pas » (ex: il ne saute pas) ou change le temps (ex: il sautait).')">Vérifier</button>
+                <button class="next-btn" style="display:none;" id="next-6" onclick="nextSlide(6)">Suivant</button>
+            </div>
+        </div>
+
+
+        <!-- JEU 4 : RELAIS (BOITES INDIVIDUELLES) -->
+        <div class="card" id="slide-7">
+            <div class="instruction-badge">Le Relais : Adverbes</div>
+            <p style="text-align:center; margin-bottom: 20px;">Touche les 3 adverbes cachés ici :</p>
+            <div id="relais-box" style="line-height:2.8; font-size:1.2rem; background:white; padding:20px; border-radius:10px; text-align:center; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
+                <!-- Phrase 1 -->
+                <span class="curling-chunk" onclick="checkRelais(this, false)">L'</span><span class="curling-chunk" onclick="checkRelais(this, false)">athlète</span><span class="curling-chunk" onclick="checkRelais(this, false)">s'</span><span class="curling-chunk" onclick="checkRelais(this, false)">entraîne</span><span class="curling-chunk" onclick="checkRelais(this, true)">beaucoup.</span> 
+                <!-- Phrase 2 -->
+                <span class="curling-chunk" onclick="checkRelais(this, false)">Elle</span><span class="curling-chunk" onclick="checkRelais(this, false)">arrive</span><span class="curling-chunk" onclick="checkRelais(this, true)">tôt</span><span class="curling-chunk" onclick="checkRelais(this, false)">le</span><span class="curling-chunk" onclick="checkRelais(this, false)">matin.</span> 
+                <!-- Phrase 3 -->
+                <span class="curling-chunk" onclick="checkRelais(this, false)">Elle</span><span class="curling-chunk" onclick="checkRelais(this, false)">parle</span><span class="curling-chunk" onclick="checkRelais(this, true)">gentiment</span><span class="curling-chunk" onclick="checkRelais(this, false)">à</span><span class="curling-chunk" onclick="checkRelais(this, false)">ses</span><span class="curling-chunk" onclick="checkRelais(this, false)">fans.</span>
+            </div>
+            <div id="fb-7" class="feedback-box"></div>
+            <div class="btn-container"><button class="next-btn" disabled id="next-7" onclick="nextSlide(7)">Résultats</button></div>
+        </div>
+
+
+        <!-- SCORE FINAL -->
+        <div class="card" id="slide-8">
+            <h2 style="text-align:center;">Fin de l'épreuve !</h2>
+            <div style="font-size: 5rem; text-align:center; font-weight:900; color:var(--silver);" id="final-pct">0%</div>
+            <p id="final-eval" style="text-align:center; font-weight:700; font-size:1.2rem;"></p>
+            <div class="btn-container">
+                <button class="next-btn" onclick="location.reload()">Recommencer</button>
+            </div>
+        </div>
+    </main>
+
+
+    <script>
+        let score = 0;
+        let totalQuestions = 10;
+
+
+        function updateScore() {
+            document.getElementById('score-display').innerText = `${score} / ${totalQuestions}`;
+        }
+
+
+        function scrollToNext(id) {
+            setTimeout(() => {
+                const btn = document.getElementById(`next-${id}`) || document.getElementById(`check-${id}`);
+                if (btn) {
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+
+
+        function nextSlide(idx) {
+            document.getElementById(`slide-${idx}`).classList.remove('active');
+            const nextSlide = document.getElementById(`slide-${idx+1}`);
+            nextSlide.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        function checkGate(btn, id, correctType, tip) {
+            const parent = btn.parentElement;
+            const fb = document.getElementById(`fb-${id}`);
+            const btnType = btn.getAttribute('data-type');
+            const isCorrect = (btnType === correctType);
+
+
+            parent.querySelectorAll('.gate').forEach(b => b.classList.add('disabled'));
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                fb.className = "feedback-box show success";
+                fb.innerHTML = `<strong>Bien joué !</strong> ${tip}`;
+                score += 1;
+            } else {
+                btn.classList.add('wrong');
+                fb.className = "feedback-box show error";
+                fb.innerHTML = `<strong>Attention...</strong> C'était un ${correctType} : ${tip}`;
+            }
+            updateScore();
+            document.getElementById(`next-${id}`).disabled = false;
+            scrollToNext(id);
+        }
+
+
+        function checkCurling(el, id, isCorrect, tip) {
+            const fb = document.getElementById(`fb-${id}`);
+            const parent = el.parentElement;
+            
+            if (isCorrect) {
+                parent.querySelectorAll('.curling-chunk').forEach(c => {
+                    c.style.pointerEvents = "none";
+                    if(c !== el) c.style.opacity = "0.5";
+                });
+                
+                el.classList.add('correct');
+                fb.className = "feedback-box show success";
+                fb.innerHTML = `<strong>Bravo !</strong> ${tip}`;
+                score += 1;
+                document.getElementById(`next-${id}`).disabled = false;
+                scrollToNext(id);
+            } else {
+                el.classList.add('wrong');
+                fb.className = "feedback-box show error";
+                fb.innerHTML = `Mauvaise cible ! Ce mot n'est pas la classe demandée. Regarde bien sa fonction.`;
+                scrollToNext(id);
+                setTimeout(() => {
+                    el.classList.remove('wrong');
+                }, 800);
+            }
+            updateScore();
+        }
+
+
+        function toggleBuild(el, id) {
+            const area = document.getElementById(`area-${id}`);
+            if (el.parentElement !== area) area.appendChild(el);
+            else el.parentElement.parentElement.appendChild(el);
+        }
+
+
+        function checkTri(id, correctList, tip) {
+            const area = document.getElementById(`area-${id}`);
+            const items = Array.from(area.children).map(i => i.innerText.toLowerCase());
+            const fb = document.getElementById(`fb-${id}`);
+            const matchesAll = items.length === correctList.length && items.every(i => correctList.includes(i));
+
+
+            if (matchesAll) {
+                fb.className = "feedback-box show success";
+                fb.innerHTML = `<strong>Tri réussi !</strong> ${tip}`;
+                score += 2;
+                document.getElementById(`check-${id}`).style.display = "none";
+                document.getElementById(`next-${id}`).style.display = "inline-block";
+            } else {
+                fb.className = "feedback-box show error";
+                fb.innerHTML = `Le compte n'est pas bon ou il y a des erreurs. Truc : ${tip}`;
+                area.style.animation = "shake 0.4s";
+                setTimeout(() => area.style.animation = "", 400);
+            }
+            updateScore();
+            scrollToNext(id);
+        }
+
+
+        let foundAdverbes = 0;
+        function checkRelais(el, isAdverbe) {
+            const tip = "l'adverbe est invariable et précise un verbe, un adjectif ou un autre adverbe. Truc : On peut souvent l'enlever ou le remplacer par « vraiment ».";
+            const fb = document.getElementById('fb-7');
+            
+            if (isAdverbe && !el.classList.contains('correct')) {
+                el.classList.add('correct');
+                foundAdverbes++;
+                if (foundAdverbes === 3) {
+                    fb.className = "feedback-box show success";
+                    fb.innerHTML = `<strong>Excellent !</strong> Tu as trouvé les 3 adverbes. Rappel : ${tip}`;
+                    score += 2;
+                    document.getElementById('next-7').disabled = false;
+                    showFinalScore();
+                    scrollToNext(7);
+                }
+            } else if (!isAdverbe) {
+                el.classList.add('wrong');
+                fb.className = "feedback-box show error";
+                fb.innerHTML = "Ce mot n'est pas un adverbe. Essaie encore !";
+                scrollToNext(7);
+                setTimeout(() => {
+                    el.classList.remove('wrong');
+                }, 800);
+            }
+            updateScore();
+        }
+
+
+        function showFinalScore() {
+            const pct = (score / totalQuestions) * 100;
+            document.getElementById('final-pct').innerText = pct + "%";
+            const eval = document.getElementById('final-eval');
+            if (pct >= 80) eval.innerText = "Médaille d'Argent validée ! Tu maîtrises les classes de mots.";
+            else if (pct >= 60) eval.innerText = "Pas mal ! Encore un peu d'entraînement sur les trucs de syntaxe.";
+            else eval.innerText = "Relis bien les astuces et réessaie l'épreuve !";
+        }
+    </script>
+</body>
+</html>

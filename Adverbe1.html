@@ -1,0 +1,1016 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Univers des Adverbes - 1ère Secondaire</title>
+    <style>
+        /* --- CSS Thème Sous-Marin --- */
+        :root {
+            --primary: #0077b6;
+            --primary-hover: #023e8a;
+            --secondary: #fb8500;
+            --bg-color: #48cae4;
+            --text-color: #03045e;
+            --correct: #2a9d8f;
+            --incorrect: #e63946;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --highlight: #ffe066;
+        }
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #48cae4, #0077b6, #023e8a, #03045e);
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+
+        /* --- Animations de bulles --- */
+        .bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+        .bubble { position: absolute; bottom: -50px; background: rgba(255,255,255,0.25); border-radius: 50%; box-shadow: inset 0 0 10px rgba(255,255,255,0.5); animation: rise linear infinite; }
+        @keyframes rise { 
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 1; } 
+            100% { transform: translateY(-100vh) translateX(50px) scale(1.2); opacity: 0; } 
+        }
+        .bubble:nth-child(1) { left: 10%; width: 40px; height: 40px; animation-duration: 8s; }
+        .bubble:nth-child(2) { left: 20%; width: 20px; height: 20px; animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { left: 35%; width: 50px; height: 50px; animation-duration: 10s; animation-delay: 2s; }
+        .bubble:nth-child(4) { left: 50%; width: 30px; height: 30px; animation-duration: 7s; }
+        .bubble:nth-child(5) { left: 65%; width: 60px; height: 60px; animation-duration: 12s; animation-delay: 3s; }
+        .bubble:nth-child(6) { left: 80%; width: 25px; height: 25px; animation-duration: 6s; animation-delay: 1.5s; }
+        .bubble:nth-child(7) { left: 90%; width: 45px; height: 45px; animation-duration: 9s; animation-delay: 4s; }
+        .bubble:nth-child(8) { left: 5%; width: 15px; height: 15px; animation-duration: 4s; animation-delay: 2.5s; }
+
+
+        header {
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 1px;
+        }
+
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+
+        .container {
+            max-width: 900px;
+            margin: 10px auto 40px auto;
+            padding: 0 20px;
+        }
+
+
+        /* Menu de navigation */
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+
+        .nav-btn {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+
+        .nav-btn:hover {
+            background-color: white;
+            color: var(--primary);
+            border-color: white;
+            text-shadow: none;
+            transform: translateY(-2px);
+        }
+
+
+        .nav-btn.active {
+            background-color: #ffb703;
+            color: #023e8a;
+            border-color: #ffb703;
+            text-shadow: none;
+            box-shadow: 0 4px 15px rgba(255, 183, 3, 0.4);
+        }
+
+
+        /* Sections des jeux (Glassmorphism) */
+        .game-section {
+            display: none;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.4);
+            animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        .game-section.active {
+            display: block;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px dashed #90e0ef;
+            padding-bottom: 15px;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .instructions {
+            background-color: #e0fbfc;
+            color: #0077b6;
+            padding: 15px 20px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-style: italic;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+
+        /* Éléments de formulaire et boutons d'action */
+        select {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #90e0ef;
+            border-radius: 8px;
+            font-family: inherit;
+            margin: 0 5px;
+            background-color: #fff;
+            color: var(--text-color);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        
+        select:focus {
+            border-color: var(--secondary);
+        }
+        select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+
+        .action-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(251, 133, 0, 0.3);
+        }
+
+
+        .action-btn:hover {
+            background-color: #ffb703;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 183, 3, 0.4);
+        }
+        
+        .action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+
+        .next-btn {
+            background-color: var(--primary);
+            margin-left: 15px;
+        }
+
+
+        .next-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 15px rgba(0, 119, 182, 0.4);
+        }
+
+
+        /* Mots cliquables */
+        .text-block {
+            font-size: 1.25rem;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px dashed #caf0f8;
+            border-radius: 12px;
+        }
+
+
+        .word {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: transparent;
+        }
+
+
+        .word:hover {
+            background-color: #caf0f8;
+            transform: scale(1.05);
+        }
+
+
+        .word.selected {
+            background-color: var(--highlight);
+            color: #023e8a;
+            font-weight: bold;
+            border: 2px solid #fb8500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+
+        /* Rétroaction */
+        .feedback {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+
+        .feedback.success {
+            display: block;
+            background-color: #d8f3dc;
+            color: #1b4332;
+            border: 2px solid var(--correct);
+        }
+
+
+        .feedback.error {
+            display: block;
+            background-color: #ffe5d9;
+            color: #9d0208;
+            border: 2px solid var(--incorrect);
+        }
+
+
+        /* Jeu 2 spécificités */
+        #jeu2-answers {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #caf0f8;
+            border-radius: 12px;
+            min-height: 50px;
+        }
+        .answer-row {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .answer-row select {
+            flex-grow: 1;
+            max-width: 350px;
+        }
+
+
+        /* Jeu 3 spécificités */
+        .j3-sentence {
+            margin-bottom: 20px;
+            font-size: 1.15rem;
+            background: rgba(255,255,255,0.5);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        .sens-badge {
+            background-color: #0077b6;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Bulles d'animation en arrière-plan -->
+    <div class="bubbles">
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    </div>
+
+
+    <header>
+        <h1>🌊 Plongée dans les Adverbes 🐟</h1>
+        <p>Pratique interactive de grammaire - Mission Sous-Marine</p>
+    </header>
+
+
+    <div class="container">
+        
+        <!-- Navigation -->
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="showGame('jeu0')">Jeu 0 : La théorie</button>
+            <button class="nav-btn" onclick="showGame('jeu1')">Jeu 1 : Reconnaissance</button>
+            <button class="nav-btn" onclick="showGame('jeu2')">Jeu 2 : Adverbe et Sens</button>
+            <button class="nav-btn" onclick="showGame('jeu3')">Jeu 3 : Le bon choix</button>
+            <button class="nav-btn" onclick="showGame('jeu4')">Jeu 4 : Les fonctions</button>
+            <button id="btn-resultats" class="nav-btn" style="display: none; background-color: #ffb703; color: #023e8a; border-color: #ffb703;" onclick="showResultats()">🏆 Résultats</button>
+        </div>
+
+
+        <!-- JEU 0 : Théorie -->
+        <div id="jeu0" class="game-section active">
+            <h2>🐡 Jeu 0 : Les notions de base</h2>
+            <div class="instructions">
+                Choisis le bon mot pour compléter les règles. Attention, une fois validé, ton choix est final !
+            </div>
+            
+            <div id="jeu0-content"></div>
+
+
+            <button id="btn-valider-j0" class="action-btn" onclick="validerJeu0()">Valider mes réponses</button>
+            <button id="btn-next-j0" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu1')">Prochaine mission ➡️</button>
+            <div id="feedback-jeu0" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 1 : Reconnaissance -->
+        <div id="jeu1" class="game-section">
+            <h2>🦀 Jeu 1 : La chasse aux adverbes</h2>
+            <div class="instructions">
+                Clique sur <strong>tous les adverbes</strong>. Attention, une seule validation permise. Ne clique pas sur n'importe quoi !
+            </div>
+
+
+            <div id="jeu1-content"></div>
+
+
+            <button id="btn-valider-j1" class="action-btn" onclick="validerJeu1()">Vérifier ma chasse</button>
+            <button id="btn-next-j1" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu2')">Prochaine mission ➡️</button>
+            <div id="feedback-jeu1" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 2 : Sens -->
+        <div id="jeu2" class="game-section">
+            <h2>🐙 Jeu 2 : Trouver le sens caché</h2>
+            <div class="instructions">
+                1. Clique sur les adverbes dans le texte.<br>
+                2. Sélectionne le <strong>sens</strong> dans le tableau en bas. Valide quand tu es certain !
+            </div>
+
+
+            <div id="jeu2-content"></div>
+
+
+            <h3>Tes sélections et leurs sens :</h3>
+            <div id="jeu2-answers">
+                <em>Sélectionne un mot pour définir son sens...</em>
+            </div>
+
+
+            <button id="btn-valider-j2" class="action-btn" onclick="validerJeu2()">Analyser mes choix</button>
+            <button id="btn-next-j2" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu3')">Prochaine mission ➡️</button>
+            <div id="feedback-jeu2" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 3 : Compléter -->
+        <div id="jeu3" class="game-section">
+            <h2>🐢 Jeu 3 : Compléter la phrase</h2>
+            <div class="instructions">
+                Choisis l'adverbe qui correspond au <strong>sens demandé</strong>. Réfléchis bien avant de confirmer.
+            </div>
+
+
+            <div id="jeu3-content"></div>
+
+
+            <button id="btn-valider-j3" class="action-btn" onclick="validerJeu3()">Confirmer mes phrases</button>
+            <button id="btn-next-j3" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu4')">Prochaine mission ➡️</button>
+            <div id="feedback-jeu3" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 4 : Complément de phrase -->
+        <div id="jeu4" class="game-section">
+            <h2>🐋 Jeu 4 : Le rôle de l'adverbe</h2>
+            <div class="instructions">
+                L'adverbe en gras est-il un <strong>Modificateur</strong> (précise un verbe/adj/adv) ou un <strong>Complément de phrase</strong> (précise toute la phrase, effaçable et déplaçable) ?
+            </div>
+
+
+            <div id="jeu4-content"></div>
+
+
+            <button id="btn-valider-j4" class="action-btn" onclick="validerJeu4()">Vérifier les fonctions</button>
+            <button id="btn-next-j4" class="action-btn next-btn" style="display: none;" onclick="showResultats()">Voir le Bilan 🏆</button>
+            <div id="feedback-jeu4" class="feedback"></div>
+        </div>
+
+
+        <!-- RÉSULTATS (Nouveau Tab) -->
+        <div id="resultats" class="game-section">
+            <h2>🏆 Bilan de la Mission</h2>
+            <div id="resultats-content"></div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // --- ÉTAT DU JEU ET SCORES ---
+        let gameStatus = {
+            jeu0: { done: false, score: 0, max: 5 },
+            jeu1: { done: false, score: 0, max: 0 },
+            jeu2: { done: false, score: 0, max: 0 },
+            jeu3: { done: false, score: 0, max: 5 },
+            jeu4: { done: false, score: 0, max: 5 }
+        };
+
+
+        // --- DONNÉES DES JEUX ---
+
+
+        const dataJeu0 = [
+            { textBefore: "L'adverbe est un mot", options: ["variable", "invariable"], correct: "invariable", textAfter: "." },
+            { textBefore: "Il sert à modifier le sens d'un verbe, d'un adjectif ou d'un autre", options: ["nom", "déterminant", "adverbe"], correct: "adverbe", textAfter: "." },
+            { textBefore: "L'adverbe peut souvent être effacé de la phrase, il est donc généralement", options: ["obligatoire", "facultatif"], correct: "facultatif", textAfter: "." },
+            { textBefore: "Beaucoup d'adverbes se terminant en '-ment' sont formés à partir d'un", options: ["verbe", "adjectif", "pronom"], correct: "adjectif", textAfter: " (ex: doux -> doucement)." },
+            { textBefore: "Lorsqu'il précise les circonstances (temps, lieu) de la phrase et qu'on peut le déplacer, il occupe la fonction de", options: ["modificateur", "complément de phrase", "sujet"], correct: "complément de phrase", textAfter: "." }
+        ];
+
+
+        const textJeu1 = [
+            "La tortue marine nage *lentement* vers le corail.",
+            "L'eau est *trop* froide ce matin pour nager *dehors*.",
+            "*Hier*, la baleine a chanté *fortement*. Le crabe était *vraiment* surpris parce qu'un requin a nagé *soudainement* devant lui. *Heureusement*, il s'est caché *ensuite*."
+        ];
+
+
+        const textJeu2 = [
+            "Le dauphin communique *clairement|manière* avec son groupe.",
+            "Cache ton trésor *ici|lieu*.",
+            "La marée montera *bientôt|temps*. Les poissons sont *très|quantité* agités. Ils nagent *partout|lieu* dans le récif car ils veulent *absolument|affirmation* se nourrir."
+        ];
+
+
+        const dataJeu3 = [
+            { textBefore: "Le requin frappe", sens: "Manière", options: ["demain", "fortement", "ici"], correct: "fortement" },
+            { textBefore: "Nous plongerons vers l'épave", sens: "Temps", options: ["bientôt", "très", "doucement"], correct: "bientôt" },
+            { textBefore: "La pieuvre est", sens: "Quantité", textAfter: "intelligente.", options: ["souvent", "vraiment", "là-bas"], correct: "vraiment" },
+            { textBefore: "Range tes coquillages", sens: "Lieu", options: ["gentiment", "ailleurs", "hier"], correct: "ailleurs" },
+            { textBefore: "Je ne sais", sens: "Négation", textAfter: "comment respirer sous l'eau sans équipement.", options: ["pas", "peu", "bien"], correct: "pas" },
+        ];
+
+
+        const dataJeu4 = [
+            { textBefore: "<strong>Aujourd'hui</strong>, le sous-marin plonge dans l'abysse.", options: ["Modificateur", "Complément de phrase"], correct: "Complément de phrase" },
+            { textBefore: "Ce petit poisson jaune est <strong>extrêmement</strong> rare.", options: ["Modificateur", "Complément de phrase"], correct: "Modificateur" },
+            { textBefore: "Les dauphins nagent <strong>rapidement</strong> autour de nous.", options: ["Modificateur", "Complément de phrase"], correct: "Modificateur" },
+            { textBefore: "Nous trouverons le trésor englouti <strong>bientôt</strong>.", options: ["Modificateur", "Complément de phrase"], correct: "Complément de phrase" },
+            { textBefore: "<strong>Là-bas</strong>, l'eau de l'océan est beaucoup plus chaude.", options: ["Modificateur", "Complément de phrase"], correct: "Complément de phrase" }
+        ];
+
+
+        // --- FONCTIONS UTILITAIRES ---
+
+
+        function wrapWords(textStr, jeuId) {
+            let result = [];
+            let words = textStr.split(' ');
+            let wordCount = 0;
+
+
+            words.forEach(chunk => {
+                let punct = "";
+                let word = chunk;
+
+
+                if (/[.,;!?]$/.test(word)) {
+                    punct = word.slice(-1);
+                    word = word.slice(0, -1);
+                }
+
+
+                let isAdv = false;
+                let sens = "";
+
+
+                if (word.startsWith('*') && word.endsWith('*')) {
+                    isAdv = true;
+                    let inner = word.slice(1, -1);
+                    if (inner.includes('|')) {
+                        let parts = inner.split('|');
+                        word = parts[0];
+                        sens = parts[1];
+                    } else {
+                        word = inner;
+                    }
+                }
+
+
+                result.push(`<span class="word" data-adv="${isAdv}" data-sens="${sens}" data-word-id="${jeuId}-${wordCount}">${word}</span>${punct}`);
+                wordCount++;
+            });
+
+
+            return result.join(' ');
+        }
+
+
+        function showGame(gameId) {
+            document.querySelectorAll('.game-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(gameId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(gameId === 'resultats' ? 'showResultats' : gameId)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+
+        function checkAllCompleted() {
+            if (gameStatus.jeu0.done && gameStatus.jeu1.done && gameStatus.jeu2.done && gameStatus.jeu3.done && gameStatus.jeu4.done) {
+                document.getElementById('btn-resultats').style.display = 'inline-block';
+            }
+        }
+
+
+        // --- INITIALISATION DES JEUX ---
+
+
+        function initJeu0() {
+            const container = document.getElementById('jeu0-content');
+            dataJeu0.forEach((item, index) => {
+                let optionsHtml = `<option value="">--Choisir--</option>`;
+                item.options.forEach(opt => {
+                    optionsHtml += `<option value="${opt}">${opt}</option>`;
+                });
+
+
+                const p = document.createElement('p');
+                p.innerHTML = `<strong>${index + 1}.</strong> ${item.textBefore} 
+                               <select id="j0-q${index}">${optionsHtml}</select> 
+                               ${item.textAfter || ""}`;
+                container.appendChild(p);
+            });
+        }
+
+
+        function initJeu1() {
+            const container = document.getElementById('jeu1-content');
+            textJeu1.forEach((text, index) => {
+                const div = document.createElement('div');
+                div.className = 'text-block';
+                div.innerHTML = wrapWords(text, `j1-${index}`);
+                container.appendChild(div);
+            });
+
+
+            container.querySelectorAll('.word').forEach(wordEl => {
+                wordEl.addEventListener('click', function() {
+                    if(!gameStatus.jeu1.done) this.classList.toggle('selected');
+                });
+            });
+            
+            gameStatus.jeu1.max = document.querySelectorAll('#jeu1-content .word[data-adv="true"]').length;
+        }
+
+
+        function initJeu2() {
+            const container = document.getElementById('jeu2-content');
+            textJeu2.forEach((text, index) => {
+                const div = document.createElement('div');
+                div.className = 'text-block';
+                div.innerHTML = wrapWords(text, `j2-${index}`);
+                container.appendChild(div);
+            });
+
+
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('word') && !gameStatus.jeu2.done) {
+                    e.target.classList.toggle('selected');
+                    updateJeu2AnswersArea();
+                }
+            });
+            
+            // Total max = nb d'adverbes (1 point pour trouver + 1 point pour le sens)
+            gameStatus.jeu2.max = document.querySelectorAll('#jeu2-content .word[data-adv="true"]').length * 2;
+        }
+
+
+        function updateJeu2AnswersArea() {
+            const answersContainer = document.getElementById('jeu2-answers');
+            const selectedWords = document.querySelectorAll('#jeu2-content .word.selected');
+            
+            if (selectedWords.length === 0) {
+                answersContainer.innerHTML = '<em>Sélectionne un mot pour définir son sens...</em>';
+                return;
+            }
+
+
+            let currentSelections = {};
+            answersContainer.querySelectorAll('select').forEach(sel => {
+                currentSelections[sel.getAttribute('data-for-id')] = sel.value;
+            });
+
+
+            answersContainer.innerHTML = '';
+
+
+            selectedWords.forEach(wordEl => {
+                const wordText = wordEl.textContent;
+                const wordId = wordEl.getAttribute('data-word-id');
+                const previousVal = currentSelections[wordId] || "";
+
+
+                const div = document.createElement('div');
+                div.className = 'answer-row';
+                div.innerHTML = `
+                    <span style="display:inline-block; width: 120px; font-weight:bold;">${wordText}</span> 
+                    <span>&#10142; Sens :</span>
+                    <select data-for-id="${wordId}">
+                        <option value="">-- Choisir un sens --</option>
+                        <option value="temps" ${previousVal === 'temps' ? 'selected' : ''}>Temps (ex: hier, demain)</option>
+                        <option value="lieu" ${previousVal === 'lieu' ? 'selected' : ''}>Lieu (ex: ici, là-bas)</option>
+                        <option value="manière" ${previousVal === 'manière' ? 'selected' : ''}>Manière (ex: bien, doucement)</option>
+                        <option value="quantité" ${previousVal === 'quantité' ? 'selected' : ''}>Quantité / Intensité (ex: très, beaucoup)</option>
+                        <option value="affirmation" ${previousVal === 'affirmation' ? 'selected' : ''}>Affirmation / Négation (ex: oui, pas)</option>
+                    </select>
+                `;
+                answersContainer.appendChild(div);
+            });
+        }
+
+
+        function initJeu3() {
+            const container = document.getElementById('jeu3-content');
+            dataJeu3.forEach((item, index) => {
+                let optionsHtml = `<option value="">-- Choisir --</option>`;
+                item.options.forEach(opt => {
+                    optionsHtml += `<option value="${opt}">${opt}</option>`;
+                });
+
+
+                const div = document.createElement('div');
+                div.className = 'j3-sentence';
+                
+                let prefix = item.textBefore;
+
+
+                div.innerHTML = `<strong>${index + 1}.</strong> ${prefix} 
+                                 <select id="j3-q${index}">${optionsHtml}</select> 
+                                 ${item.textAfter || ""} 
+                                 <span class="sens-badge">${item.sens}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+
+        function initJeu4() {
+            const container = document.getElementById('jeu4-content');
+            dataJeu4.forEach((item, index) => {
+                let optionsHtml = `<option value="">-- Choisir la fonction --</option>`;
+                item.options.forEach(opt => {
+                    optionsHtml += `<option value="${opt}">${opt}</option>`;
+                });
+
+
+                const div = document.createElement('div');
+                div.className = 'j3-sentence';
+                
+                div.innerHTML = `<strong>${index + 1}.</strong> ${item.textBefore} 
+                                 <select id="j4-q${index}">${optionsHtml}</select>`;
+                container.appendChild(div);
+            });
+        }
+
+
+        // --- VALIDATIONS & SCORES ---
+
+
+        function validerJeu0() {
+            if(gameStatus.jeu0.done) return;
+            gameStatus.jeu0.done = true;
+
+
+            let score = 0;
+            dataJeu0.forEach((item, index) => {
+                const selectEl = document.getElementById(`j0-q${index}`);
+                selectEl.disabled = true; // Verrouille la réponse
+                if (selectEl.value === item.correct) {
+                    score++;
+                    selectEl.style.borderColor = "var(--correct)";
+                    selectEl.style.backgroundColor = "#e8f8f5";
+                } else {
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.backgroundColor = "#fdedec";
+                }
+            });
+
+
+            gameStatus.jeu0.score = score;
+            document.getElementById('btn-valider-j0').style.display = 'none';
+            document.getElementById('btn-next-j0').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu0');
+            fb.innerHTML = `Jeu terminé ! Score : ${score} / ${gameStatus.jeu0.max}`;
+            fb.className = score === gameStatus.jeu0.max ? 'feedback success' : 'feedback error';
+            
+            checkAllCompleted();
+        }
+
+
+        function validerJeu1() {
+            if(gameStatus.jeu1.done) return;
+            gameStatus.jeu1.done = true;
+
+
+            const allWords = document.querySelectorAll('#jeu1-content .word');
+            let correctCount = 0;
+            let errorsCount = 0;
+
+
+            allWords.forEach(wordEl => {
+                wordEl.style.pointerEvents = 'none'; // Verrouille la sélection
+                wordEl.style.color = "";
+                wordEl.style.borderBottom = "";
+
+
+                const isAdv = wordEl.getAttribute('data-adv') === "true";
+                const isSelected = wordEl.classList.contains('selected');
+
+
+                if (isSelected && isAdv) {
+                    correctCount++;
+                    wordEl.style.color = "var(--correct)";
+                    wordEl.style.borderBottom = "2px solid var(--correct)";
+                } else if (isSelected && !isAdv) {
+                    errorsCount++;
+                    wordEl.style.color = "var(--incorrect)";
+                    wordEl.style.borderBottom = "2px solid var(--incorrect)";
+                } else if (!isSelected && isAdv) {
+                    wordEl.style.borderBottom = "2px dashed var(--incorrect)";
+                }
+            });
+
+
+            let score = Math.max(0, correctCount - errorsCount);
+            gameStatus.jeu1.score = score;
+            document.getElementById('btn-valider-j1').style.display = 'none';
+            document.getElementById('btn-next-j1').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu1');
+            fb.innerHTML = `Jeu terminé ! Adverbes trouvés : ${correctCount}/${gameStatus.jeu1.max}. Mauvaises sélections : ${errorsCount}. Score calculé : ${score} / ${gameStatus.jeu1.max}`;
+            fb.className = score >= gameStatus.jeu1.max * 0.8 ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function validerJeu2() {
+            if(gameStatus.jeu2.done) return;
+            gameStatus.jeu2.done = true;
+
+
+            const allWords = document.querySelectorAll('#jeu2-content .word');
+            allWords.forEach(w => w.style.pointerEvents = 'none'); // Verrouille
+            
+            const selects = document.querySelectorAll('#jeu2-answers select');
+            let correctWordsCount = 0;
+            let correctSensCount = 0;
+            let errorsCount = 0;
+
+
+            selects.forEach(selectEl => {
+                selectEl.disabled = true; // Verrouille
+                const wordId = selectEl.getAttribute('data-for-id');
+                const wordEl = document.querySelector(`.word[data-word-id="${wordId}"]`);
+                const isAdv = wordEl.getAttribute('data-adv') === "true";
+                const expectedSens = wordEl.getAttribute('data-sens');
+                const chosenSens = selectEl.value;
+
+
+                if (isAdv) {
+                    correctWordsCount++;
+                    if (chosenSens === expectedSens) {
+                        correctSensCount++;
+                        selectEl.style.borderColor = "var(--correct)";
+                        selectEl.style.backgroundColor = "#e8f8f5";
+                    } else {
+                        selectEl.style.borderColor = "var(--incorrect)";
+                        selectEl.style.backgroundColor = "#fdedec";
+                    }
+                } else {
+                    errorsCount++;
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.backgroundColor = "#fdedec";
+                }
+            });
+
+
+            allWords.forEach(w => {
+                if (w.getAttribute('data-adv') === "true" && !w.classList.contains('selected')) {
+                    w.style.borderBottom = "2px dashed var(--incorrect)";
+                }
+            });
+
+
+            let scoreFinding = Math.max(0, correctWordsCount - errorsCount);
+            let scoreTotal = scoreFinding + correctSensCount;
+            gameStatus.jeu2.score = scoreTotal;
+            document.getElementById('btn-valider-j2').style.display = 'none';
+            document.getElementById('btn-next-j2').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu2');
+            fb.innerHTML = `Jeu terminé ! Score total (trouvailles + sens) : ${scoreTotal} / ${gameStatus.jeu2.max}`;
+            fb.className = scoreTotal >= gameStatus.jeu2.max * 0.8 ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function validerJeu3() {
+            if(gameStatus.jeu3.done) return;
+            gameStatus.jeu3.done = true;
+
+
+            let score = 0;
+            dataJeu3.forEach((item, index) => {
+                const selectEl = document.getElementById(`j3-q${index}`);
+                selectEl.disabled = true; // Verrouille
+                if (selectEl.value === item.correct) {
+                    score++;
+                    selectEl.style.borderColor = "var(--correct)";
+                    selectEl.style.backgroundColor = "#e8f8f5";
+                } else {
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.backgroundColor = "#fdedec";
+                }
+            });
+
+
+            gameStatus.jeu3.score = score;
+            document.getElementById('btn-valider-j3').style.display = 'none';
+            document.getElementById('btn-next-j3').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu3');
+            fb.innerHTML = `Jeu terminé ! Score : ${score} / ${gameStatus.jeu3.max}`;
+            fb.className = score === gameStatus.jeu3.max ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function validerJeu4() {
+            if(gameStatus.jeu4.done) return;
+            gameStatus.jeu4.done = true;
+
+
+            let score = 0;
+            dataJeu4.forEach((item, index) => {
+                const selectEl = document.getElementById(`j4-q${index}`);
+                selectEl.disabled = true; // Verrouille
+                if (selectEl.value === item.correct) {
+                    score++;
+                    selectEl.style.borderColor = "var(--correct)";
+                    selectEl.style.backgroundColor = "#e8f8f5";
+                } else {
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.backgroundColor = "#fdedec";
+                }
+            });
+
+
+            gameStatus.jeu4.score = score;
+            document.getElementById('btn-valider-j4').style.display = 'none';
+            document.getElementById('btn-next-j4').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu4');
+            fb.innerHTML = `Jeu terminé ! Score : ${score} / ${gameStatus.jeu4.max}`;
+            fb.className = score === gameStatus.jeu4.max ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function showResultats() {
+            showGame('resultats');
+            
+            let totalScore = gameStatus.jeu0.score + gameStatus.jeu1.score + gameStatus.jeu2.score + gameStatus.jeu3.score + gameStatus.jeu4.score;
+            let totalMax = gameStatus.jeu0.max + gameStatus.jeu1.max + gameStatus.jeu2.max + gameStatus.jeu3.max + gameStatus.jeu4.max;
+            let percentage = Math.round((totalScore / totalMax) * 100);
+
+
+            let resContainer = document.getElementById('resultats-content');
+            
+            let html = `
+                <div style="text-align:center; padding: 20px;">
+                    <h3 style="font-size: 2.2rem; margin-bottom: 5px;">Score Final : ${totalScore} / ${totalMax}</h3>
+                    <h4 style="font-size: 1.8rem; margin-top: 0; color: ${percentage > 80 ? 'var(--correct)' : 'var(--incorrect)'}">${percentage}%</h4>
+                </div>
+            `;
+
+
+            if (percentage > 80) {
+                html += `
+                    <div class="feedback success" style="display:block; text-align:center; font-size: 1.2rem;">
+                        Bravo ! Tu as excellé dans cette mission sous-marine et maîtrisé les adverbes ! 🐠✨
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback error" style="display:block; text-align:center; font-size: 1.2rem;">
+                        Mission échouée... Tu as obtenu 80% ou moins. Le capitaine exige que tu reprennes l'entraînement depuis le début ! 🦈
+                    </div>
+                    <div style="text-align:center; margin-top: 30px;">
+                        <button class="action-btn" style="background-color: var(--incorrect);" onclick="location.reload()">Recommencer la mission</button>
+                    </div>
+                `;
+            }
+
+
+            resContainer.innerHTML = html;
+        }
+
+
+        window.onload = () => {
+            initJeu0();
+            initJeu1();
+            initJeu2();
+            initJeu3();
+            initJeu4();
+        };
+
+
+    </script>
+</body>
+</html>

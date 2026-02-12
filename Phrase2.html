@@ -1,0 +1,860 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institut Pasteur - Types et Formes de phrases</title>
+    <style>
+        /* --- CSS Thème Microbiologie / Médecine High-Tech --- */
+        :root {
+            --primary: #005f73;
+            --primary-hover: #0a9396;
+            --secondary: #00f5d4; /* Cyan fluo / Néon médical */
+            --secondary-hover: #9b5de5; /* Violet/Magenta viral */
+            --bg-top: #0b132b; /* Nuit profonde / Microscope sombre */
+            --bg-bottom: #1c2541; /* Bleu laboratoire */
+            --text-color: #e0fbfc;
+            --text-dark: #0b132b;
+            --correct: #00f5d4;
+            --correct-light: rgba(0, 245, 212, 0.15);
+            --incorrect: #f15bb5;
+            --incorrect-light: rgba(241, 91, 181, 0.15);
+            --card-bg: rgba(11, 19, 43, 0.85);
+            --highlight: #f15bb5; /* Magenta pour surligner */
+        }
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+
+        /* --- Animations de Bactéries/Cellules en suspension --- */
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+        .particle { 
+            position: absolute; 
+            border-radius: 50%; 
+            animation: drift linear infinite; 
+            opacity: 0.6;
+            filter: blur(1px);
+        }
+        .bacillus {
+            border-radius: 10px; /* Forme allongée de bactérie */
+            background: var(--secondary); 
+            box-shadow: 0 0 10px var(--secondary);
+        }
+        .coccus {
+            border-radius: 50%; /* Forme ronde de coque */
+            background: var(--highlight);
+            box-shadow: 0 0 12px var(--highlight);
+        }
+        
+        @keyframes drift { 
+            0% { transform: translateY(110vh) translateX(0) rotate(0deg) scale(0.5); opacity: 0; } 
+            10% { opacity: 0.8; }
+            50% { transform: translateY(50vh) translateX(40px) rotate(180deg) scale(1.2); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) translateX(-30px) rotate(360deg) scale(0.5); opacity: 0; } 
+        }
+        .particle:nth-child(1) { left: 15%; width: 15px; height: 6px; animation-duration: 18s; }
+        .particle:nth-child(2) { left: 35%; width: 8px; height: 8px; animation-duration: 22s; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 55%; width: 20px; height: 8px; animation-duration: 20s; animation-delay: 5s; }
+        .particle:nth-child(4) { left: 75%; width: 10px; height: 10px; animation-duration: 15s; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 85%; width: 12px; height: 5px; animation-duration: 25s; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 20%; width: 6px; height: 6px; animation-duration: 19s; animation-delay: 6s; }
+
+
+        header {
+            color: var(--secondary);
+            text-align: center;
+            padding: 40px 20px 20px;
+            text-shadow: 0 0 15px rgba(0, 245, 212, 0.5);
+        }
+
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            color: #98c1d9;
+            opacity: 0.9;
+        }
+
+
+        .container {
+            max-width: 950px;
+            margin: 10px auto 40px auto;
+            padding: 0 20px;
+        }
+
+
+        /* Menu de navigation */
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+
+        .nav-btn {
+            background-color: rgba(0, 95, 115, 0.2);
+            color: var(--text-color);
+            border: 1px solid var(--primary-hover);
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+
+        .nav-btn:hover {
+            background-color: rgba(0, 245, 212, 0.1);
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(0, 245, 212, 0.3);
+        }
+
+
+        .nav-btn.active {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.6);
+        }
+
+
+        /* Sections des jeux */
+        .game-section {
+            display: none;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 245, 212, 0.2);
+            border-left: 4px solid var(--secondary);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+
+        .game-section.active {
+            display: block;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 1px solid rgba(0, 245, 212, 0.3);
+            padding-bottom: 15px;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+
+        .instructions {
+            background-color: rgba(0, 245, 212, 0.05);
+            color: #98c1d9;
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+
+
+        /* Éléments de formulaire */
+        select {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 1px solid var(--primary-hover);
+            border-radius: 4px;
+            font-family: inherit;
+            margin: 10px 0;
+            background-color: #1c2541;
+            color: #fff;
+            transition: all 0.2s;
+            outline: none;
+            width: 100%;
+            max-width: 450px;
+            display: block;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 8px rgba(0, 245, 212, 0.4);
+        }
+        
+        select:disabled {
+            background-color: #0b132b;
+            color: #6c757d;
+            border-color: #3a506b;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+
+        .action-btn {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.2);
+        }
+
+
+        .action-btn:hover {
+            background-color: #00b4d8;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 245, 212, 0.5);
+        }
+        
+        .action-btn:disabled {
+            background-color: #3a506b;
+            color: #1c2541;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+
+        .next-btn {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            margin-left: 15px;
+        }
+
+
+        .next-btn:hover {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+        }
+
+
+        /* Structure des phrases */
+        .j-sentence {
+            margin-bottom: 25px;
+            font-size: 1.15rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 2px solid rgba(241, 91, 181, 0.5);
+        }
+
+
+        .phrase-text {
+            font-weight: 400;
+            color: #e0fbfc;
+            margin-bottom: 12px;
+            display: block;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+
+        /* Mots cliquables (Chasse Négation) */
+        .text-block {
+            font-size: 1.3rem;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(241, 91, 181, 0.4);
+            border-radius: 6px;
+        }
+
+
+        .word {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 2px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: transparent;
+        }
+
+
+        .word:hover {
+            background-color: rgba(241, 91, 181, 0.2);
+        }
+
+
+        .word.selected {
+            background-color: var(--highlight);
+            color: var(--text-dark);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(241, 91, 181, 0.6);
+        }
+
+
+        /* Rétroaction */
+        .feedback {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+
+        .feedback.success {
+            display: block;
+            background-color: var(--correct-light);
+            color: var(--correct);
+            border-left: 4px solid var(--correct);
+        }
+
+
+        .feedback.error {
+            display: block;
+            background-color: var(--incorrect-light);
+            color: var(--incorrect);
+            border-left: 4px solid var(--incorrect);
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Particules (Bactéries/Cellules) en arrière-plan -->
+    <div class="particles">
+        <div class="particle bacillus"></div>
+        <div class="particle coccus"></div>
+        <div class="particle bacillus"></div>
+        <div class="particle coccus"></div>
+        <div class="particle bacillus"></div>
+        <div class="particle coccus"></div>
+    </div>
+
+
+    <header>
+        <h1>🔬 Diagnostics Avancés 🧬</h1>
+        <p>Analyse structurelle des protocoles cliniques (Types & Formes)</p>
+    </header>
+
+
+    <div class="container">
+        
+        <!-- Navigation -->
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="showGame('jeu1')">P1: Types Cliniques</button>
+            <button class="nav-btn" onclick="showGame('jeu2')">P2: Polarité Virale</button>
+            <button class="nav-btn" onclick="showGame('jeu3')">P3: Extraction Négative</button>
+            <button class="nav-btn" onclick="showGame('jeu4')">P4: Voix Cellulaires</button>
+            <button class="nav-btn" onclick="showGame('jeu5')">P5: Formes Atypiques</button>
+            <button class="nav-btn" onclick="showGame('jeu6')">P6: Bilan Sérologique</button>
+            <button id="btn-resultats" class="nav-btn" style="display: none; background-color: var(--highlight); color: var(--text-dark);" onclick="showResultats()">📊 Synthèse</button>
+        </div>
+
+
+        <!-- JEU 1 : Types de phrases -->
+        <div id="jeu1" class="game-section active">
+            <h2>💉 Protocole 1 : Les 4 Types Fondamentaux</h2>
+            <div class="instructions">
+                Identifiez le type exact de chaque phrase issue de nos derniers rapports d'essais cliniques. Attention, la ponctuation et la structure sont vos seuls indices fiables.
+            </div>
+            <div id="jeu1-content"></div>
+            <button id="btn-valider-j1" class="action-btn" onclick="validerJeu1()">Lancer l'analyse</button>
+            <button id="btn-next-j1" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu2')">Protocole suivant ➡️</button>
+            <div id="feedback-jeu1" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 2 : Forme Affirmative ou Négative -->
+        <div id="jeu2" class="game-section">
+            <h2>🦠 Protocole 2 : Polarité Virale (Aff / Nég)</h2>
+            <div class="instructions">
+                Analysez la polarité de l'action : l'infection progresse-t-elle (<strong>Affirmative</strong>) ou est-elle inhibée par le traitement (<strong>Négative</strong>) ? Prenez garde aux formulations complexes et aux termes restrictifs.
+            </div>
+            <div id="jeu2-content"></div>
+            <button id="btn-valider-j2" class="action-btn" onclick="validerJeu2()">Vérifier les échantillons</button>
+            <button id="btn-next-j2" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu3')">Protocole suivant ➡️</button>
+            <div id="feedback-jeu2" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 3 : Chasse à la négation -->
+        <div id="jeu3" class="game-section">
+            <h2>🧫 Protocole 3 : Extraction des Marqueurs Négatifs</h2>
+            <div class="instructions">
+                Isolez les séquences inhibitrices. Cliquez sur <strong>tous les mots qui marquent la négation</strong> dans ce rapport médical (ex: ne, jamais, guère, personne, aucun...).
+            </div>
+            <div id="jeu3-content"></div>
+            <button id="btn-valider-j3" class="action-btn" onclick="validerJeu3()">Confirmer l'extraction</button>
+            <button id="btn-next-j3" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu4')">Protocole suivant ➡️</button>
+            <div id="feedback-jeu3" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 4 : Forme active ou passive -->
+        <div id="jeu4" class="game-section">
+            <h2>🩸 Protocole 4 : Dynamique d'Action (Active / Passive)</h2>
+            <div class="instructions">
+                Le sujet effectue-t-il le processus métabolique (<strong>Active</strong>) ou le subit-il (<strong>Passive</strong>) ? Attention, le complément d'agent introduit par "par" n'est pas toujours explicitement mentionné.
+            </div>
+            <div id="jeu4-content"></div>
+            <button id="btn-valider-j4" class="action-btn" onclick="validerJeu4()">Traiter les données</button>
+            <button id="btn-next-j4" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu5')">Protocole suivant ➡️</button>
+            <div id="feedback-jeu4" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 5 : Forme Impersonnelle ou Emphatique -->
+        <div id="jeu5" class="game-section">
+            <h2>💊 Protocole 5 : Formes Atypiques</h2>
+            <div class="instructions">
+                Distinguez ces structures complexes :<br>
+                - <strong>Impersonnelle</strong> : Le verbe ne s'accorde qu'avec le pronom neutre "il" (ex: Il s'avère que...).<br>
+                - <strong>Emphatique</strong> : Un élément clinique est mis en relief (ex: C'est le variant qui...).
+            </div>
+            <div id="jeu5-content"></div>
+            <button id="btn-valider-j5" class="action-btn" onclick="validerJeu5()">Soumettre à validation</button>
+            <button id="btn-next-j5" class="action-btn next-btn" style="display: none;" onclick="showGame('jeu6')">Protocole suivant ➡️</button>
+            <div id="feedback-jeu5" class="feedback"></div>
+        </div>
+
+
+        <!-- JEU 6 : Le Grand Diagnostic -->
+        <div id="jeu6" class="game-section">
+            <h2>🏥 Protocole 6 : Le Bilan Sérologique (Mix)</h2>
+            <div class="instructions">
+                Phase finale de l'analyse. Identifiez la forme particulière (<strong>Négative, Passive, Impersonnelle ou Emphatique</strong>) dominante dans chaque rapport d'observation.
+            </div>
+            <div id="jeu6-content"></div>
+            <button id="btn-valider-j6" class="action-btn" onclick="validerJeu6()">Générer le rapport final</button>
+            <button id="btn-next-j6" class="action-btn next-btn" style="display: none;" onclick="showResultats()">Afficher la Synthèse 📊</button>
+            <div id="feedback-jeu6" class="feedback"></div>
+        </div>
+
+
+        <!-- RÉSULTATS -->
+        <div id="resultats" class="game-section">
+            <h2>📊 Synthèse de l'Étude Clinique</h2>
+            <div id="resultats-content"></div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // --- ÉTAT DU JEU ET SCORES ---
+        let gameStatus = {
+            jeu1: { done: false, score: 0, max: 5 }, // Types
+            jeu2: { done: false, score: 0, max: 5 }, // Aff/Neg
+            jeu3: { done: false, score: 0, max: 0 }, // Clic Négation
+            jeu4: { done: false, score: 0, max: 5 }, // Active/Passive
+            jeu5: { done: false, score: 0, max: 5 }, // Impersonnelle/Emphatique
+            jeu6: { done: false, score: 0, max: 6 }  // Grand labo
+        };
+
+
+        // --- DONNÉES DES JEUX (Niveau Avancé / Thème Médical) ---
+
+
+        // Jeu 1 : Types
+        const dataJeu1 = [
+            { text: "L'apoptose est un processus d'autodestruction cellulaire génétiquement programmé.", correct: "Déclarative" },
+            { text: "Veuillez centrifuger les échantillons sanguins avant toute analyse sérologique de phase 2.", correct: "Impérative" },
+            { text: "Le staphylocoque doré présente-t-il une résistance accrue à la méticilline depuis l'an dernier ?", correct: "Interrogative" },
+            { text: "Quelle virulence exceptionnelle dans la propagation pulmonaire de cet agent pathogène !", correct: "Exclamative" },
+            { text: "Ne contaminez sous aucun prétexte les boîtes de Petri lors du frottis de contrôle.", correct: "Impérative" }
+        ];
+
+
+        // Jeu 2 : Affirmative / Négative
+        const dataJeu2 = [
+            { text: "Le patient ne présente plus le moindre symptôme inflammatoire post-opératoire.", correct: "Négative" },
+            { text: "Les macrophages phagocytent activement les débris cellulaires présents dans le tissu.", correct: "Affirmative" },
+            { text: "Nul protocole clinique n'a permis d'endiguer la prolifération bactérienne in vitro.", correct: "Négative" },
+            { text: "L'agent viral se multiplie de façon exponentielle au cœur du cytoplasme hôte.", correct: "Affirmative" },
+            { text: "La souche mutante n'a guère réagi à l'administration d'antibiotiques à large spectre.", correct: "Négative" }
+        ];
+
+
+        // Jeu 3 : Mots entourés de * * sont les marqueurs de négation.
+        const textJeu3 = [
+            "Le patient zéro *n'* a montré *aucune* réaction immunitaire aux antipyrétiques de synthèse. *Personne* *n'* a pu identifier formellement la souche virale initiale lors du premier examen. L'infection *ne* s'est *guère* propagée au-delà du derme supérieur, cependant il *n'* y a *plus* *rien* à faire pour sauver le tissu déjà nécrosé."
+        ];
+
+
+        // Jeu 4 : Active / Passive
+        const dataJeu4 = [
+            { text: "L'agent pathogène de classe 3 a été isolé par les chercheurs du département de virologie.", correct: "Passive" },
+            { text: "Les lymphocytes T cytotoxiques détruisent de manière ciblée les cellules infectées par le virus.", correct: "Active" },
+            { text: "De nouvelles mutations génétiques sont observées quotidiennement au microscope électronique.", correct: "Passive" },
+            { text: "La toxine botulique inhibe drastiquement la libération de l'acétylcholine dans les synapses.", correct: "Active" },
+            { text: "Cet essai clinique en double aveugle sera rigoureusement encadré par le comité d'éthique.", correct: "Passive" }
+        ];
+
+
+        // Jeu 5 : Impersonnelle / Emphatique
+        const dataJeu5 = [
+            { text: "Il convient de stériliser minutieusement les instruments chirurgicaux avant chaque incision.", correct: "Impersonnelle" },
+            { text: "C'est l'antigène de surface membranaire qui déclenche la réponse immunitaire adaptative.", correct: "Emphatique" },
+            { text: "Il s'est produit une mutation inattendue dans la séquence de la protéine Spike.", correct: "Impersonnelle" },
+            { text: "Quant à la pénicilline, elle fut découverte par hasard par Alexander Fleming.", correct: "Emphatique" },
+            { text: "Il s'avère crucial d'isoler le variant delta avant qu'il ne se propage dans l'unité.", correct: "Impersonnelle" }
+        ];
+
+
+        // Jeu 6 : Grand Labo (Mélange des 4 formes)
+        const dataJeu6 = [
+            { text: "Il manque un nombre alarmant de plaquettes dans l'hémogramme du patient de la chambre 104.", correct: "Impersonnelle" },
+            { text: "Le vaccin ARN messager n'a jamais provoqué d'altération du génome humain lors des tests.", correct: "Négative" },
+            { text: "Ce sont les plasmides bactériens qui confèrent la résistance aux antibiotiques de dernière génération.", correct: "Emphatique" },
+            { text: "Une baisse soudaine de la tension artérielle a été signalée par l'appareil de monitoring.", correct: "Passive" },
+            { text: "Il est formellement interdit de pénétrer dans le laboratoire P4 sans combinaison de protection.", correct: "Impersonnelle" },
+            { text: "Le microbiote intestinal de ce nourrisson ne contient aucun agent pathogène dangereux.", correct: "Négative" }
+        ];
+
+
+        // --- FONCTIONS UTILITAIRES ---
+
+
+        function showGame(gameId) {
+            document.querySelectorAll('.game-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(gameId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(gameId === 'resultats' ? 'showResultats' : gameId)) {
+                    btn.classList.add('active');
+                }
+            });
+
+
+            // Remonter automatiquement en haut de la page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        function checkAllCompleted() {
+            if (gameStatus.jeu1.done && gameStatus.jeu2.done && 
+                gameStatus.jeu3.done && gameStatus.jeu4.done && gameStatus.jeu5.done && 
+                gameStatus.jeu6.done) {
+                document.getElementById('btn-resultats').style.display = 'inline-block';
+            }
+        }
+
+
+        // --- GÉNÉRATEUR DE QUESTIONS QCM ---
+        function genererQCM(dataArray, containerId, selectIdPrefix, defaultText, optionsHtml) {
+            const container = document.getElementById(containerId);
+            dataArray.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'j-sentence';
+                div.innerHTML = `
+                    <span class="phrase-text">"${item.text}"</span>
+                    <select id="${selectIdPrefix}-q${index}">
+                        <option value="">-- ${defaultText} --</option>
+                        ${optionsHtml}
+                    </select>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+
+        // --- INITIALISATION DES JEUX ---
+
+
+        function initJeu1() {
+            genererQCM(dataJeu1, 'jeu1-content', 'j1', 'Identifier le Type', `
+                <option value="Déclarative">Type Déclaratif</option>
+                <option value="Interrogative">Type Interrogatif</option>
+                <option value="Exclamative">Type Exclamatif</option>
+                <option value="Impérative">Type Impératif</option>
+            `);
+        }
+
+
+        function initJeu2() {
+            genererQCM(dataJeu2, 'jeu2-content', 'j2', 'Déterminer la Forme', `
+                <option value="Affirmative">Forme Affirmative</option>
+                <option value="Négative">Forme Négative</option>
+            `);
+        }
+
+
+        function initJeu3() {
+            const container = document.getElementById('jeu3-content');
+            let totalNeg = 0;
+
+
+            textJeu3.forEach((text, index) => {
+                let resultHtml = [];
+                let words = text.split(' ');
+                
+                words.forEach(chunk => {
+                    let punct = "";
+                    let word = chunk;
+
+
+                    if (/[.,;!?]$/.test(word)) {
+                        punct = word.slice(-1);
+                        word = word.slice(0, -1);
+                    }
+
+
+                    let isNeg = false;
+                    if (word.startsWith('*') && word.endsWith('*')) {
+                        isNeg = true;
+                        word = word.slice(1, -1);
+                        totalNeg++;
+                    }
+
+
+                    resultHtml.push(`<span class="word" data-neg="${isNeg}">${word}</span>${punct}`);
+                });
+
+
+                const div = document.createElement('div');
+                div.className = 'text-block';
+                div.innerHTML = resultHtml.join(' ').replace(/(>n'<\/span>)\s+(<span)/gi, "$1$2");
+                container.appendChild(div);
+            });
+
+
+            gameStatus.jeu3.max = totalNeg;
+
+
+            container.querySelectorAll('.word').forEach(wordEl => {
+                wordEl.addEventListener('click', function() {
+                    if(!gameStatus.jeu3.done) this.classList.toggle('selected');
+                });
+            });
+        }
+
+
+        function initJeu4() {
+            genererQCM(dataJeu4, 'jeu4-content', 'j4', 'Déterminer la Forme', `
+                <option value="Active">Forme Active</option>
+                <option value="Passive">Forme Passive</option>
+            `);
+        }
+
+
+        function initJeu5() {
+            genererQCM(dataJeu5, 'jeu5-content', 'j5', 'Déterminer la Forme', `
+                <option value="Impersonnelle">Forme Impersonnelle</option>
+                <option value="Emphatique">Forme Emphatique</option>
+            `);
+        }
+
+
+        function initJeu6() {
+            genererQCM(dataJeu6, 'jeu6-content', 'j6', 'Diagnostic de Forme', `
+                <option value="Impersonnelle">Forme Impersonnelle</option>
+                <option value="Emphatique">Forme Emphatique</option>
+                <option value="Négative">Forme Négative</option>
+                <option value="Passive">Forme Passive</option>
+            `);
+        }
+
+
+        // --- VALIDATIONS & SCORES ---
+
+
+        function validerQuestionsSelect(dataArray, gamePrefix, statusObj, fbId, successMsg) {
+            if(statusObj.done) return;
+            statusObj.done = true;
+
+
+            let score = 0;
+            dataArray.forEach((item, index) => {
+                const selectEl = document.getElementById(`${gamePrefix}-q${index}`);
+                selectEl.disabled = true; 
+                if (selectEl.value === item.correct) {
+                    score++;
+                    selectEl.style.borderColor = "var(--correct)";
+                    selectEl.style.color = "var(--correct)";
+                    selectEl.style.backgroundColor = "rgba(0, 245, 212, 0.1)";
+                } else {
+                    selectEl.style.borderColor = "var(--incorrect)";
+                    selectEl.style.color = "var(--incorrect)";
+                    selectEl.style.backgroundColor = "rgba(241, 91, 181, 0.1)";
+                    let optionText = Array.from(selectEl.options).find(opt => opt.value === item.correct)?.text || item.correct;
+                    const correctSpan = document.createElement('span');
+                    correctSpan.style.color = "var(--incorrect)";
+                    correctSpan.style.marginLeft = "10px";
+                    correctSpan.style.fontWeight = "bold";
+                    correctSpan.innerHTML = `(Diagnostic attendu : ${optionText})`;
+                    selectEl.parentNode.appendChild(correctSpan);
+                }
+            });
+
+
+            statusObj.score = score;
+            document.getElementById(`btn-valider-${gamePrefix}`).style.display = 'none';
+            document.getElementById(`btn-next-${gamePrefix}`).style.display = 'inline-block';
+
+
+            const fb = document.getElementById(fbId);
+            fb.innerHTML = `[SYSTÈME] ${successMsg} Précision : ${score} / ${statusObj.max}`;
+            fb.className = score === statusObj.max ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function validerJeu1() { validerQuestionsSelect(dataJeu1, 'j1', gameStatus.jeu1, 'feedback-jeu1', "Analyse syntaxique achevée."); }
+        function validerJeu2() { validerQuestionsSelect(dataJeu2, 'j2', gameStatus.jeu2, 'feedback-jeu2', "Polarités confirmées."); }
+        function validerJeu4() { validerQuestionsSelect(dataJeu4, 'j4', gameStatus.jeu4, 'feedback-jeu4', "Dynamique des agents traitée."); }
+        function validerJeu5() { validerQuestionsSelect(dataJeu5, 'j5', gameStatus.jeu5, 'feedback-jeu5', "Structures atypiques répertoriées."); }
+        function validerJeu6() { validerQuestionsSelect(dataJeu6, 'j6', gameStatus.jeu6, 'feedback-jeu6', "Bilan sérologique finalisé."); }
+
+
+        function validerJeu3() {
+            if(gameStatus.jeu3.done) return;
+            gameStatus.jeu3.done = true;
+
+
+            const allWords = document.querySelectorAll('#jeu3-content .word');
+            let correctCount = 0;
+            let errorsCount = 0;
+
+
+            allWords.forEach(wordEl => {
+                wordEl.style.pointerEvents = 'none';
+                
+                const isNeg = wordEl.getAttribute('data-neg') === "true";
+                const isSelected = wordEl.classList.contains('selected');
+
+
+                if (isSelected && isNeg) {
+                    correctCount++;
+                    wordEl.style.color = "var(--correct)";
+                    wordEl.style.borderBottom = "2px solid var(--correct)";
+                    wordEl.style.backgroundColor = "rgba(0, 245, 212, 0.15)";
+                    wordEl.style.boxShadow = "none";
+                } else if (isSelected && !isNeg) {
+                    errorsCount++;
+                    wordEl.style.color = "var(--incorrect)";
+                    wordEl.style.borderBottom = "2px solid var(--incorrect)";
+                    wordEl.style.backgroundColor = "rgba(241, 91, 181, 0.15)";
+                    wordEl.style.boxShadow = "none";
+                } else if (!isSelected && isNeg) {
+                    wordEl.style.borderBottom = "2px dashed var(--incorrect)";
+                }
+            });
+
+
+            let score = Math.max(0, correctCount - errorsCount);
+            gameStatus.jeu3.score = score;
+            document.getElementById('btn-valider-j3').style.display = 'none';
+            document.getElementById('btn-next-j3').style.display = 'inline-block';
+
+
+            const fb = document.getElementById('feedback-jeu3');
+            fb.innerHTML = `[SYSTÈME] Extraction terminée. Marqueurs isolés : ${correctCount}/${gameStatus.jeu3.max}. Contaminants (erreurs) : ${errorsCount}. Score d'intégrité : ${score} / ${gameStatus.jeu3.max}`;
+            fb.className = score >= gameStatus.jeu3.max * 0.8 ? 'feedback success' : 'feedback error';
+
+
+            checkAllCompleted();
+        }
+
+
+        function showResultats() {
+            showGame('resultats');
+            
+            let totalScore = gameStatus.jeu1.score + gameStatus.jeu2.score + gameStatus.jeu3.score + 
+                             gameStatus.jeu4.score + gameStatus.jeu5.score + gameStatus.jeu6.score;
+            let totalMax = gameStatus.jeu1.max + gameStatus.jeu2.max + gameStatus.jeu3.max + 
+                           gameStatus.jeu4.max + gameStatus.jeu5.max + gameStatus.jeu6.max;
+            let percentage = Math.round((totalScore / totalMax) * 100);
+
+
+            let resContainer = document.getElementById('resultats-content');
+            
+            let html = `
+                <div style="text-align:center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--primary-hover);">
+                    <h3 style="font-size: 2.2rem; margin-bottom: 5px; color: var(--text-color); font-weight: 300;">Fiabilité de l'Analyse : <span style="color: var(--secondary); font-weight: bold;">${totalScore} / ${totalMax}</span></h3>
+                    <h4 style="font-size: 2.5rem; margin-top: 0; color: ${percentage >= 80 ? 'var(--correct)' : 'var(--incorrect)'}; text-shadow: 0 0 10px ${percentage >= 80 ? 'var(--correct)' : 'var(--incorrect)'};">${percentage}%</h4>
+                </div>
+            `;
+
+
+            if (percentage >= 80) {
+                html += `
+                    <div class="feedback success" style="display:block; text-align:center; font-size: 1.2rem; padding: 25px;">
+                        <strong>ÉVALUATION POSITIVE : COMPÉTENCES CLINIQUES VALIDÉES</strong><br><br>
+                        Votre maîtrise de la syntaxe et de la sémantique complexe est digne d'un Chercheur Principal. Les rapports d'essais cliniques sont désormais classifiés avec une précision scientifique indéniable.<br><br>
+                        🧬 <em>Veuillez exporter ce rapport (capture d'écran) vers la base de données de l'encadrement supérieur.</em>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback error" style="display:block; text-align:center; font-size: 1.2rem; padding: 25px;">
+                        <strong>ALERTE DE PROTOCOLE : COMPÉTENCES INSUFFISANTES</strong><br><br>
+                        L'intégrité de l'analyse est inférieure au seuil de sécurité requis (80%). La confusion dans les structures syntaxiques avancées risque d'engendrer des faux positifs lors des diagnostics.<br><br>
+                        ☣️ <em>Il est impératif de retraiter l'ensemble des échantillons.</em>
+                    </div>
+                    <div style="text-align:center; margin-top: 30px;">
+                        <button class="action-btn" style="background-color: var(--incorrect); color: var(--text-dark);" onclick="location.reload()">Initialiser une nouvelle procédure</button>
+                    </div>
+                `;
+            }
+
+
+            resContainer.innerHTML = html;
+        }
+
+
+        window.onload = () => {
+            initJeu1();
+            initJeu2();
+            initJeu3();
+            initJeu4();
+            initJeu5();
+            initJeu6();
+        };
+
+
+    </script>
+</body>
+</html>
