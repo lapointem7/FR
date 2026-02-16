@@ -1,0 +1,922 @@
+﻿import * as React from 'react';
+import { 
+    BookOpen, CircleHelp, Search, CircleCheck, ArrowRight, ArrowLeft, 
+    RotateCcw, PenTool, CircleAlert, Sparkles, X, MessageCircle, 
+    Eye, ListFilter, Scissors, Type, Quote, Info, HandMetal, Check, ThumbsUp, Ruler, Split, Lightbulb, ChevronDown, ChevronUp
+} from 'lucide-react';
+
+
+const { useState, useEffect } = React;
+
+
+// --- BASE DE DONNÉES COMPLÈTE DES HOMOPHONES ---
+const homophonesDetailedDB = [
+    {
+        label: "a / as / à",
+        items: [
+            { word: "a", classe: "Verbe avoir (3e p.s.)", explication: "On peut le remplacer par AVAIT." },
+            { word: "as", classe: "Verbe avoir (2e p.s.)", explication: "On peut le remplacer par AVAIS (sujet tu)." },
+            { word: "à", classe: "Préposition", explication: "On NE peut PAS le remplacer par avait." }
+        ]
+    },
+    {
+        label: "on / on n' / ont",
+        items: [
+            { word: "on", classe: "Pronom personnel", explication: "On peut le remplacer par LÉON." },
+            { word: "on n'", classe: "Pronom + négation", explication: "On peut le remplacer par LÉON (phrase négative)." },
+            { word: "ont", classe: "Verbe avoir (3e p.pl.)", explication: "On peut le remplacer par AVAIENT." }
+        ]
+    },
+     {
+        label: "se / ce",
+        items: [
+            { word: "se", classe: "Pronom personnel", explication: "Devant un verbe autre que le verbe être." },
+            { word: "ce", classe: "Dét. ou pronom", explication: "Devant un nom (ce chien) ou le verbe être (c'est)." }
+        ]
+    },
+    {
+        label: "son / sont",
+        items: [
+            { word: "son", classe: "Dét. possessif", explication: "Devant un nom ou adj. masc. sing. (Mon/Ton)." },
+            { word: "sont", classe: "Verbe être", explication: "On peut le remplacer par ÉTAIENT." }
+        ]
+    },
+    {
+        label: "ces / ses / c'est / s'est / sais / sait",
+        items: [
+            { word: "ces", classe: "Dét. démonstratif", explication: "Devant un nom pluriel. Sert à montrer (Ceux-là)." },
+            { word: "ses", classe: "Dét. possessif", explication: "Devant un nom pluriel. Indique la possession (À lui/elle)." },
+            { word: "s'est", classe: "Pronom + Être", explication: "Devant un participe passé. Remplacer par S'ÉTAIT." },
+            { word: "c'est", classe: "Pronom + Être", explication: "Devant un mot autre qu'un verbe. Remplacer par CELA EST." },
+            { word: "sais", classe: "Verbe savoir (1e/2e p.s.)", explication: "Remplacer par SAVAIS." },
+            { word: "sait", classe: "Verbe savoir (3e p.s.)", explication: "Remplacer par SAVAIT." }
+        ]
+    },
+     {
+        label: "ou / où / houx",
+        items: [
+            { word: "ou", classe: "Conjonction", explication: "On peut le remplacer par OU BIEN." },
+            { word: "où", classe: "Pronom relatif / lieu", explication: "Indique un LIEU (À quel endroit)." },
+            { word: "houx", classe: "Nom", explication: "C'est un arbuste." }
+        ]
+    },
+    {
+        label: "mon / m'ont / mont",
+        items: [
+            { word: "mon", classe: "Dét. possessif", explication: "Devant un nom/adj masc. sing." },
+            { word: "m'ont", classe: "Pr. + Avoir", explication: "On peut le remplacer par M'AVAIENT." },
+            { word: "mont", classe: "Nom", explication: "C'est une montagne." }
+        ]
+    },
+    {
+        label: "peu / peut / peux",
+        items: [
+            { word: "peu", classe: "Adverbe", explication: "On peut le remplacer par PAS BEAUCOUP." },
+            { word: "peut", classe: "Verbe pouvoir (3e p.s.)", explication: "On peut le remplacer par POUVAIT." },
+            { word: "peux", classe: "Verbe pouvoir (1e/2e p.s.)", explication: "On peut le remplacer par POUVAIS." }
+        ]
+    },
+    {
+        label: "la / l'a / l'as / là / -là",
+        items: [
+            { word: "la", classe: "Dét. ou Pronom", explication: "Dans tous les autres cas (Une/Le)." },
+            { word: "l'a", classe: "Pr. + Avoir (3e p.s.)", explication: "On peut le remplacer par L'AVAIT." },
+            { word: "l'as", classe: "Pr. + Avoir (2e p.s.)", explication: "On peut le remplacer par L'AVAIS." },
+            { word: "là", classe: "Adverbe", explication: "On peut le remplacer par ICI." },
+            { word: "-là", classe: "Adverbe", explication: "On peut le remplacer par -CI." }
+        ]
+    },
+    {
+        label: "mais / mes / m'est / m'es",
+        items: [
+            { word: "mais", classe: "Coordonnant", explication: "On peut le remplacer par CEPENDANT." },
+            { word: "mes", classe: "Dét. possessif", explication: "Devant un nom pluriel (Tes/Ses)." },
+            { word: "m'est", classe: "Pr. + Être (3e p.s.)", explication: "On peut le remplacer par M'ÉTAIT (est à moi)." },
+            { word: "m'es", classe: "Pr. + Être (2e p.s.)", explication: "On peut le remplacer par M'ÉTAIS (es à moi)." }
+        ]
+    },
+    {
+        label: "met / mets / mets",
+        items: [
+            { word: "met", classe: "Verbe mettre (3e p.s.)", explication: "On peut le remplacer par METTAIT." },
+            { word: "mets", classe: "Verbe mettre (1e/2e p.s.)", explication: "On peut le remplacer par METTAIS." },
+            { word: "mets", classe: "Nom", explication: "C'est un repas." }
+        ]
+    },
+    {
+        label: "prêt / prêt / près",
+        items: [
+            { word: "prêt (adj)", classe: "Adjectif", explication: "Remplacer par PRÉPARÉ / DISPOSÉ (suivi de à)." },
+            { word: "prêt (nom)", classe: "Nom", explication: "Une avance d'argent." },
+            { word: "près", classe: "Adverbe", explication: "Remplacer par PROCHE (suivi de de)." }
+        ]
+    },
+    {
+        label: "tes / t'es / t'est / taie / t'ai",
+        items: [
+            { word: "tes", classe: "Dét. possessif", explication: "Devant un nom pluriel." },
+            { word: "t'es", classe: "Pr. + Être (2e p.s.)", explication: "On peut le remplacer par T'ÉTAIS." },
+            { word: "t'est", classe: "Pr. + Être (3e p.s.)", explication: "On peut le remplacer par T'ÉTAIT." },
+            { word: "taie", classe: "Nom", explication: "Recouvre l'oreiller." },
+            { word: "t'ai", classe: "Pr. + Avoir (1e p.s.)", explication: "On peut le remplacer par T'AVAIS." }
+        ]
+    },
+    {
+        label: "leurs / leur",
+        items: [
+            { word: "leurs", classe: "Dét. possessif", explication: "Devant un nom pluriel (parfois précédé de les)." },
+            { word: "leur", classe: "Dét. ou Pronom", explication: "Devant un singulier ou un verbe (invariable)." }
+        ]
+    },
+    {
+        label: "sans / s'en / sens / sent / sang",
+        items: [
+            { word: "sans", classe: "Préposition", explication: "Remplacer par PRIVÉ DE." },
+            { word: "s'en", classe: "Pronoms", explication: "Devant un verbe." },
+            { word: "sens", classe: "Verbe sentir (1e/2e p.s.)", explication: "Remplacer par SENTAIS." },
+            { word: "sent", classe: "Verbe sentir (3e p.s.)", explication: "Remplacer par SENTAIT." },
+            { word: "sang", classe: "Nom", explication: "Liquide rouge du corps." },
+            { word: "sens (nom)", classe: "Nom", explication: "Direction ou les 5 sens." }
+        ]
+    },
+    {
+        label: "d'en / dans",
+        items: [
+            { word: "d'en", classe: "Prép. + Pronom", explication: "Devant un verbe à l'infinitif." },
+            { word: "dans", classe: "Préposition", explication: "Dans tous les autres cas (Dedans)." }
+        ]
+    },
+    {
+        label: "dont / donc",
+        items: [
+            { word: "dont", classe: "Pronom relatif", explication: "Précédé d'un nom/pronom. (De qui/De quoi)." },
+            { word: "donc", classe: "Coordonnant", explication: "Conséquence. On peut souvent l'enlever." }
+        ]
+    },
+    {
+        label: "sa / ça",
+        items: [
+            { word: "sa", classe: "Dét. possessif", explication: "Devant un nom fém. sing. (Ma/Ta)." },
+            { word: "ça", classe: "Pronom", explication: "Remplacer par CELA." }
+        ]
+    },
+    {
+        label: "ta / t'a",
+        items: [
+            { word: "ta", classe: "Dét. possessif", explication: "Devant un nom fém. sing." },
+            { word: "t'a", classe: "Pr. + Avoir", explication: "Remplacer par T'AVAIT." }
+        ]
+    },
+    {
+        label: "ma / m'a / m'as",
+        items: [
+            { word: "ma", classe: "Dét. possessif", explication: "Devant un nom fém. sing." },
+            { word: "m'a", classe: "Pr. + Avoir (3e p.s.)", explication: "Remplacer par M'AVAIT." },
+            { word: "m'as", classe: "Pr. + Avoir (2e p.s.)", explication: "Remplacer par M'AVAIS." }
+        ]
+    },
+    {
+        label: "ton / t'ont / thon / taon / tond / tonds",
+        items: [
+            { word: "ton", classe: "Dét. possessif", explication: "Devant un nom/adj masc. sing." },
+            { word: "t'ont", classe: "Pr. + Avoir", explication: "Remplacer par T'AVAIENT." },
+            { word: "thon", classe: "Nom", explication: "Poisson." },
+            { word: "taon", classe: "Nom", explication: "Insecte." },
+            { word: "tond(s)", classe: "Verbe tondre", explication: "Remplacer par un autre verbe." },
+            { word: "ton (nom)", classe: "Nom", explication: "Volume de voix ou couleur." }
+        ]
+    },
+    {
+        label: "plus tôt / plutôt",
+        items: [
+            { word: "plus tôt", classe: "Locution", explication: "Contraire de PLUS TARD (temps)." },
+            { word: "plutôt", classe: "Adverbe", explication: "Marque une préférence (Au lieu de)." }
+        ]
+    },
+    {
+        label: "cou / coup / coût / coud / couds",
+        items: [
+            { word: "cou", classe: "Nom", explication: "Partie du corps." },
+            { word: "coup", classe: "Nom", explication: "Frapper." },
+            { word: "coût", classe: "Nom", explication: "Prix / Montant." },
+            { word: "coud(s)", classe: "Verbe coudre", explication: "Remplacer par COUSAIT/COUSAIS." }
+        ]
+    },
+    {
+        label: "peut-être / peut être",
+        items: [
+            { word: "peut-être", classe: "Adverbe", explication: "Remplacer par PROBABLEMENT." },
+            { word: "peut être", classe: "Verbe pouvoir + être", explication: "Remplacer par POUVAIT ÊTRE." }
+        ]
+    },
+    {
+        label: "quand / quant / qu'en",
+        items: [
+            { word: "quand", classe: "Adverbe", explication: "Remplacer par LORSQUE ou À QUEL MOMENT." },
+            { word: "quant", classe: "Locution", explication: "Toujours suivi de 'à', 'au', 'aux'." },
+            { word: "qu'en", classe: "Pronom + pronom", explication: "Dans tous les autres cas." }
+        ]
+    },
+    {
+        label: "ni / n'y / nie / nies / nient",
+        items: [
+            { word: "ni", classe: "Coordonnant", explication: "Suivi d'un autre ni dans la phrase." },
+            { word: "n'y", classe: "Négation + Pronom", explication: "Devant un verbe dans une phrase négative." },
+            { word: "nie(s)(nt)", classe: "Verbe nier", explication: "Dire que ce n'est pas vrai (Niait/Niaient)." }
+        ]
+    },
+    {
+        label: "s'y / -ci / si",
+        items: [
+            { word: "s'y", classe: "Pronoms", explication: "Devant un verbe." },
+            { word: "-ci", classe: "Adverbe", explication: "Remplacer par -LÀ." },
+            { word: "si", classe: "Adverbe/Subordonnant", explication: "Dans tous les autres cas." }
+        ]
+    },
+    {
+        label: "qu'elle / quel",
+        items: [
+            { word: "qu'elle", classe: "Sub. + Pronom", explication: "Remplacer par QU'IL." },
+            { word: "quel", classe: "Dét. ou Pronom", explication: "Ne PEUT PAS être remplacé par qu'il." }
+        ]
+    },
+    {
+        label: "qui / qu'il / qu'y",
+        items: [
+            { word: "qui", classe: "Pronom", explication: "Ne peut pas être remplacé par qu'elle." },
+            { word: "qu'il", classe: "Conj. + Pronom", explication: "Peut être remplacé par QU'ELLE." },
+            { word: "qu'y", classe: "Conj. + Pronom", explication: "Peut être remplacé par QUE." }
+        ]
+    },
+    {
+        label: "quoique / quoi que",
+        items: [
+            { word: "quoique", classe: "Conjonction", explication: "Remplacer par BIEN QUE." },
+            { word: "quoi que", classe: "Locution", explication: "Remplacer par QUELLE QUE SOIT LA CHOSE QUE." }
+        ]
+    },
+    {
+        label: "davantage / d'avantage",
+        items: [
+            { word: "davantage", classe: "Adverbe", explication: "Remplacer par J'EN VEUX PLUS." },
+            { word: "d'avantage", classe: "Prép. + Nom", explication: "Remplacer par DES AVANTAGES." }
+        ]
+    },
+    {
+        label: "sur / sur(e) / sûr(e)",
+        items: [
+            { word: "sur", classe: "Préposition", explication: "Position (dessus), avec les objets." },
+            { word: "sur(e)", classe: "Adjectif", explication: "Acide (goût)." },
+            { word: "sûr(e)", classe: "Adjectif", explication: "Remplacer par CERTAIN(E)." }
+        ]
+    },
+    {
+        label: "ver / vers / verre / vert",
+        items: [
+            { word: "ver", classe: "Nom", explication: "Animal (ver de terre)." },
+            { word: "vers", classe: "Préposition", explication: "C'est la direction." },
+            { word: "verre", classe: "Nom", explication: "On l'utilise pour boire." },
+            { word: "vert", classe: "Adjectif", explication: "C'est une couleur." }
+        ]
+    }
+];
+
+
+// --- BASE DE DONNÉES DES RÈGLES ---
+const rulesDB = {
+    // GRAMMAIRE
+    "GN1": { titre: "Accord dans le GN (Nom)", regle: "Les marques de genre et de nombre du nom ou du pronom.", exemple: "les béluga (X) -> les bélugas (V)" },
+    "GN2": { titre: "Accord du DÉTERMINANT", regle: "Accord du déterminant avec le nom.", exemple: "ce baleines (X) -> ces baleines (V)" },
+    "GN3": { titre: "Accord de l'ADJECTIF", regle: "Accord de l'adjectif ou du participe passé employé seul (PPS) avec le nom.", exemple: "des forêts vert (X) -> des forêts vertes (V)" },
+    "GV1": { titre: "VERBE CONJUGUÉ", regle: "Mauvaise conjugaison du verbe avec son sujet ou erreur dans le radical.", exemple: "ils joue (X) -> ils jouent (V)" },
+    "GV2": { titre: "PARTICIPE PASSÉ (PPE/PPA)", regle: "Accord du participe passé avec l'auxiliaire être ou avoir.", exemple: "elles sont partit (X) -> elles sont parties (V)" },
+    "GH": { titre: "Confusion homophonique", regle: "Confusion entre deux mots qui se prononcent pareil.", special: "Indique: homophone erroné (stratégie) / homophone approprié (stratégie).", exemple: "a (remplace par avait) / à (ne remplace pas par avait)" },
+    
+    // USAGE
+    "U1": { titre: "Orthographe d'Usage", regle: "Le mot est mal écrit.", special: "Cherche dans le dictionnaire ou Usito et recopie 5 fois.", exemple: "une maizon (X) -> une maison (V)" },
+    "U2": { titre: "Trait d'union", regle: "Il manque un trait d'union ou il y en a un de trop.", exemple: "pense t'il (X) -> pense-t-il (V)" },
+    "U3": { titre: "Apostrophe / Élision", regle: "Apostrophe marquant l'élision (l', d', s', etc.).", exemple: "le ami (X) -> l'ami (V)" },
+    "U4": { titre: "Majuscule", regle: "Majuscule dans le nom propre ou début de phrase.", exemple: "en france (X) -> en France (V)" },
+    "U5": { titre: "Coupure de mot", regle: "Coupure de mot incorrecte en fin de ligne.", exemple: "pom- me (X) -> pom- me (V)" },
+    "U6": { titre: "Chiffres et Symboles", regle: "L'emploi d'un chiffre (0 à 9 = en lettres).", exemple: "il a 3 chiens (X) -> il a trois chiens (V)" },
+    
+    // SYNTAXE
+    "S1": { titre: "Construction de phrase", regle: "Manque un groupe essentiel (GNs ou GV).", exemple: "Le chat la souris (X) -> Le chat mange la souris (V)" },
+    "S2": { titre: "Négation", regle: "Absence du 'n' dans la négation.", exemple: "il aime pas (X) -> il n'aime pas (V)" },
+    "S3": { titre: "Manque un mot", regle: "Il manque un mot dans la phrase (autre que GNs/GV).", exemple: "Je vais école (X) -> Je vais à l'école (V)" },
+    "S4": { titre: "Préposition", regle: "Mauvaise utilisation de la préposition.", exemple: "J'attends sur un feu rouge (X) -> J'attends à un feu rouge (V)" },
+    "S5": { titre: "Coordination", regle: "Ne pas commencer une phrase par un coordonnant (Mais, Car, Et...).", exemple: "Mais il est gentil (X) -> Cependant, il est gentil (V)" },
+
+
+    // PONCTUATION - VIRGULE
+    "P1": { titre: "Virgule (Énumération)", regle: "Isoler les éléments d'une énumération.", exemple: "Un gâteau chocolaté, moelleux et savoureux." },
+    "P2": { titre: "Virgule (GN détaché)", regle: "Isoler le GN détaché (apposition).", exemple: "Le Nil, le fleuve égyptien, est long de 6500 km." },
+    "P3": { titre: "Virgule (CP déplacé)", regle: "Isoler le complément de phrase (CP) déplacé.", exemple: "Quand je serai parti, ma mère trouvera la maison vide." },
+    "P4": { titre: "Virgule (Organisateur)", regle: "Isoler un organisateur textuel en début de phrase.", exemple: "D'abord, je mange (V)" },
+    "P5": { titre: "Virgule (Coordonnant)", regle: "À gauche des coordonnants (mais, car, or, donc...).", exemple: "Je mange, car j'ai faim (V)" },
+    "P6": { titre: "Virgule (Incise)", regle: "Isoler la phrase incise ou le groupe incident.", exemple: "« Ce sentier... », lit-on sur les affiches. / Il est, tout le monde le dit, un candidat sérieux." },
+    "P7": { titre: "Virgule (Apostrophe)", regle: "Isoler un mot mis en apostrophe (à qui l'on parle).", exemple: "Monsieur, est-ce à vous ce joli chapeau ?" },
+    "P8": { titre: "Virgule (Effacement)", regle: "Marquer l'effacement d'un élément (souvent le verbe).", exemple: "Karim joue au football et Manon, au tennis." },
+    
+    // PONCTUATION - POINT
+    "P9": { titre: "Le Point", regle: "Marque la fin d'une phrase déclarative.", exemple: "Il mange." },
+    "P10": { titre: "Point d'interrogation", regle: "Marque la fin d'une phrase interrogative.", exemple: "Qui est là ?" },
+    "P11": { titre: "Point d'exclamation", regle: "Marque la fin d'une phrase exclamative.", exemple: "Quel beau but !" },
+
+
+    // PONCTUATION - DEUX POINTS
+    "P17": { titre: "Deux points (Discours)", regle: "Introduire un discours direct ou une citation.", exemple: "Il a dit : « Bonjour » (V)" },
+    "P18": { titre: "Deux points (Cause/Conséquence)", regle: "Établir un rapport de cause/conséquence (juxtaposition).", exemple: "Jasmin souffre : son comportement est affecté." },
+    "P19": { titre: "Deux points (Explication)", regle: "Introduire une explication ou une définition.", exemple: "Il ne mange pas de dessert : il est diabétique." },
+
+
+    // PONCTUATION - AUTRES
+    "P20": { titre: "Parenthèses", regle: "Encadrer une information accessoire (explication, réflexion, commentaire).", exemple: "Ce garçon (le frère de Julie) est gentil." },
+    "P22": { titre: "Guillemets (Discours)", regle: "Encadrer un discours direct.", exemple: "Il a dit : « Bonjour »." },
+    "P23": { titre: "Guillemets (Mot isolé)", regle: "Encadrer un mot ou une expression que l'auteur désire isoler.", exemple: "Le mot « chien » est un nom." },
+    "P24": { titre: "Guillemets (Citation)", regle: "Respecter les règles de citation.", exemple: "Comme l'a dit l'auteur : « ... »." },
+};
+
+
+// --- LOGIQUE DU GÉNIE (ARBRE DE DÉCISION) ---
+const genieGraph = {
+    // === GRAMMAIRE (G) ===
+    'G_START': {
+        text: "Est-ce que tu confonds deux mots qui se prononcent pareil (homophones ex: a/à, son/sont) ?",
+        yes: { type: 'action', value: 'GH_SEARCH' },
+        no: { type: 'node', value: 'G_GV_CHECK' }
+    },
+    'G_GV_CHECK': {
+        text: "Est-ce une faute dans un GV (groupe du verbe) ?",
+        visual: {
+            title: "Identifier le verbe",
+            examples: [
+                { text: "Temps simple : Les chats [mangent]. -> Les chats ne [mangent] pas.", valid: true },
+                { text: "Temps composé : Les chats [ont mangé]. -> Les chats n'[ont] pas [mangé].", valid: true }
+            ],
+            note: "Le verbe est le mot qui change si on change le temps (hier/demain) ou qu'on peut encadrer par 'ne...pas'."
+        },
+        yes: { type: 'node', value: 'G_GV_TYPE' },
+        no: { type: 'node', value: 'G_GN_CHECK' }
+    },
+    'G_GV_TYPE': {
+        text: "Est-ce un verbe à un temps simple (un seul mot) ?",
+        visual: {
+            title: "Temps Simple",
+            examples: [{ text: "Je [marche]. (Présent)", valid: true }, { text: "Je [marchais]. (Imparfait)", valid: true }],
+            note: "Il n'y a pas d'auxiliaire (être/avoir)."
+        },
+        yes: { type: 'result', value: 'GV1' },
+        no: { type: 'node', value: 'G_GV_COMPOSE' }
+    },
+    'G_GV_COMPOSE': {
+        text: "Est-ce un verbe à un temps composé (auxiliaire + participe passé) ?",
+        visual: {
+            title: "Temps Composé",
+            examples: [{ text: "J'[ai] [marché]. (Passé composé)", valid: true }, { text: "J'[avais] [marché]. (Plus-que-parfait)", valid: true }],
+            note: "Il y a deux mots : l'auxiliaire et le participe passé."
+        },
+        yes: { type: 'node', value: 'G_GV_AUX' },
+        no: { type: 'node', value: 'G_GN_CHECK' }
+    },
+    'G_GV_AUX': {
+        text: "Est-ce que la faute est dans le premier des deux mots (l'auxiliaire) ?",
+        yes: { type: 'result', value: 'GV1' },
+        no: { type: 'result', value: 'GV2' } 
+    },
+    'G_GN_CHECK': {
+        text: "Est-ce une faute dans un GN (Groupe nominal) ?",
+        yes: { type: 'node', value: 'G_GN_NOM' },
+        no: { type: 'action', value: 'TEACHER' }
+    },
+    'G_GN_NOM': {
+        text: "La classe du mot erroné est-elle un NOM ?",
+        visual: {
+            title: "Identifier le NOM",
+            examples: [
+                { text: "Le [chat]. (Nom commun - on peut mettre 'un' devant)", valid: true },
+                { text: "[Félix]. (Nom propre)", valid: true }
+            ],
+            note: "Le nom est le noyau du groupe nominal."
+        },
+        yes: { type: 'result', value: 'GN1' },
+        no: { type: 'node', value: 'G_GN_DET' }
+    },
+    'G_GN_DET': {
+        text: "La classe du mot erroné est-elle un DÉTERMINANT ?",
+        visual: {
+            title: "Identifier le DÉTERMINANT",
+            examples: [{ text: "[Le] chat. [Mon] chat. [Ce] chat.", valid: true }],
+            note: "Il est toujours placé avant le nom."
+        },
+        yes: { type: 'result', value: 'GN2' },
+        no: { type: 'node', value: 'G_GN_ADJ' }
+    },
+    'G_GN_ADJ': {
+        text: "La classe du mot erroné est-elle un ADJECTIF ?",
+        visual: {
+            title: "Identifier l'ADJECTIF",
+            examples: [
+                { text: "Un [petit] chat. -> Un [très] [petit] chat.", valid: true },
+                { text: "Le chat est [noir]. -> Le chat est [très] [noir].", valid: true }
+            ],
+            note: "Il qualifie le nom. On peut souvent dire 'très' devant."
+        },
+        yes: { type: 'result', value: 'GN3' },
+        no: { type: 'action', value: 'TEACHER' }
+    },
+
+
+    // === USAGE (U) ===
+    'U_START': { text: "Crois-tu que le mot aurait nécessité une majuscule (Nom propre ou début de phrase) ?", yes: { type: 'result', value: 'U4' }, no: { type: 'node', value: 'U_CHIFFRE' } },
+    'U_CHIFFRE': { text: "As-tu écrit un chiffre de 0 à 9 en chiffres (ex: 3) plutôt qu'en lettres (ex: trois) ?", yes: { type: 'result', value: 'U6' }, no: { type: 'node', value: 'U_APOSTROPHE' } },
+    'U_APOSTROPHE': { text: "Manque-t-il une apostrophe (ex: l'arbre) ou est-elle mal placée ?", yes: { type: 'result', value: 'U3' }, no: { type: 'node', value: 'U_TRAIT' } },
+    'U_TRAIT': { text: "S'agit-il d'un problème de trait d'union (ex: 'pense-t-il', 'peut-être') ?", yes: { type: 'result', value: 'U2' }, no: { type: 'node', value: 'U_COUPURE' } },
+    'U_COUPURE': { text: "As-tu coupé un mot à la fin de la ligne (avec un trait d'union) ?", yes: { type: 'action', value: 'U5_CHECK' }, no: { type: 'node', value: 'U_ORTHO' } },
+    'U_ORTHO': { text: "Le mot est-il simplement mal écrit selon le dictionnaire ?", yes: { type: 'result', value: 'U1' }, no: { type: 'action', value: 'TEACHER' } },
+
+
+    // === SYNTAXE (S) ===
+    'S_START': { 
+        text: "As-tu commencé ta phrase par une conjonction (Ex : et, mais, car...) ?", 
+        yes: { type: 'result', value: 'S5' }, 
+        no: { type: 'node', value: 'S_VERBE_MANQUANT' } 
+    },
+    'S_VERBE_MANQUANT': {
+        text: "Manque-t-il un verbe conjugué dans ta phrase ?",
+        visual: {
+            title: "Le moteur de la phrase",
+            examples: [
+                { text: "Phrase correcte : Le chien [court] vite.", valid: true },
+                { text: "Phrase incorrecte : Le chien vite. (Pas de moteur !)", valid: false }
+            ],
+            note: "Si tu réponds OUI, c'est qu'il MANQUE un verbe (S1)."
+        },
+        yes: { type: 'result', value: 'S1' }, // YES = Error found (Missing verb)
+        no: { type: 'node', value: 'S_NEGATION' }
+    },
+    'S_NEGATION': { 
+        text: "Manque-t-il le 'ne' ou 'n'' dans une négation (ex: j'aime pas) ?", 
+        yes: { type: 'result', value: 'S2' }, 
+        no: { type: 'node', value: 'S_MOT_MANQUANT' } 
+    },
+    'S_MOT_MANQUANT': { 
+        text: "Manque-t-il un petit mot (autre que le sujet ou le verbe) ?", 
+        yes: { type: 'result', value: 'S3' }, 
+        no: { type: 'node', value: 'S_PREPOSITION' } 
+    },
+    'S_PREPOSITION': { 
+        text: "Est-ce une mauvaise utilisation de préposition (ex: sur/à) ?", 
+        visual: {
+            title: "Exemples fréquents",
+            examples: [
+                { text: "C'est la faute [à] Pierre (X) -> C'est la faute [de] Pierre (V)", valid: true },
+                { text: "Je vais [sur] le téléphone (X) -> Je vais [au] téléphone (V)", valid: true }
+            ]
+        },
+        yes: { type: 'result', value: 'S4' }, 
+        no: { type: 'action', value: 'TEACHER' } 
+    },
+
+
+    // === PONCTUATION (P) - HYPOTHÈSE INITIALE ===
+    'P_START': {
+        text: "Quelle est ton hypothèse sur la ponctuation ?",
+        type: 'choice',
+        options: [
+            { label: "Virgule (,)", next: 'P_V_ENUM' },
+            { label: "Point (.)", next: 'P_POINT_TYPE' },
+            { label: "Point d'interrogation (?)", next: 'P_POINT_INT' },
+            { label: "Point d'exclamation (!)", next: 'P_POINT_EXCL' },
+            { label: "Deux points (:)", next: 'P_DP_DISCOURS' },
+            { label: "Parenthèses ( )", next: 'P_PAR_INFO' },
+            { label: "Guillemets « »", next: 'P_GUI_DISCOURS' },
+        ]
+    },
+
+
+    // BRANCHE VIRGULE
+    'P_V_ENUM': { 
+        text: "Est-ce pour isoler les éléments d'une énumération (liste) ou séparer des phrases juxtaposées ?", 
+        visual: { title: "Exemple P1", examples: [{ text: "Un gâteau chocolaté, moelleux et savoureux.", valid: true }], note: "Liste d'au moins 3 éléments." },
+        yes: { type: 'result', value: 'P1' }, no: { type: 'node', value: 'P_V_GN_DET' } 
+    },
+    'P_V_GN_DET': { 
+        text: "Est-ce pour isoler un GN détaché (apposition) ?", 
+        visual: { title: "Exemple P2", examples: [{ text: "Le Nil, [le fleuve égyptien], est long...", valid: true }], note: "Donne une info supplémentaire sur le nom." },
+        yes: { type: 'result', value: 'P2' }, no: { type: 'node', value: 'P_V_CP' } 
+    },
+    'P_V_CP': { 
+        text: "Est-ce pour isoler un Complément de Phrase (CP) déplacé en début ou milieu de phrase ?", 
+        visual: { title: "Exemple P3", examples: [{ text: "[Quand je serai parti], ma mère trouvera la maison vide.", valid: true }], note: "Indique le temps, le lieu, le but..." },
+        yes: { type: 'result', value: 'P3' }, no: { type: 'node', value: 'P_V_ORG' } 
+    },
+    'P_V_ORG': { 
+        text: "Est-ce pour isoler un organisateur textuel ou marqueur de relation en début de phrase ?", 
+        yes: { type: 'result', value: 'P4' }, no: { type: 'node', value: 'P_V_COORD' } 
+    },
+    'P_V_COORD': { 
+        text: "Est-ce à gauche des coordonnants : mais/car/or/donc/... ?", 
+        yes: { type: 'result', value: 'P5' }, no: { type: 'node', value: 'P_V_INCISE' } 
+    },
+    'P_V_INCISE': { 
+        text: "Est-ce pour isoler la phrase incise ou un groupe incident ?", 
+        visual: { title: "Exemple P6", examples: [{ text: "« Ce sentier est réservé... », [lit-on sur les affiches].", valid: true }, { text: "Il est, [tout le monde le dit], un candidat sérieux.", valid: true }], note: "" },
+        yes: { type: 'result', value: 'P6' }, no: { type: 'node', value: 'P_V_APOSTROPHE' } 
+    },
+    'P_V_APOSTROPHE': { 
+        text: "Est-ce pour isoler un mot mis en apostrophe (à qui l’on parle) ?", 
+        visual: { title: "Exemple P7", examples: [{ text: "[Monsieur], est-ce à vous ce joli chapeau ?", valid: true }], note: "" },
+        yes: { type: 'result', value: 'P7' }, no: { type: 'node', value: 'P_V_EFFACEMENT' } 
+    },
+    'P_V_EFFACEMENT': { 
+        text: "Est-ce pour marquer l’effacement d’un élément (souvent le verbe) ?", 
+        visual: { title: "Exemple P8", examples: [{ text: "Karim joue au football et Manon, [joue] au tennis.", valid: true }], note: "La virgule remplace le verbe 'joue'." },
+        yes: { type: 'result', value: 'P8' }, no: { type: 'action', value: 'TEACHER' } 
+    },
+
+
+    // BRANCHE POINT
+    'P_POINT_TYPE': { text: "Marque-t-il la fin d'une phrase déclarative ?", yes: { type: 'result', value: 'P9' }, no: { type: 'action', value: 'TEACHER' } },
+    'P_POINT_INT': { text: "Marque-t-il la fin d'une phrase interrogative ?", yes: { type: 'result', value: 'P10' }, no: { type: 'action', value: 'TEACHER' } },
+    'P_POINT_EXCL': { text: "Marque-t-il la fin d'une phrase exclamative ?", yes: { type: 'result', value: 'P11' }, no: { type: 'action', value: 'TEACHER' } },
+
+
+    // BRANCHE DEUX POINTS
+    'P_DP_DISCOURS': { text: "Est-ce pour introduire un discours direct ou une citation ?", yes: { type: 'result', value: 'P17' }, no: { type: 'node', value: 'P_DP_CAUSE' } },
+    'P_DP_CAUSE': { 
+        text: "Est-ce pour établir un rapport de cause/conséquence (juxtaposition) ?", 
+        visual: { title: "Exemple P18", examples: [{ text: "Jasmin souffre d'une maladie grave : son comportement est affecté.", valid: true }], note: "La 2e phrase est la conséquence de la 1re." },
+        yes: { type: 'result', value: 'P18' }, no: { type: 'node', value: 'P_DP_EXPL' } 
+    },
+    'P_DP_EXPL': { 
+        text: "Est-ce pour introduire une explication ou une définition (juxtaposition) ?", 
+        visual: { title: "Exemple P19", examples: [{ text: "Il ne mange pas de dessert : il est diabétique.", valid: true }], note: "" },
+        yes: { type: 'result', value: 'P19' }, no: { type: 'action', value: 'TEACHER' } 
+    },
+
+
+    // BRANCHE PARENTHESES
+    'P_PAR_INFO': { text: "Est-ce pour encadrer une information accessoire (explication, réflexion, commentaire) ?", yes: { type: 'result', value: 'P20' }, no: { type: 'action', value: 'TEACHER' } },
+
+
+    // BRANCHE GUILLEMETS
+    'P_GUI_DISCOURS': { text: "Est-ce pour encadrer un discours direct ?", yes: { type: 'result', value: 'P22' }, no: { type: 'node', value: 'P_GUI_MOT' } },
+    'P_GUI_MOT': { text: "Est-ce pour encadrer un mot ou une expression que l’auteur désire isoler ?", yes: { type: 'result', value: 'P23' }, no: { type: 'node', value: 'P_GUI_CITATION' } },
+    'P_GUI_CITATION': { text: "S'agit-il d'une règle de citation ?", yes: { type: 'result', value: 'P24' }, no: { type: 'action', value: 'TEACHER' } },
+};
+
+
+// --- COMPOSANTS UI ---
+const Card = ({ children, className = "" }) => (
+    <div className={`bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden ${className}`}>
+        {children}
+    </div>
+);
+
+
+// --- COMPOSANT GLOSSAIRE ---
+const GlossaryTerm = ({ term, definition, example }) => {
+    const [show, setShow] = useState(false);
+    return (
+        <span className="relative inline-block group z-50">
+            <span className="cursor-help border-b-2 border-dotted border-indigo-400 text-indigo-700 hover:text-indigo-900 transition-colors font-semibold"
+                  onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)} onClick={() => setShow(!show)}>
+                {term}
+            </span>
+            {show && (
+                <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200 text-left pointer-events-none">
+                    <span className="block font-bold mb-1 text-indigo-300 flex items-center gap-1"><Info size={14} /> Définition</span>
+                    <span className="block mb-2 text-slate-200 leading-relaxed">{definition}</span>
+                    {example && <><span className="block font-bold mb-1 text-emerald-300">Ex :</span><span className="block italic text-slate-300">"{example}"</span></>}
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-800"></span>
+                </span>
+            )}
+        </span>
+    );
+};
+
+
+// --- ÉCRAN D'ACCUEIL ---
+const Home = ({ startGenie }) => (
+    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8 p-4">
+        <div className="space-y-4 max-w-2xl">
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-indigo-200 animate-pulse">
+                <Sparkles className="text-white" size={48} />
+            </div>
+            <h1 className="text-5xl font-black text-slate-800 tracking-tight">Le Génie du Scripteur</h1>
+            <p className="text-xl text-slate-500 font-medium">
+                Je t'aide à identifier tes erreurs une par une.
+            </p>
+        </div>
+        
+        <button 
+            onClick={startGenie} 
+            className="group relative bg-white px-10 py-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all border-2 border-indigo-100"
+        >
+            <div className="flex items-center gap-4">
+                <div className="bg-indigo-100 p-3 rounded-full text-indigo-600"><PenTool size={32} /></div>
+                <div className="text-left">
+                    <span className="block text-sm text-slate-400 font-bold uppercase tracking-wider">Commencer</span>
+                    <span className="block text-2xl font-black text-slate-800">Analyser une faute</span>
+                </div>
+                <ArrowRight className="text-indigo-400 group-hover:translate-x-2 transition-transform ml-4" />
+            </div>
+        </button>
+    </div>
+);
+
+
+// --- LE GÉNIE ---
+const Genie = ({ goHome }) => {
+    const [step, setStep] = useState('category');
+    const [category, setCategory] = useState(null);
+    const [currentNodeId, setCurrentNodeId] = useState(null);
+    const [resultCode, setResultCode] = useState(null);
+    const [homophoneInput, setHomophoneInput] = useState("");
+    const [matchedHomophones, setMatchedHomophones] = useState(null);
+    const [expandedHomophone, setExpandedHomophone] = useState(null);
+
+
+    const categories = [
+        { id: 'G', name: 'Grammaire', icon: <Type size={32} />, color: 'bg-blue-500', text: 'text-blue-600', startNode: 'G_START' },
+        { id: 'U', name: 'Usage', icon: <Scissors size={32} />, color: 'bg-emerald-500', text: 'text-emerald-600', startNode: 'U_START' },
+        { id: 'S', name: 'Syntaxe', icon: <ListFilter size={32} />, color: 'bg-indigo-500', text: 'text-indigo-600', startNode: 'S_START' },
+        { id: 'P', name: 'Ponctuation', icon: <Quote size={32} />, color: 'bg-amber-500', text: 'text-amber-600', startNode: 'P_START' },
+    ];
+
+
+    const selectCategory = (cat) => {
+        setCategory(cat);
+        setCurrentNodeId(cat.startNode);
+        setStep('investigation');
+    };
+
+
+    const handleChoice = (nextNodeId) => {
+        setCurrentNodeId(nextNodeId);
+    };
+
+
+    const handleAnswer = (ans) => {
+        const currentNode = genieGraph[currentNodeId];
+        const action = ans === 'yes' ? currentNode.yes : currentNode.no;
+
+
+        if (action.type === 'result') {
+            setResultCode(action.value);
+            setStep('result');
+        } else if (action.type === 'node') {
+            setCurrentNodeId(action.value);
+        } else if (action.type === 'action') {
+            if (action.value === 'GH_SEARCH') setStep('gh_list');
+            if (action.value === 'U5_CHECK') setStep('u5_verification');
+            if (action.value === 'TEACHER') setStep('teacher');
+        }
+    };
+
+
+    const confirmU5 = (confirmed) => {
+        if (confirmed) {
+            setResultCode('U5');
+            setStep('result');
+        } else {
+            setCurrentNodeId('U_ORTHO');
+            setStep('investigation');
+        }
+    };
+
+
+    const reset = () => {
+        setStep('category');
+        setCategory(null);
+        setCurrentNodeId(null);
+        setResultCode(null);
+        setExpandedHomophone(null);
+    };
+
+
+    const renderCategorySelection = () => (
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+            <h2 className="text-2xl font-black text-slate-800 mb-8 text-center">Quelle est la lettre indiquée ?</h2>
+            <div className="grid grid-cols-2 gap-4">
+                {categories.map((cat) => (
+                    <button key={cat.id} onClick={() => selectCategory(cat)} className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-indigo-500 shadow-md transition-all flex flex-col items-center gap-4 text-center group">
+                        <div className={`${cat.color} text-white p-4 rounded-xl shadow-md group-hover:scale-110 transition-transform`}>{cat.icon}</div>
+                        <div><span className="text-4xl font-black text-slate-800 block">{cat.id}</span><span className="font-bold uppercase text-xs text-slate-500">{cat.name}</span></div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+
+
+    const renderInvestigation = () => {
+        const currentNode = genieGraph[currentNodeId];
+        
+        // GESTION DU TYPE 'CHOICE' (Pour la Ponctuation)
+        if (currentNode.type === 'choice') {
+            return (
+                <div className="max-w-3xl mx-auto animate-in zoom-in-95 duration-300">
+                    <button onClick={reset} className="mb-6 flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-sm"><ArrowLeft size={16}/> Changer de lettre</button>
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl font-black text-slate-800">{currentNode.text}</h2>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {currentNode.options.map((opt, idx) => (
+                            <button key={idx} onClick={() => handleChoice(opt.next)} className="bg-white p-6 rounded-xl border-2 border-slate-100 hover:border-amber-400 shadow-sm hover:shadow-lg transition-all text-center">
+                                <span className="font-bold text-slate-700 block">{opt.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+
+        // GESTION STANDARD OUI/NON
+        return (
+            <div className="max-w-xl mx-auto animate-in zoom-in-95 duration-300">
+                <button onClick={reset} className="mb-6 flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-sm"><ArrowLeft size={16}/> Changer de lettre</button>
+                <Card className="border-t-8 border-indigo-500 relative">
+                    <div className="p-8 md:p-12 text-center">
+                        <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 text-indigo-600"><CircleHelp size={32} /></div>
+                        <h3 className="text-2xl font-bold text-slate-800 leading-snug mb-8">{currentNode.text}</h3>
+                        
+                        {currentNode.visual && (
+                            <div className="mb-8 bg-slate-50 p-4 rounded-xl border border-slate-200 text-left">
+                                <h4 className="font-bold text-indigo-600 text-sm uppercase mb-3 flex items-center gap-2"><Eye size={16}/> {currentNode.visual.title}</h4>
+                                <div className="space-y-2 mb-3">
+                                    {currentNode.visual.examples.map((ex, i) => (
+                                        <div key={i} className="flex items-start gap-2 text-slate-700 text-sm">
+                                            <div className={`mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${ex.valid ? 'bg-emerald-400' : 'bg-red-400'}`}></div>
+                                            <span dangerouslySetInnerHTML={{__html: ex.text.replace(/\[/g, '<strong class="text-indigo-700">').replace(/\]/g, '</strong>')}}></span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-xs text-slate-500 italic border-t border-slate-200 pt-2"><Info size={12} className="inline mr-1"/> {currentNode.visual.note}</p>
+                            </div>
+                        )}
+
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <button onClick={() => handleAnswer('yes')} className="bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-black text-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><Check size={28} /> OUI</button>
+                            <button onClick={() => handleAnswer('no')} className="bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-xl font-black text-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><X size={28} /> NON</button>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+        );
+    };
+
+
+    const renderU5Verification = () => (
+        <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-right-4 duration-400">
+             <button onClick={() => confirmU5(false)} className="mb-6 flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-sm"><ArrowLeft size={16} /> Retour</button>
+            <Card className="border-t-8 border-emerald-500 p-8">
+                <h2 className="text-2xl font-black text-slate-800 mb-4 flex items-center gap-2"><Ruler className="text-emerald-500"/> Règles de coupure</h2>
+                <div className="space-y-3 mb-8">
+                    <div className="bg-slate-50 p-3 rounded-lg border text-sm text-slate-700"><Check size={14} className="inline text-emerald-500 mr-2"/> Couper entre deux syllabes (fro-mage)</div>
+                    <div className="bg-slate-50 p-3 rounded-lg border text-sm text-slate-700"><Check size={14} className="inline text-emerald-500 mr-2"/> Ne pas laisser une lettre seule (a-vion X)</div>
+                    <div className="bg-slate-50 p-3 rounded-lg border text-sm text-slate-700"><Check size={14} className="inline text-emerald-500 mr-2"/> Le trait d'union reste sur la ligne du haut</div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <button onClick={() => confirmU5(true)} className="bg-emerald-600 text-white py-3 rounded-xl font-bold">Oui, c'est mon erreur</button>
+                    <button onClick={() => confirmU5(false)} className="bg-white border-2 border-slate-200 text-slate-600 py-3 rounded-xl font-bold">Non, ce n'est pas ça</button>
+                </div>
+            </Card>
+        </div>
+    );
+
+
+    const renderGHList = () => (
+        <div className="max-w-4xl mx-auto animate-in zoom-in-95 duration-300">
+            <button onClick={() => { setCurrentNodeId('G_START'); setStep('investigation'); }} className="mb-6 flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-sm"><ArrowLeft size={16} /> Non, ce n'est pas un homophone</button>
+            <h2 className="text-3xl font-black text-slate-800 mb-6 text-center">Choisis la famille d'homophones</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {homophonesDetailedDB.map((family, idx) => {
+                    const isExpanded = expandedHomophone === idx;
+                    return (
+                        <div key={idx} className={`bg-white rounded-xl border-2 transition-all ${isExpanded ? 'col-span-1 sm:col-span-2 md:col-span-3 border-indigo-500 shadow-xl' : 'border-slate-100 hover:border-indigo-300'}`}>
+                            <button onClick={() => setExpandedHomophone(isExpanded ? null : idx)} className="w-full p-4 flex justify-between items-center text-lg font-bold text-slate-700">
+                                {family.label}
+                                {isExpanded ? <ChevronUp size={20}/> : <ChevronDown size={20}/>}
+                            </button>
+                            {isExpanded && (
+                                <div className="p-4 bg-slate-50 rounded-b-xl border-t border-slate-100">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        {family.items.map((item, i) => (
+                                            <div key={i} className="bg-white p-3 rounded-lg border shadow-sm">
+                                                <div className="font-hand text-xl font-bold text-slate-800">{item.word}</div>
+                                                <div className="text-xs font-bold text-slate-400 uppercase mb-2">{item.classe}</div>
+                                                <div className="text-sm text-indigo-600 flex items-start gap-1"><Lightbulb size={14} className="shrink-0 mt-0.5"/> {item.explication}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-indigo-100">
+                                        <div className="text-xs text-slate-600 flex-1"><strong>Consigne GH :</strong> Écris l'homophone erroné (et son truc) puis le bon (et son truc).</div>
+                                        <button onClick={() => { setResultCode('GH'); setStep('result'); }} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold shadow-md">C'est mon erreur !</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+
+
+    const renderResult = () => {
+        const rule = rulesDB[resultCode] || { titre: resultCode, regle: "Consulte ton guide." };
+        return (
+            <div className="max-w-xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
+                <Card className="overflow-hidden border-t-8 border-t-emerald-500">
+                    <div className="bg-emerald-50 p-8 text-center border-b border-emerald-100">
+                        <div className="inline-block p-4 bg-white rounded-full text-emerald-500 shadow-md mb-4"><Sparkles size={40} /></div>
+                        <h2 className="text-4xl font-black text-emerald-800 mb-2">C'est trouvé !</h2>
+                        <div className="mt-2 text-6xl font-black text-slate-800">{resultCode}</div>
+                    </div>
+                    <div className="p-8 space-y-6">
+                        <div>
+                            <label className="text-xs font-black uppercase text-slate-400 tracking-widest mb-1 block">La Règle</label>
+                            <p className="text-lg font-bold text-slate-700">{rule.titre}</p>
+                            <p className="text-slate-600 italic">{rule.regle}</p>
+                        </div>
+                        {rule.special && <div className="bg-red-50 p-4 rounded-xl border border-red-100 text-red-600 text-sm flex gap-2"><CircleAlert size={16} className="shrink-0"/> {rule.special}</div>}
+                        {rule.exemple && (
+                            <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 relative">
+                                <label className="text-xs font-black uppercase text-amber-700 tracking-widest mb-2 block">Exemple</label>
+                                <p className="font-hand text-2xl text-amber-900">{rule.exemple}</p>
+                            </div>
+                        )}
+                        <button onClick={reset} className="w-full bg-slate-800 text-white py-4 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg flex items-center justify-center gap-2 mt-6">
+                            <RotateCcw size={18}/> Analyser une autre faute
+                        </button>
+                    </div>
+                </Card>
+            </div>
+        );
+    };
+
+
+    const renderTeacherHelp = () => (
+        <div className="max-w-md mx-auto text-center animate-in zoom-in-95 duration-300 py-10">
+            <div className="bg-indigo-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6"><HandMetal className="text-indigo-600" size={48} /></div>
+            <h2 className="text-2xl font-black text-slate-800 mb-4">Mmmh... C'est complexe !</h2>
+            <p className="text-slate-600 mb-8">Je n'ai pas trouvé ton erreur avec mes questions. Demande à ton enseignant(e) !</p>
+            <button onClick={reset} className="text-slate-400 font-bold hover:text-slate-600 flex items-center justify-center gap-2 mx-auto"><ArrowLeft size={18}/> Retour au début</button>
+        </div>
+    );
+
+
+    return (
+        <div className="min-h-screen bg-slate-50 font-sans p-4 md:p-8">
+            <div className="max-w-4xl mx-auto">
+                <header className="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-indigo-600 p-2 rounded-lg"><PenTool className="text-white" size={24} /></div>
+                        <h1 className="text-xl font-black text-slate-800">Le Génie du Scripteur</h1>
+                    </div>
+                    {step !== 'category' && <button onClick={reset} className="p-2 hover:bg-slate-100 rounded-full text-slate-400"><X size={24}/></button>}
+                </header>
+                {step === 'category' && renderCategorySelection()}
+                {step === 'investigation' && renderInvestigation()}
+                {step === 'u5_verification' && renderU5Verification()}
+                {step === 'gh_list' && renderGHList()}
+                {step === 'result' && renderResult()}
+                {step === 'teacher' && renderTeacherHelp()}
+            </div>
+        </div>
+    );
+};
+
+
+// --- APP PRINCIPALE ---
+export default function App() {
+    const [mode, setMode] = useState('home');
+
+
+    return (
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100">
+            <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Patrick+Hand&family=Inter:wght@400;600&display=swap');
+                .font-hand { font-family: 'Patrick Hand', cursive; }
+                .font-comic { font-family: 'Comic Neue', cursive; }
+                .font-sans { font-family: 'Inter', sans-serif; }
+            `}</style>
+            <nav className="bg-white/80 backdrop-blur-sm px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+                <div className="flex items-center gap-2 font-bold text-slate-700 cursor-pointer" onClick={() => setMode('home')}>
+                    <div className="bg-indigo-600 p-1.5 rounded-lg">
+                        <PenTool className="text-white" size={16}/>
+                    </div>
+                    <span>Profil du Scripteur</span>
+                </div>
+            </nav>
+            <main className="container mx-auto">
+                {mode === 'home' && <Home startGenie={() => setMode('genie')} />}
+                {mode === 'genie' && <Genie goHome={() => setMode('home')} />}
+            </main>
+        </div>
+    );
+};
