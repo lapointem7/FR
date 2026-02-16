@@ -1,0 +1,1915 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil de Scripteur - Tutoriel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+
+        .font-hand {
+            font-family: 'Patrick Hand', cursive;
+        }
+
+
+        .font-comic {
+            font-family: 'Comic Neue', cursive;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        /* NAVBAR */
+        nav {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+        }
+
+
+        .nav-icon {
+            color: #3b82f6;
+            font-size: 24px;
+        }
+
+
+        .close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+
+        .close-btn:hover {
+            background: #e2e8f0;
+        }
+
+
+        /* HOME SCREEN */
+        .home-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+
+        .home-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+
+        .home-subtitle {
+            font-size: 20px;
+            color: #64748b;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+
+        .tutorial-card {
+            background: white;
+            padding: 40px;
+            padding-right: 140px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 8px solid #3b82f6;
+            text-align: left;
+            max-width: 600px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+
+        .tutorial-card:hover {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+        }
+
+
+        .tutorial-icon {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #dbeafe;
+            padding: 15px;
+            border-radius: 50%;
+            color: #3b82f6;
+            font-size: 32px;
+            transition: transform 0.3s;
+        }
+
+
+        .tutorial-card:hover .tutorial-icon {
+            transform: scale(1.1);
+        }
+
+
+        .tutorial-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+
+        .tutorial-card p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+
+        .tutorial-card .start-link {
+            color: #3b82f6;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        /* TUTORIAL SCREEN */
+        .tutorial-screen {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+
+        .tutorial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+
+        .back-btn {
+            color: #94a3b8;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+
+        .back-btn:hover {
+            color: #3b82f6;
+        }
+
+
+        .step-counter {
+            color: #94a3b8;
+            font-family: monospace;
+        }
+
+
+        /* CHARACTER BUBBLE */
+        .character-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+
+        .character-avatar {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+
+        .genie-lamp-link {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+
+        .genie-lamp-link:hover {
+            transform: scale(1.05);
+        }
+
+
+        .genie-help-bubble {
+            background: white;
+            border: 3px solid #fbbf24;
+            border-radius: 20px;
+            padding: 12px 20px;
+            max-width: 400px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: center;
+            line-height: 1.5;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 15px;
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.25);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 100;
+            white-space: normal;
+        }
+
+
+        .genie-lamp-link:hover .genie-help-bubble {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        .genie-help-bubble::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 12px solid #fbbf24;
+        }
+
+
+        .genie-help-bubble::after {
+            content: '';
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid white;
+        }
+
+
+        .genie-lamp-container {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+            transition: box-shadow 0.3s;
+            font-size: 64px;
+        }
+
+
+        .genie-lamp-link:hover .genie-lamp-container {
+            box-shadow: 0 12px 35px rgba(251, 191, 36, 0.6);
+        }
+
+
+        .speech-bubble {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 2px solid #dbeafe;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+        }
+
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid white;
+        }
+
+
+        .speech-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+
+        /* VISUALIZERS */
+        .visualizer {
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* Context Visualizer */
+        .context-visual {
+            background: #eef2ff;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #c7d2fe;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+
+        .visual-title {
+            color: #3730a3;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+
+        .word-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+
+        .word-label {
+            position: absolute;
+            top: -35px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+
+        .word-label::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid;
+        }
+
+
+        .word-text {
+            font-size: 28px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+
+        .visual-description {
+            margin-top: 20px;
+            color: #4338ca;
+            font-size: 14px;
+            font-style: italic;
+            text-align: center;
+            max-width: 600px;
+        }
+
+
+        /* Manipulation Visualizer */
+        .manipulation-visual {
+            background: #d1fae5;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #a7f3d0;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+
+        .manipulation-visual .visual-title {
+            color: #065f46;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+
+        .manipulation-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+
+        .word-to-test {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+
+        .test-word {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 18px;
+        }
+
+
+        .arrow-icon {
+            color: #34d399;
+            font-size: 20px;
+        }
+
+
+        .test-box {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #a7f3d0;
+            border-left: 4px solid #10b981;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+
+        .test-box-title {
+            font-weight: 700;
+            color: #065f46;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+
+        .test-item {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+
+        .check-icon {
+            color: #10b981;
+            font-size: 14px;
+        }
+
+
+        /* Rules Visualizer */
+        .rules-visual {
+            background: #fef3c7;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #fde68a;
+        }
+
+
+        .rules-visual .visual-title {
+            color: #92400e;
+            margin-bottom: 20px;
+        }
+
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+
+        .rule-item {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+
+        .rule-item.active {
+            background: white;
+            border-color: #f59e0b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: scale(1.05);
+        }
+
+
+        .rule-item.inactive {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            opacity: 0.5;
+        }
+
+
+        .rule-code {
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+
+        .rule-item.active .rule-code {
+            color: #92400e;
+        }
+
+
+        .rule-item.inactive .rule-code {
+            color: #94a3b8;
+        }
+
+
+        .rule-label {
+            font-size: 14px;
+        }
+
+
+        .rule-item.active .rule-label {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+
+        .rule-item.inactive .rule-label {
+            color: #94a3b8;
+        }
+
+
+        .rules-description {
+            margin-top: 20px;
+            background: #fde68a;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #92400e;
+            text-align: center;
+        }
+
+
+        /* TABLE */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 1px solid #cbd5e1;
+            background: white;
+            margin-bottom: 40px;
+        }
+
+
+        table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+        }
+
+
+        thead {
+            background: #f1f5f9;
+        }
+
+
+        th {
+            padding: 15px;
+            border-right: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+
+        th:last-child {
+            border-right: none;
+        }
+
+
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            height: 80px;
+        }
+
+
+        tbody tr.completed {
+            background: #f8fafc;
+            opacity: 0.7;
+            height: 35px;
+        }
+
+
+        tbody tr.completed:hover {
+            opacity: 1;
+        }
+
+
+        tbody tr.completed td {
+            padding: 4px 8px;
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+
+        tbody tr.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+
+        td {
+            padding: 15px;
+            border-right: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+        }
+
+
+        td:last-child {
+            border-right: none;
+        }
+
+
+        td.focused {
+            background: #eff6ff;
+            animation: pulse 2s infinite;
+        }
+
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: inset 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+            50% {
+                box-shadow: inset 0 0 0 3px rgba(59, 130, 246, 0.4);
+            }
+        }
+
+
+        .cell-content {
+            transition: all 0.5s;
+        }
+
+
+        .cell-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        .cell-content.hidden-cell {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+
+        .col1-text {
+            font-size: 18px;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        .col2-text {
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 18px;
+            color: #3b82f6;
+        }
+
+
+        .col3-text {
+            color: #64748b;
+            font-style: italic;
+        }
+
+
+        .col4-text {
+            font-size: 18px;
+            color: #16a34a;
+        }
+
+
+        .col5-text {
+            font-size: 13px;
+            color: #64748b;
+            max-width: 350px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        .highlight {
+            background: #fef08a;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+
+        tbody tr.completed .highlight {
+            padding: 1px 3px;
+            font-size: 11px;
+        }
+
+
+        /* COMPLETED ROWS */
+        tbody tr.completed .col1-text,
+        tbody tr.completed .col2-text,
+        tbody tr.completed .col3-text,
+        tbody tr.completed .col4-text,
+        tbody tr.completed .col5-text {
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+
+        tbody tr.completed .col4-text {
+            color: #4ade80;
+            opacity: 0.7;
+        }
+
+
+        /* FOOTER NAVIGATION */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            z-index: 50;
+        }
+
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s;
+        }
+
+
+        .progress-dot.active {
+            background: #3b82f6;
+            width: 16px;
+            border-radius: 4px;
+        }
+
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+
+        .btn-outline {
+            background: white;
+            border: 2px solid #cbd5e1;
+            color: #64748b;
+        }
+
+
+        .btn-outline:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+
+        .btn.invisible {
+            visibility: hidden;
+        }
+
+
+        /* RESPONSIVE */
+        @media (min-width: 768px) {
+            .character-section {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+
+            .speech-bubble::before {
+                top: 50%;
+                left: -10px;
+                transform: translateY(-50%);
+                border-left: 0;
+                border-right: 10px solid white;
+                border-bottom: 10px solid transparent;
+                border-top: 10px solid transparent;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .home-title {
+                font-size: 32px;
+            }
+
+
+            .tutorial-card {
+                padding: 25px;
+                padding-right: 100px;
+            }
+
+
+            .tutorial-icon {
+                top: 20px;
+                right: 20px;
+                font-size: 24px;
+            }
+
+
+            .genie-help-bubble {
+                max-width: 300px;
+                font-size: 12px;
+                padding: 10px 16px;
+            }
+
+
+            .genie-lamp-container {
+                width: 90px;
+                height: 90px;
+                font-size: 48px;
+            }
+
+
+            .speech-text {
+                font-size: 16px;
+            }
+
+
+            .word-text {
+                font-size: 20px;
+            }
+
+
+            .progress-dots {
+                display: none;
+            }
+
+
+            .table-container {
+                font-size: 12px;
+            }
+
+
+            th, td {
+                padding: 8px;
+            }
+
+
+            tbody tr.completed {
+                height: 30px;
+            }
+
+
+            tbody tr.completed td {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+
+
+        /* COLORS & HIGHLIGHTS */
+        .bg-blue-donneur {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+
+        .bg-red-error {
+            background: #fecaca;
+            color: #dc2626;
+            font-weight: 700;
+            text-decoration: underline wavy;
+        }
+
+
+        .text-slate {
+            color: #94a3b8;
+        }
+
+
+        .label-blue {
+            background: #3b82f6;
+            color: white;
+        }
+
+
+        .label-blue::after {
+            border-top-color: #3b82f6;
+        }
+
+
+        .label-red {
+            background: #ef4444;
+            color: white;
+        }
+
+
+        .label-red::after {
+            border-top-color: #ef4444;
+        }
+
+
+        .border-relation {
+            position: relative;
+        }
+
+
+        .border-relation::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #c7d2fe;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-brand" onclick="goHome()">
+            <span class="nav-icon">✏️</span>
+            <span class="hidden-mobile">Classe de Français - Sec 1</span>
+        </div>
+        <button id="closeBtn" class="close-btn hidden" onclick="goHome()">✕</button>
+    </nav>
+
+
+    <!-- HOME SCREEN -->
+    <div id="homeScreen" class="container">
+        <div class="home-screen">
+            <h1 class="home-title font-comic">Profil de Scripteur</h1>
+            <p class="home-subtitle">
+                Ton outil personnel pour analyser tes erreurs, comprendre tes défis et t'améliorer en français !
+            </p>
+            <div class="tutorial-card" onclick="startTutorial()">
+                <div class="tutorial-icon">📖</div>
+                <h3>Démarrer le Tutoriel Interactif</h3>
+                <p>Apprends comment remplir ta grille, et surtout <strong>comment choisir le contexte</strong> étape par étape.</p>
+                <div class="start-link">
+                    Commencer →
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- TUTORIAL SCREEN -->
+    <div id="tutorialScreen" class="tutorial-screen hidden">
+        <div class="tutorial-header">
+            <button class="back-btn" onclick="goHome()">← Retour</button>
+            <span class="step-counter" id="stepCounter">Étape 1/39</span>
+        </div>
+
+
+        <!-- Character and Speech Bubble -->
+        <div class="character-section">
+            <div class="character-avatar">
+                <a href="https://htmlpreview.github.io/?https://github.com/lapointem7/FR/blob/main/genie-scripteur.html" 
+                   target="_blank" 
+                   class="genie-lamp-link">
+                    <div class="genie-help-bubble">
+                        À tout moment, tu peux demander au Génie de t'aider à trouver ton Code d'Erreur.
+                    </div>
+                    <div class="genie-lamp-container">
+                        🧞‍♂️
+                    </div>
+                </a>
+            </div>
+            <div class="speech-bubble">
+                <p class="speech-text font-hand" id="speechText"></p>
+            </div>
+        </div>
+
+
+        <!-- Visualizer Container -->
+        <div id="visualizerContainer"></div>
+
+
+        <!-- Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">1. Faute en contexte</th>
+                        <th style="width: 10%;">2. Code</th>
+                        <th style="width: 10%;">3. Classe</th>
+                        <th style="width: 25%;">4. Correction</th>
+                        <th style="width: 30%;">5. Règle à copier</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows will be generated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Footer Navigation (shown only in tutorial) -->
+    <div id="footerNav" class="footer-nav hidden">
+        <div class="footer-content">
+            <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">Précédent</button>
+            <div class="progress-dots" id="progressDots"></div>
+            <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">Continuer →</button>
+        </div>
+    </div>
+
+
+    <script>
+        // STATE
+        let currentStep = 0;
+        let mode = 'home';
+
+
+        // TUTORIAL STEPS DATA
+        const tutorialSteps = [
+            // GN3 - Accord de l'adjectif
+            {
+                bubble: "Salut ! Je suis là pour t'aider. La partie la plus difficile, c'est de choisir le CONTEXTE (Colonne 1).",
+                visual: null,
+                focus: null,
+                rowId: 1,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Règle #1 (Grammaire) : Pour corriger une faute d'accord, tu dois faire une HYPOTHÈSE. Qui est le chef (Donneur) ?",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "Les", class: "text-slate" },
+                        { text: "bélugas", class: "bg-blue-donneur border-relation", label: "Donneur (Chef)", labelClass: "label-blue" },
+                        { text: "adulte", class: "bg-red-error", label: "Erreur (Receveur)", labelClass: "label-red" },
+                        { text: "nagent", class: "text-slate" }
+                    ],
+                    description: "Pour prouver que 'adulte' prend un 's', tu es OBLIGÉ d'inclure 'bélugas' dans ton contexte."
+                },
+                focus: null,
+                rowId: 1,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "On commence donc par écrire le contexte.",
+                visual: null,
+                focus: "col1",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Ensuite, regarde sur ta copie. Ton enseignant(e) a déjà indiqué la lettre du code (G, S, P ou U). Ici, c'est G.",
+                visual: null,
+                focus: "col2",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "G...", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "STOP ! Avant de trouver le numéro de la règle, tu dois identifier la CLASSE du mot fautif. C'est le secret !",
+                visual: null,
+                focus: "col3",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "G...", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Faisons une manipulation syntaxique. Par quoi peut-on remplacer 'adulte' ?",
+                visual: {
+                    type: 'manipulation',
+                    word: "adulte",
+                    testTitle: "Peut-on le remplacer par un Adjectif classifiant ?",
+                    tests: [
+                        "les bélugas <strong style='color: #10b981;'>CANADIENS</strong>",
+                        "les bélugas <strong style='color: #10b981;'>BLANCS</strong>"
+                    ],
+                    description: "Comme on peut le remplacer par un autre adjectif classifiant, c'est bien un ADJECTIF."
+                },
+                focus: "col3",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "G...", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Tu peux maintenant indiquer 'Adj.' dans la colonne 3.",
+                visual: null,
+                focus: "col3",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "G...", col3: "Adj.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Maintenant, regarde les règles G. Laquelle correspond à un Adjectif ?",
+                visual: {
+                    type: 'rules',
+                    rules: [
+                        { code: "GN1", label: "Nom", active: false },
+                        { code: "GN2", label: "Déterminant", active: false },
+                        { code: "GN3", label: "Adjectif / PPS", active: true },
+                        { code: "GV1", label: "Verbe", active: false }
+                    ],
+                    description: "C'est la règle GN3 (Groupe du Nom #3) car c'est un Adjectif !"
+                },
+                focus: "col2",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "G...", col3: "Adj.", col4: "", col5: "" }
+            },
+            {
+                bubble: "On complète donc le code avec GN3.",
+                visual: null,
+                focus: "col2",
+                rowId: 1,
+                content: { col1: "les bélugas adulte", col2: "GN3", col3: "Adj.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Écris maintenant la correction. N'oublie pas de souligner ou mettre en gras ce que tu as corrigé !",
+                visual: null,
+                focus: "col4",
+                rowId: 1,
+                content: { 
+                    col1: "les bélugas adulte", 
+                    col2: "GN3", 
+                    col3: "Adj.", 
+                    col4: "les bélugas <span class='highlight'>adultes</span>", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "Enfin, recopie TOUTE la règle associée à ton code (GN3).",
+                visual: null,
+                focus: "col5",
+                rowId: 1,
+                content: { 
+                    col1: "les bélugas adulte", 
+                    col2: "GN3", 
+                    col3: "Adj.", 
+                    col4: "les bélugas <span class='highlight'>adultes</span>", 
+                    col5: "L'adjectif s'accorde en genre et en nombre avec le nom." 
+                }
+            },
+            // GV1 - Verbe
+            {
+                bubble: "Faisons une faute de Verbe (GV). Erreur : 'Les bélugas nage'.",
+                visual: null,
+                focus: null,
+                rowId: 2,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Colonne 1 : Le contexte. Le sujet (Donneur) et le verbe (Receveur).",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "Les bélugas", class: "bg-blue-donneur border-relation", label: "Donneur (Sujet)", labelClass: "label-blue" },
+                        { text: "nage", class: "bg-red-error", label: "Erreur (Verbe)", labelClass: "label-red" },
+                        { text: "vite", class: "text-slate" }
+                    ],
+                    description: "On doit voir le Sujet pour vérifier l'accord du Verbe."
+                },
+                focus: "col1",
+                rowId: 2,
+                content: { col1: "les bélugas nage", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Lettre G. Classe : C'est un VERBE. On peut l'encadrer par 'ne...pas' (ne nage pas).",
+                visual: null,
+                focus: "col3",
+                rowId: 2,
+                content: { col1: "les bélugas nage", col2: "G...", col3: "Verbe", col4: "", col5: "" }
+            },
+            {
+                bubble: "Regarde les règles G. C'est la GV1 (Verbe conjugué).",
+                visual: {
+                    type: 'rules',
+                    rules: [
+                        { code: "GN3", label: "Adjectif", active: false },
+                        { code: "GV1", label: "Verbe Conjugué", active: true },
+                        { code: "GV2", label: "Participe Passé", active: false }
+                    ],
+                    description: "C'est un verbe conjugué, donc GV1."
+                },
+                focus: "col2",
+                rowId: 2,
+                content: { col1: "les bélugas nage", col2: "GV1", col3: "Verbe", col4: "", col5: "" }
+            },
+            {
+                bubble: "IMPORTANT : Pour corriger un verbe, tu dois chercher sa conjugaison dans le Bescherelle ou sur Usito.",
+                visual: null,
+                focus: "col4",
+                rowId: 2,
+                content: { col1: "les bélugas nage", col2: "GV1", col3: "Verbe", col4: "", col5: "" }
+            },
+            {
+                bubble: "Correction : 'nagent' (3e pers. pluriel).",
+                visual: null,
+                focus: "col4",
+                rowId: 2,
+                content: { 
+                    col1: "les bélugas nage", 
+                    col2: "GV1", 
+                    col3: "Verbe", 
+                    col4: "les bélugas <span class='highlight'>nagent</span>", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "On copie la règle GV1.",
+                visual: null,
+                focus: "col5",
+                rowId: 2,
+                content: { 
+                    col1: "les bélugas nage", 
+                    col2: "GV1", 
+                    col3: "Verbe", 
+                    col4: "les bélugas <span class='highlight'>nagent</span>", 
+                    col5: "Le verbe s'accorde avec son sujet." 
+                }
+            },
+            // U1 - Orthographe
+            {
+                bubble: "Faisons maintenant un exemple d'Usage (U). Voici l'erreur : 'un éléphan'.",
+                visual: null,
+                focus: null,
+                rowId: 3,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Colonne 1 : Recopie la faute avec son contexte.",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "C'est", class: "text-slate" },
+                        { text: "un", class: "text-slate", label: "Déterminant", labelClass: "label-blue" },
+                        { text: "éléphan", class: "bg-red-error", label: "Erreur", labelClass: "label-red" },
+                        { text: "gris", class: "text-slate" }
+                    ],
+                    description: "Pour U1, le mot seul suffit parfois, mais le déterminant aide à voir que c'est un Nom masculin."
+                },
+                focus: "col1",
+                rowId: 3,
+                content: { col1: "un éléphan", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Ton enseignant(e) t'a donné la lettre U. Vérifions la classe. C'est un NOM, prouvons-le !",
+                visual: {
+                    type: 'manipulation',
+                    word: "éléphant",
+                    testTitle: "Peut-on mettre un déterminant devant ?",
+                    tests: [
+                        "<strong style='color: #10b981;'>UN</strong> éléphant",
+                        "<strong style='color: #10b981;'>LE</strong> gros éléphant"
+                    ],
+                    description: "Ça fonctionne ! C'est donc un NOM."
+                },
+                focus: "col3",
+                rowId: 3,
+                content: { col1: "un éléphan", col2: "U...", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Le code est U1 (Orthographe d'usage).",
+                visual: null,
+                focus: "col2",
+                rowId: 3,
+                content: { col1: "un éléphan", col2: "U1", col3: "Nom", col4: "", col5: "" }
+            },
+            {
+                bubble: "Pour trouver la bonne orthographe, tu dois OBLIGATOIREMENT chercher dans le dictionnaire ou sur Usito.",
+                visual: null,
+                focus: "col4",
+                rowId: 3,
+                content: { 
+                    col1: "un éléphan", 
+                    col2: "U1", 
+                    col3: "Nom", 
+                    col4: "un éléphan<span class='highlight'>t</span>", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "ATTENTION ! Pour U1, la règle est spéciale : Tu dois recopier le mot 5 FOIS.",
+                visual: null,
+                focus: "col5",
+                rowId: 3,
+                content: { 
+                    col1: "un éléphan", 
+                    col2: "U1", 
+                    col3: "Nom", 
+                    col4: "un éléphan<span class='highlight'>t</span>", 
+                    col5: "éléphant éléphant éléphant éléphant éléphant" 
+                }
+            },
+            // U4 - Majuscule
+            {
+                bubble: "Un autre exemple d'Usage (U), cette fois pour une Majuscule. Erreur : 'j'habite au canada'.",
+                visual: null,
+                focus: null,
+                rowId: 4,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Colonne 1 : Le contexte. 'au canada'.",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "J'habite", class: "text-slate" },
+                        { text: "au", class: "text-slate" },
+                        { text: "canada", class: "bg-red-error", label: "Nom Propre (Lieu)", labelClass: "label-red" },
+                        { text: "l'hiver", class: "text-slate" }
+                    ],
+                    description: "Le contexte montre que c'est un lieu géographique unique, donc un Nom Propre."
+                },
+                focus: "col1",
+                rowId: 4,
+                content: { col1: "au canada", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Classe : C'est un NOM PROPRE. Faisons le test pour le prouver.",
+                visual: {
+                    type: 'manipulation',
+                    word: "canada",
+                    testTitle: "Peut-on mettre un déterminant devant ?",
+                    tests: [
+                        "<strong style='color: #10b981;'>UN</strong> Canada",
+                        "<strong style='color: #10b981;'>LE</strong> gros Canada"
+                    ],
+                    description: "Ça fonctionne ! C'est donc un NOM."
+                },
+                focus: "col3",
+                rowId: 4,
+                content: { col1: "au canada", col2: "U...", col3: "Nom p.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Le code U4 correspond à la Majuscule.",
+                visual: null,
+                focus: "col2",
+                rowId: 4,
+                content: { col1: "au canada", col2: "U4", col3: "Nom p.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Correction : On met la majuscule.",
+                visual: null,
+                focus: "col4",
+                rowId: 4,
+                content: { 
+                    col1: "au canada", 
+                    col2: "U4", 
+                    col3: "Nom p.", 
+                    col4: "au <span class='highlight'>C</span>anada", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "On copie la règle U4.",
+                visual: null,
+                focus: "col5",
+                rowId: 4,
+                content: { 
+                    col1: "au canada", 
+                    col2: "U4", 
+                    col3: "Nom p.", 
+                    col4: "au <span class='highlight'>C</span>anada", 
+                    col5: "Majuscule dans le nom propre." 
+                }
+            },
+            // S2 - Négation
+            {
+                bubble: "Passons à la Syntaxe (S). Erreur : 'les bélugas sont pas bleus'. Il manque quelque chose...",
+                visual: null,
+                focus: null,
+                rowId: 5,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Colonne 1 : Attention ! Écrire juste 'sont pas' ne suffit pas. Je ne peux pas voir s'il manque le 'ne' ou non. Je préfère plus de contexte que moins !",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "Les bélugas", class: "text-slate" },
+                        { text: "sont", class: "bg-blue-donneur border-relation", label: "Verbe", labelClass: "label-blue" },
+                        { text: "pas", class: "bg-red-error", label: "Négation incomplète", labelClass: "label-red" },
+                        { text: "bleus", class: "text-slate" }
+                    ],
+                    description: "En mettant le mot AVANT le verbe, on prouve qu'il n'y a rien."
+                },
+                focus: "col1",
+                rowId: 5,
+                content: { col1: "les bélugas sont pas", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "L'enseignant(e) a mis S. Vérifions si c'est bien une négation.",
+                visual: {
+                    type: 'manipulation',
+                    word: "pas",
+                    testTitle: "Doit-il encadrer le verbe ?",
+                    tests: [
+                        "<strong style='color: #10b981;'>NE</strong> sont <strong style='color: #10b981;'>PAS</strong>",
+                        "<strong style='color: #10b981;'>N'</strong>aime <strong style='color: #10b981;'>PAS</strong>"
+                    ],
+                    description: "Oui, la négation a deux parties (lunettes). C'est un Adverbe de négation."
+                },
+                focus: "col3",
+                rowId: 5,
+                content: { col1: "les bélugas sont pas", col2: "S...", col3: "Adv.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Le code S2 correspond à la Négation.",
+                visual: null,
+                focus: "col2",
+                rowId: 5,
+                content: { col1: "les bélugas sont pas", col2: "S2", col3: "Adv.", col4: "", col5: "" }
+            },
+            {
+                bubble: "Correction : On ajoute le 'ne' (ou n').",
+                visual: null,
+                focus: "col4",
+                rowId: 5,
+                content: { 
+                    col1: "les bélugas sont pas", 
+                    col2: "S2", 
+                    col3: "Adv.", 
+                    col4: "<span class='highlight'>ne</span> sont pas", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "Et on copie la règle S2.",
+                visual: null,
+                focus: "col5",
+                rowId: 5,
+                content: { 
+                    col1: "les bélugas sont pas", 
+                    col2: "S2", 
+                    col3: "Adv.", 
+                    col4: "<span class='highlight'>ne</span> sont pas", 
+                    col5: "La négation s'écrit toujours avec deux mots (ne... pas)." 
+                }
+            },
+            // P9 - Point
+            {
+                bubble: "Enfin, la Ponctuation (P). Il manque un point entre 'écholocation' et 'aussi'. Mais 'écholocation aussi' ne suffit pas comme contexte.",
+                visual: null,
+                focus: null,
+                rowId: 6,
+                content: { col1: "", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Colonne 1 : Pour justifier un point, il faut prouver qu'il y a DEUX phrases syntaxiques complètes (Sujet + Verbe).",
+                visual: {
+                    type: 'context',
+                    words: [
+                        { text: "Ils", class: "text-slate", label: "Sujet 1", labelClass: "label-blue" },
+                        { text: "attrapent", class: "bg-blue-donneur" },
+                        { text: "...l'écholocation", class: "text-slate" },
+                        { text: "aussi", class: "bg-red-error font-hand", label: "Mur manquant !", labelClass: "label-red" },
+                        { text: "cela", class: "text-slate", label: "Sujet 2", labelClass: "label-red" },
+                        { text: "permet", class: "bg-red-error" },
+                        { text: "...", class: "text-slate" }
+                    ],
+                    description: "On a deux couples Sujet-Verbe. Il faut obligatoirement un point (un mur) entre les deux !"
+                },
+                focus: "col1",
+                rowId: 6,
+                content: { col1: "Ils utilisent l'écholocation aussi cela permet de communiquer", col2: "", col3: "", col4: "", col5: "" }
+            },
+            {
+                bubble: "Ton enseignant(e) a mis P. Pour la classe, on met souvent X ou Ponct.",
+                visual: null,
+                focus: "col3",
+                rowId: 6,
+                content: { col1: "Ils utilisent l'écholocation aussi cela permet de communiquer", col2: "P...", col3: "X", col4: "", col5: "" }
+            },
+            {
+                bubble: "Le code P9 correspond à l'oubli du point.",
+                visual: null,
+                focus: "col2",
+                rowId: 6,
+                content: { col1: "Ils utilisent l'écholocation aussi cela permet de communiquer", col2: "P9", col3: "X", col4: "", col5: "" }
+            },
+            {
+                bubble: "Correction : On ajoute le point et la majuscule !",
+                visual: null,
+                focus: "col4",
+                rowId: 6,
+                content: { 
+                    col1: "Ils utilisent l'écholocation aussi cela permet de communiquer", 
+                    col2: "P9", 
+                    col3: "X", 
+                    col4: "écholocation<span class='highlight'>. A</span>ussi", 
+                    col5: "" 
+                }
+            },
+            {
+                bubble: "On copie la règle P9.",
+                visual: null,
+                focus: "col5",
+                rowId: 6,
+                content: { 
+                    col1: "Ils utilisent l'écholocation aussi cela permet de communiquer", 
+                    col2: "P9", 
+                    col3: "X", 
+                    col4: "écholocation<span class='highlight'>. A</span>ussi", 
+                    col5: "Le point marque la fin d'une phrase déclarative." 
+                }
+            },
+            {
+                bubble: "Bravo ! Tu as vu des exemples pour G, U, S et P. À toi de jouer maintenant !",
+                visual: null,
+                focus: null,
+                rowId: 6,
+                content: { col1: "...", col2: "...", col3: "...", col4: "...", col5: "..." }
+            }
+        ];
+
+
+        // NAVIGATION
+        function goHome() {
+            mode = 'home';
+            document.getElementById('homeScreen').classList.remove('hidden');
+            document.getElementById('tutorialScreen').classList.add('hidden');
+            document.getElementById('footerNav').classList.add('hidden');
+            document.getElementById('closeBtn').classList.add('hidden');
+        }
+
+
+        function startTutorial() {
+            mode = 'tutorial';
+            currentStep = 0;
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('tutorialScreen').classList.remove('hidden');
+            document.getElementById('footerNav').classList.remove('hidden');
+            document.getElementById('closeBtn').classList.remove('hidden');
+            renderTutorialStep();
+            renderProgressDots();
+        }
+
+
+        function nextStep() {
+            if (currentStep < tutorialSteps.length - 1) {
+                currentStep++;
+                renderTutorialStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderTutorialStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+
+        // RENDER TUTORIAL STEP
+        function renderTutorialStep() {
+            const step = tutorialSteps[currentStep];
+            
+            // Update step counter
+            document.getElementById('stepCounter').textContent = `Étape ${currentStep + 1}/${tutorialSteps.length}`;
+            
+            // Update speech bubble
+            document.getElementById('speechText').textContent = step.bubble;
+            
+            // Update visualizer
+            renderVisualizer(step.visual);
+            
+            // Update table
+            renderTable(step);
+            
+            // Update buttons
+            document.getElementById('prevBtn').classList.toggle('invisible', currentStep === 0);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === tutorialSteps.length - 1) {
+                nextBtn.textContent = "J'ai compris ! ✓";
+                nextBtn.className = 'btn btn-secondary';
+                nextBtn.onclick = goHome;
+            } else {
+                nextBtn.textContent = 'Continuer →';
+                nextBtn.className = 'btn btn-primary';
+                nextBtn.onclick = nextStep;
+            }
+            
+            // Update progress dots
+            updateProgressDots();
+        }
+
+
+        // RENDER VISUALIZER
+        function renderVisualizer(visual) {
+            const container = document.getElementById('visualizerContainer');
+            
+            if (!visual) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            if (visual.type === 'context') {
+                container.innerHTML = `
+                    <div class="visualizer context-visual">
+                        <h4 class="visual-title">👁️ Analyse du Détective</h4>
+                        <div class="words-container">
+                            ${visual.words.map(word => `
+                                <div class="word-item">
+                                    ${word.label ? `
+                                        <div class="word-label ${word.labelClass || ''}">
+                                            ${word.label}
+                                        </div>
+                                    ` : ''}
+                                    <span class="word-text font-hand ${word.class || ''}">${word.text}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${visual.description ? `<p class="visual-description">${visual.description}</p>` : ''}
+                    </div>
+                `;
+            } else if (visual.type === 'manipulation') {
+                container.innerHTML = `
+                    <div class="visualizer manipulation-visual">
+                        <h4 class="visual-title">✂️ Test de Manipulation</h4>
+                        <div class="manipulation-content">
+                            <div class="word-to-test">
+                                Mot à tester : <span class="test-word font-hand">${visual.word}</span>
+                            </div>
+                            <span class="arrow-icon">→</span>
+                            <div class="test-box">
+                                <p class="test-box-title">${visual.testTitle}</p>
+                                ${visual.tests.map(test => `
+                                    <p class="test-item">
+                                        <span class="check-icon">✓</span>
+                                        ${test}
+                                    </p>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${visual.description ? `<p class="visual-description" style="color: #065f46; margin-top: 15px;">${visual.description}</p>` : ''}
+                    </div>
+                `;
+            } else if (visual.type === 'rules') {
+                container.innerHTML = `
+                    <div class="visualizer rules-visual">
+                        <h4 class="visual-title">📋 Choix de la Règle</h4>
+                        <div class="rules-grid">
+                            ${visual.rules.map(rule => `
+                                <div class="rule-item ${rule.active ? 'active' : 'inactive'}">
+                                    <span class="rule-code">${rule.code}</span>
+                                    <span class="rule-label">${rule.label}</span>
+                                    ${rule.active ? '<span style="color: #f59e0b; font-size: 20px;">✓</span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${visual.description ? `<div class="rules-description">${visual.description}</div>` : ''}
+                    </div>
+                `;
+            }
+        }
+
+
+        // RENDER TABLE
+        function renderTable(step) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            // Completed rows
+            const completedData = [
+                { col1: "les bélugas adulte", col2: "GN3", col3: "Adj.", col4: "les bélugas <span class='highlight'>adultes</span>", col5: "L'adjectif s'accorde en genre et en nombre avec le nom." },
+                { col1: "les bélugas nage", col2: "GV1", col3: "Verbe", col4: "les bélugas <span class='highlight'>nagent</span>", col5: "Le verbe s'accorde avec son sujet." },
+                { col1: "un éléphan", col2: "U1", col3: "Nom", col4: "un éléphan<span class='highlight'>t</span>", col5: "éléphant éléphant éléphant éléphant éléphant" },
+                { col1: "au canada", col2: "U4", col3: "Nom p.", col4: "au <span class='highlight'>C</span>anada", col5: "Majuscule dans le nom propre." },
+                { col1: "les bélugas sont pas", col2: "S2", col3: "Adv.", col4: "<span class='highlight'>ne</span> sont pas", col5: "La négation s'écrit toujours avec deux mots (ne... pas)." }
+            ];
+            
+            // Show completed rows
+            for (let i = 0; i < step.rowId - 1; i++) {
+                if (completedData[i]) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'completed';
+                    tr.innerHTML = `
+                        <td><div class="col1-text font-hand">${completedData[i].col1}</div></td>
+                        <td><div class="col2-text">${completedData[i].col2}</div></td>
+                        <td><div class="col3-text">${completedData[i].col3}</div></td>
+                        <td><div class="col4-text font-hand">${completedData[i].col4}</div></td>
+                        <td><div class="col5-text">${completedData[i].col5}</div></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+            
+            // Active row
+            const tr = document.createElement('tr');
+            tr.className = 'active';
+            tr.innerHTML = `
+                <td class="${step.focus === 'col1' ? 'focused' : ''}">
+                    <div class="cell-content col1-text font-hand ${step.content.col1 ? 'visible' : 'hidden-cell'}">${step.content.col1}</div>
+                </td>
+                <td class="${step.focus === 'col2' ? 'focused' : ''}">
+                    <div class="cell-content col2-text ${step.content.col2 ? 'visible' : 'hidden-cell'}">${step.content.col2}</div>
+                </td>
+                <td class="${step.focus === 'col3' ? 'focused' : ''}">
+                    <div class="cell-content col3-text ${step.content.col3 ? 'visible' : 'hidden-cell'}">${step.content.col3}</div>
+                </td>
+                <td class="${step.focus === 'col4' ? 'focused' : ''}">
+                    <div class="cell-content col4-text font-hand ${step.content.col4 ? 'visible' : 'hidden-cell'}">${step.content.col4}</div>
+                </td>
+                <td class="${step.focus === 'col5' ? 'focused' : ''}">
+                    <div class="cell-content col5-text ${step.content.col5 ? 'visible' : 'hidden-cell'}">${step.content.col5}</div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+
+        // PROGRESS DOTS
+        function renderProgressDots() {
+            const container = document.getElementById('progressDots');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < tutorialSteps.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = `progress-dot ${i === currentStep ? 'active' : ''}`;
+                container.appendChild(dot);
+            }
+        }
+
+
+        function updateProgressDots() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, i) => {
+                if (i === currentStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
