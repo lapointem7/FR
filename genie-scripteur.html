@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Génie du Scripteur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* HOME SCREEN */
+        .home-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 48px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+        .start-button {
+            background: white;
+            border: 3px solid #e0e7ff;
+            padding: 25px 40px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .start-button-icon {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 15px;
+            color: #667eea;
+            font-size: 32px;
+        }
+
+        .start-button-text {
+            text-align: left;
+        }
+
+        .start-button-label {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-button-title {
+            display: block;
+            font-size: 24px;
+            font-weight: 900;
+            color: #1e293b;
+        }
+
+        /* CATEGORY SELECTION */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border: 3px solid #f1f5f9;
+            padding: 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .category-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        .category-letter {
+            font-size: 36px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .category-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        /* COLORS */
+        .bg-blue { background: #3b82f6; }
+        .bg-emerald { background: #10b981; }
+        .bg-indigo { background: #6366f1; }
+        .bg-amber { background: #f59e0b; }
+
+        /* QUESTION SCREEN */
+        .question-card {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .question-icon {
+            width: 80px;
+            height: 80px;
+            background: #ede9fe;
+            color: #7c3aed;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 32px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .visual-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .visual-title {
+            font-weight: 700;
+            color: #6366f1;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .visual-example {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .visual-bullet {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .bullet-valid { background: #10b981; }
+        .bullet-invalid { background: #ef4444; }
+
+        .visual-note {
+            font-size: 12px;
+            color: #64748b;
+            font-style: italic;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .answer-button {
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .answer-button:hover {
+            transform: scale(1.05);
+        }
+
+        .answer-button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-yes {
+            background: #10b981;
+        }
+
+        .btn-yes:hover {
+            background: #059669;
+        }
+
+        .btn-no {
+            background: #f43f5e;
+        }
+
+        .btn-no:hover {
+            background: #e11d48;
+        }
+
+        /* BACK BUTTON */
+        .back-button {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-button:hover {
+            color: #667eea;
+        }
+
+        /* CHOICE BUTTONS (for punctuation) */
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .choice-button {
+            background: white;
+            border: 3px solid #f1f5f9;
+            padding: 25px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #475569;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .choice-button:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        /* HOMOPHONE LIST */
+        .homophone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .homophone-family {
+            background: white;
+            border: 3px solid #f1f5f9;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .homophone-family.expanded {
+            grid-column: 1 / -1;
+            border-color: #6366f1;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .homophone-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #475569;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .homophone-header:hover {
+            background: #f8fafc;
+        }
+
+        .homophone-content {
+            padding: 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .homophone-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .homophone-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .homophone-word {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .homophone-class {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .homophone-explanation {
+            font-size: 14px;
+            color: #6366f1;
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .homophone-action {
+            background: white;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .homophone-action-text {
+            font-size: 12px;
+            color: #475569;
+            flex: 1;
+        }
+
+        .homophone-action-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .homophone-action-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* RESULT SCREEN */
+        .result-header {
+            background: #d1fae5;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #a7f3d0;
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #10b981;
+            font-size: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+
+        .result-code {
+            font-size: 64px;
+            font-weight: 900;
+            color: #1e293b;
+        }
+
+        .result-body {
+            padding: 40px;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+        }
+
+        .result-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .result-rule-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 5px;
+        }
+
+        .result-rule-text {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .alert-box {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 10px;
+            padding: 15px;
+            color: #dc2626;
+            font-size: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .example-box {
+            background: #fffbeb;
+            border: 2px solid #fde68a;
+            border-radius: 10px;
+            padding: 15px;
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        .example-label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #78350f;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 3px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        /* U5 VERIFICATION */
+        .rule-list {
+            margin-bottom: 30px;
+        }
+
+        .rule-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rule-check {
+            color: #10b981;
+            font-size: 14px;
+        }
+
+        /* TEACHER SCREEN */
+        .teacher-card {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .teacher-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .teacher-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .teacher-text {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .result-code {
+                font-size: 48px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .homophone-action {
+                flex-direction: column;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Strong text highlight */
+        strong {
+            color: #6366f1;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HOME SCREEN -->
+        <div id="homeScreen" class="animate-in">
+            <div class="card home-screen">
+                <div class="logo">✨</div>
+                <h1>Le Génie du Scripteur</h1>
+                <p class="subtitle">Je t'aide à identifier tes erreurs une par une.</p>
+                <button class="start-button" onclick="startGenie()">
+                    <div class="start-button-icon">✏️</div>
+                    <div class="start-button-text">
+                        <span class="start-button-label">Commencer</span>
+                        <span class="start-button-title">Analyser une faute</span>
+                    </div>
+                    <span style="font-size: 24px;">→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- CATEGORY SELECTION -->
+        <div id="categoryScreen" class="card hidden animate-in">
+            <h2 style="font-size: 24px; font-weight: 900; color: #1e293b; margin-bottom: 30px; text-align: center;">
+                Quelle est la lettre indiquée ?
+            </h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="selectCategory('G', 'Grammaire', 'bg-blue', 'G_START')">
+                    <div class="category-icon bg-blue">📝</div>
+                    <div class="category-letter">G</div>
+                    <div class="category-name">Grammaire</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('U', 'Usage', 'bg-emerald', 'U_START')">
+                    <div class="category-icon bg-emerald">✂️</div>
+                    <div class="category-letter">U</div>
+                    <div class="category-name">Usage</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('S', 'Syntaxe', 'bg-indigo', 'S_START')">
+                    <div class="category-icon bg-indigo">📋</div>
+                    <div class="category-letter">S</div>
+                    <div class="category-name">Syntaxe</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('P', 'Ponctuation', 'bg-amber', 'P_START')">
+                    <div class="category-icon bg-amber">💬</div>
+                    <div class="category-letter">P</div>
+                    <div class="category-name">Ponctuation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVESTIGATION SCREEN -->
+        <div id="investigationScreen" class="hidden animate-in">
+            <button class="back-button" onclick="resetToCategory()">
+                ← Changer de lettre
+            </button>
+            <div class="card question-card">
+                <div class="question-icon">❓</div>
+                <h3 id="questionText" class="question-text"></h3>
+                <div id="visualBox" class="visual-box hidden"></div>
+                <div id="answerButtons" class="answer-buttons"></div>
+            </div>
+        </div>
+
+        <!-- HOMOPHONE LIST -->
+        <div id="homophoneScreen" class="card hidden animate-in">
+            <button class="back-button" onclick="backFromHomophones()">
+                ← Non, ce n'est pas un homophone
+            </button>
+            <h2 style="font-size: 28px; font-weight: 900; color: #1e293b; margin-bottom: 25px; text-align: center;">
+                Choisis la famille d'homophones
+            </h2>
+            <div id="homophoneList" class="homophone-grid"></div>
+        </div>
+
+        <!-- U5 VERIFICATION -->
+        <div id="u5Screen" class="card hidden animate-in">
+            <button class="back-button" onclick="backFromU5()">
+                ← Retour
+            </button>
+            <div style="border-top: 8px solid #10b981; border-radius: 20px; padding: 30px;">
+                <h2 style="font-size: 24px; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    📏 Règles de coupure
+                </h2>
+                <div class="rule-list">
+                    <div class="rule-item">
+                        <span class="rule-check">✓</span>
+                        Couper entre deux syllabes (fro-mage)
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-check">✓</span>
+                        Ne pas laisser une lettre seule (a-vion ✗)
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-check">✓</span>
+                        Le trait d'union reste sur la ligne du haut
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-button btn-primary" onclick="confirmU5(true)">
+                        Oui, c'est mon erreur
+                    </button>
+                    <button class="action-button btn-secondary" onclick="confirmU5(false)">
+                        Non, ce n'est pas ça
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEACHER SCREEN -->
+        <div id="teacherScreen" class="card hidden animate-in">
+            <div class="teacher-card">
+                <div class="teacher-icon">👨‍🏫</div>
+                <h2 class="teacher-title">Consulte ton enseignant(e)</h2>
+                <p class="teacher-text">
+                    Je n'ai pas pu identifier cette erreur. Demande de l'aide à ton enseignant(e).
+                </p>
+                <button class="action-button btn-primary" onclick="goHome()" style="max-width: 300px; margin: 0 auto;">
+                    Retour à l'accueil
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="resultScreen" class="card hidden animate-in" style="padding: 0; overflow: hidden;">
+            <div class="result-header">
+                <div class="result-icon">✨</div>
+                <h2 class="result-title">C'est trouvé !</h2>
+                <div id="resultCode" class="result-code"></div>
+            </div>
+            <div class="result-body">
+                <div class="result-section">
+                    <div class="result-label">La Règle</div>
+                    <div id="resultRuleTitle" class="result-rule-title"></div>
+                    <div id="resultRuleText" class="result-rule-text"></div>
+                </div>
+                <div id="resultSpecial" class="alert-box hidden">
+                    <span>⚠️</span>
+                    <span id="resultSpecialText"></span>
+                </div>
+                <div id="resultExample" class="example-box hidden">
+                    <div class="example-label">Exemple :</div>
+                    <div id="resultExampleText"></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-button btn-primary" onclick="resetToCategory()">
+                        Nouvelle faute
+                    </button>
+                    <button class="action-button btn-secondary" onclick="goHome()">
+                        Retour à l'accueil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === BASE DE DONNÉES HOMOPHONES ===
+        const homophonesDB = [
+            {
+                label: "a / as / à",
+                items: [
+                    { word: "a", classe: "verbe avoir 3 ps", explication: "On peut le remplacer par AVAIT." },
+                    { word: "as", classe: "verbe avoir 2 ps", explication: "On peut le remplacer par AVAIS (sujet tu)." },
+                    { word: "à", classe: "préposition", explication: "On NE peut PAS le remplacer par avait." }
+                ]
+            },
+            {
+                label: "on / on n' / ont",
+                items: [
+                    { word: "on", classe: "pronom personnel", explication: "On peut le remplacer par LÉON." },
+                    { word: "on n'", classe: "pronom + négation", explication: "On peut le remplacer par LÉON (phrase négative)." },
+                    { word: "ont", classe: "verbe avoir 3pp", explication: "On peut le remplacer par AVAIENT." }
+                ]
+            },
+            {
+                label: "se / ce",
+                items: [
+                    { word: "se", classe: "pronom personnel", explication: "Devant un verbe autre que le verbe être." },
+                    { word: "ce", classe: "dét. ou pronom dém.", explication: "Dans tous les autres cas (devant un nom ou le verbe être)." }
+                ]
+            },
+            {
+                label: "son / sont",
+                items: [
+                    { word: "son", classe: "déterminant possessif", explication: "Devant un nom ou un adj. masc. singulier." },
+                    { word: "sont", classe: "verbe être", explication: "On peut le remplacer par ÉTAIENT." }
+                ]
+            },
+            {
+                label: "ces / ses / s'est / c'est / sais / sait",
+                items: [
+                    { word: "ces", classe: "dét. démonstratif", explication: "Devant un nom pluriel; sert à montrer." },
+                    { word: "ses", classe: "dét. possessif", explication: "Devant un nom plur; indique la possession." },
+                    { word: "s'est", classe: "pronom + verbe être", explication: "Devant un participe passé; remplacer par S'ÉTAIT." },
+                    { word: "c'est", classe: "pronom + verbe être", explication: "Devant un mot autre qu'un verbe. Remplacer par CELA EST." },
+                    { word: "sais", classe: "verbe savoir (1/2 ps)", explication: "Remplacer par SAVAIS (sujet je/tu)." },
+                    { word: "sait", classe: "verbe savoir (3 ps)", explication: "Remplacer par SAVAIT." }
+                ]
+            },
+            {
+                label: "ou / où / houx",
+                items: [
+                    { word: "ou", classe: "conjonction", explication: "On peut le remplacer par OU BIEN." },
+                    { word: "où", classe: "pronom relatif", explication: "Indique un LIEU." },
+                    { word: "houx", classe: "nom", explication: "C'est un arbuste." }
+                ]
+            },
+            {
+                label: "mon / m'ont / mont",
+                items: [
+                    { word: "mon", classe: "dét. possessif", explication: "Devant un nom ou un adjectif masc. singulier." },
+                    { word: "m'ont", classe: "pronom + avoir", explication: "On peut le remplacer par M'AVAIENT." },
+                    { word: "mont", classe: "nom", explication: "C'est une montagne." }
+                ]
+            },
+            {
+                label: "peu / peut / peux",
+                items: [
+                    { word: "peu", classe: "adverbe", explication: "On peut le remplacer par PAS BEAUCOUP." },
+                    { word: "peut", classe: "verbe pouvoir 3ps", explication: "On peut le remplacer par POUVAIT." },
+                    { word: "peux", classe: "verbe pouvoir 1/2ps", explication: "On peut le remplacer par POUVAIS." }
+                ]
+            },
+            {
+                label: "l'a / l'as / -là / là / la",
+                items: [
+                    { word: "l'a", classe: "pr. + verbe avoir", explication: "On peut le remplacer par L'AVAIT." },
+                    { word: "l'as", classe: "pr. + verbe avoir", explication: "On peut le remplacer par L'AVAIS." },
+                    { word: "-là", classe: "adverbe", explication: "On peut le remplacer par -CI." },
+                    { word: "là", classe: "adverbe", explication: "On peut le remplacer par ICI." },
+                    { word: "la", classe: "dét. ou pronom", explication: "Dans tous les autres cas." }
+                ]
+            },
+            {
+                label: "mais / mes / m'est / m'es",
+                items: [
+                    { word: "mais", classe: "coordonnant", explication: "On peut le remplacer par CEPENDANT." },
+                    { word: "mes", classe: "dét. possessif", explication: "Devant un nom ou un adjectif pluriel." },
+                    { word: "m'est", classe: "pr. + verbe être", explication: "On peut le remplacer par EST... À MOI." },
+                    { word: "m'es", classe: "pr. + verbe être", explication: "On peut le remplacer par ES... À MOI." }
+                ]
+            },
+            {
+                label: "met / mets / mets",
+                items: [
+                    { word: "met", classe: "verbe mettre 3ps", explication: "On peut le remplacer par METTAIT." },
+                    { word: "mets", classe: "verbe mettre 1/2ps", explication: "On peut le remplacer par METTAIS." },
+                    { word: "mets", classe: "nom", explication: "C'est un repas." }
+                ]
+            },
+            {
+                label: "prêt / prêt / près",
+                items: [
+                    { word: "prêt", classe: "adjectif", explication: "Remplacer par PRÉPARÉ/DISPOSÉ (suivi de à)." },
+                    { word: "prêt", classe: "nom", explication: "Avance d'argent." },
+                    { word: "près", classe: "adverbe", explication: "Remplacer par PROCHE (suivi de de)." }
+                ]
+            },
+            {
+                label: "tes / t'es / t'est / taie / t'ai",
+                items: [
+                    { word: "tes", classe: "dét. possessif", explication: "Devant un nom pluriel." },
+                    { word: "t'es", classe: "pr. + être 2ps", explication: "On peut le remplacer par T'ÉTAIS." },
+                    { word: "t'est", classe: "pr. + être 3ps", explication: "On peut le remplacer par T'ÉTAIT." },
+                    { word: "taie", classe: "nom", explication: "Elle recouvre l'oreiller." },
+                    { word: "t'ai", classe: "pr. + avoir 1ps", explication: "On peut le remplacer par T'AVAIS." }
+                ]
+            },
+            {
+                label: "leurs / leur",
+                items: [
+                    { word: "leurs", classe: "dét. ou pronom poss.", explication: "Devant un nom pluriel (parfois précédé de les)." },
+                    { word: "leur", classe: "dét. ou pronom", explication: "Dans tous les autres cas (devant un verbe/singulier)." }
+                ]
+            },
+            {
+                label: "sans / s'en / sens / sent / sang",
+                items: [
+                    { word: "sans", classe: "préposition", explication: "On peut le remplacer par PRIVÉ DE." },
+                    { word: "s'en", classe: "deux pronoms", explication: "Devant un verbe." },
+                    { word: "sens", classe: "verbe sentir 1/2ps", explication: "Remplacer par SENTAIS." },
+                    { word: "sent", classe: "verbe sentir 3ps", explication: "Remplacer par SENTAIT." },
+                    { word: "sang", classe: "nom", explication: "Liquide qui circule dans notre corps." },
+                    { word: "sens", classe: "nom", explication: "Une indication ou les 5 sens." }
+                ]
+            },
+            {
+                label: "d'en / dans",
+                items: [
+                    { word: "d'en", classe: "prép. + pronom", explication: "Devant un verbe à l'infinitif." },
+                    { word: "dans", classe: "préposition", explication: "Dans tous les autres cas." }
+                ]
+            },
+            {
+                label: "dont / donc",
+                items: [
+                    { word: "dont", classe: "pronom relatif", explication: "Précédé d'un nom ou d'un pronom." },
+                    { word: "donc", classe: "conjonction", explication: "Souvent, on peut l'enlever de la phrase." }
+                ]
+            },
+            {
+                label: "sa / ça",
+                items: [
+                    { word: "sa", classe: "dét. possessif", explication: "Devant un nom ou un adjectif fém. sing." },
+                    { word: "ça", classe: "pronom dém.", explication: "On peut le remplacer par CELA." }
+                ]
+            },
+            {
+                label: "ta / t'a",
+                items: [
+                    { word: "ta", classe: "dét. possessif", explication: "Devant un nom ou un adjectif fém. sing." },
+                    { word: "t'a", classe: "pr. + avoir", explication: "On peut le remplacer par T'AVAIT." }
+                ]
+            },
+            {
+                label: "ma / m'a / m'as",
+                items: [
+                    { word: "ma", classe: "dét. possessif", explication: "Devant un nom ou un adjectif fém. sing." },
+                    { word: "m'a", classe: "pr. + avoir 3ps", explication: "On peut remplacer par M'AVAIT." },
+                    { word: "m'as", classe: "pr. + avoir 2ps", explication: "On peut remplacer par M'AVAIS." }
+                ]
+            },
+            {
+                label: "ton / t'ont / thon / taon / tond...",
+                items: [
+                    { word: "ton", classe: "dét. possessif", explication: "Devant un nom ou un adj. masc. singulier." },
+                    { word: "t'ont", classe: "pr. + avoir 3pp", explication: "On peut le remplacer par T'AVAIENT." },
+                    { word: "thon", classe: "nom", explication: "Poisson." },
+                    { word: "taon", classe: "nom", explication: "Insecte." },
+                    { word: "tond(s)", classe: "verbe tondre", explication: "On peut le remplacer par un autre verbe." }
+                ]
+            },
+            {
+                label: "plus tôt / plutôt",
+                items: [
+                    { word: "plus tôt", classe: "locution adv.", explication: "On peut le remplacer par PLUS TARD." },
+                    { word: "plutôt", classe: "adverbe", explication: "C'est un choix (au lieu de)." }
+                ]
+            },
+            {
+                label: "cou / coup / coût / coud / couds",
+                items: [
+                    { word: "cou", classe: "nom", explication: "C'est une partie du corps." },
+                    { word: "coup", classe: "nom", explication: "Donner un coup, frapper." },
+                    { word: "coût", classe: "nom", explication: "Le montant total de tes achats." },
+                    { word: "coud(s)", classe: "verbe coudre", explication: "Remplacer par COUSAIT/COUSAIS." }
+                ]
+            },
+            {
+                label: "peut-être / peut être",
+                items: [
+                    { word: "peut-être", classe: "adverbe", explication: "On peut le remplacer par PROBABLEMENT." },
+                    { word: "peut être", classe: "verbe pouvoir + être", explication: "On peut le remplacer par POUVAIT ÊTRE." }
+                ]
+            },
+            {
+                label: "quand / quant / qu'en",
+                items: [
+                    { word: "quand", classe: "subordonnant", explication: "Remplacer par LORSQUE ou À QUEL MOMENT." },
+                    { word: "quant", classe: "locution prép.", explication: "Toujours suivi de à, au ou aux." },
+                    { word: "qu'en", classe: "pronom + pronom", explication: "Dans tous les autres cas." }
+                ]
+            },
+            {
+                label: "ni / n'y / nie / nies / nient",
+                items: [
+                    { word: "ni", classe: "coordonnant", explication: "Suivi d'un autre ni dans la phrase." },
+                    { word: "n'y", classe: "négation + pronom", explication: "Devant un verbe dans une phrase négative." },
+                    { word: "nie(s)(nt)", classe: "verbe nier", explication: "Dire que ce n'est pas vrai." }
+                ]
+            },
+            {
+                label: "s'y / -ci / si",
+                items: [
+                    { word: "s'y", classe: "deux pronoms", explication: "Devant un verbe." },
+                    { word: "-ci", classe: "adverbe", explication: "On peut le remplacer par -LÀ." },
+                    { word: "si", classe: "adverbe/sub.", explication: "Dans tous les autres cas." }
+                ]
+            },
+            {
+                label: "qu'elle / quel",
+                items: [
+                    { word: "qu'elle", classe: "sub. + pronom", explication: "On peut le remplacer par QU'IL." },
+                    { word: "quel", classe: "dét. ou pronom", explication: "On ne peut PAS le remplacer par qu'il." }
+                ]
+            },
+            {
+                label: "qui / qu'il / qu'y",
+                items: [
+                    { word: "qui", classe: "pronom relatif", explication: "On ne peut pas le remplacer par qu'elle." },
+                    { word: "qu'il", classe: "conj. + pronom", explication: "On peut le remplacer par QU'ELLE." },
+                    { word: "qu'y", classe: "sub. + pronom", explication: "On peut le remplacer par QUE." }
+                ]
+            },
+            {
+                label: "quoique / quoi que",
+                items: [
+                    { word: "quoique", classe: "conjonction", explication: "On peut le remplacer par BIEN QUE." },
+                    { word: "quoi que", classe: "locution", explication: "Remplacer par QUELLE QUE SOIT LA CHOSE QUE." }
+                ]
+            },
+            {
+                label: "davantage / d'avantage",
+                items: [
+                    { word: "davantage", classe: "adverbe", explication: "On peut le remplacer par J'EN VEUX PLUS." },
+                    { word: "d'avantage", classe: "prép. + nom", explication: "On peut remplacer par DES AVANTAGES." }
+                ]
+            },
+            {
+                label: "sur / sur(e) / sûr(e)",
+                items: [
+                    { word: "sur", classe: "préposition", explication: "On l'utilise avec les objets (dessus)." },
+                    { word: "sur(e)", classe: "adjectif", explication: "Goût acide." },
+                    { word: "sûr(e)", classe: "adjectif", explication: "Remplacer par CERTAIN / CERTAINE." }
+                ]
+            },
+            {
+                label: "ver / vers / verre / vert",
+                items: [
+                    { word: "ver", classe: "nom", explication: "C'est un animal invertébré." },
+                    { word: "vers", classe: "préposition", explication: "C'est la direction." },
+                    { word: "verre", classe: "nom", explication: "On l'utilise pour boire." },
+                    { word: "vert", classe: "adjectif", explication: "C'est une couleur." }
+                ]
+            }
+        ];
+
+        // === BASE DE DONNÉES RÈGLES ===
+        const rulesDB = {
+            "GN1": { titre: "Accord dans le GN (Nom)", regle: "Les marques de genre et de nombre du nom ou du pronom.", exemple: "les béluga (X) -> les bélugas (V)" },
+            "GN2": { titre: "Accord du DÉTERMINANT", regle: "Accord du déterminant avec le nom.", exemple: "ce baleines (X) -> ces baleines (V)" },
+            "GN3": { titre: "Accord de l'ADJECTIF", regle: "Accord de l'adjectif ou du participe passé employé seul (PPS) avec le nom.", exemple: "des forêts vert (X) -> des forêts vertes (V)" },
+            "GV1": { titre: "VERBE CONJUGUÉ", regle: "Mauvaise conjugaison du verbe avec son sujet ou erreur dans le radical.", exemple: "ils joue (X) -> ils jouent (V)" },
+            "GV2": { titre: "PARTICIPE PASSÉ (PPE/PPA)", regle: "Accord du participe passé avec l'auxiliaire être ou avoir.", exemple: "elles sont partit (X) -> elles sont parties (V)" },
+            "GH": { titre: "Confusion homophonique", regle: "Confusion entre deux mots qui se prononcent pareil.", special: "Indique: homophone erroné (stratégie) / homophone approprié (stratégie).", exemple: "a (remplace par avait) / à (ne remplace pas par avait)" },
+            "U1": { titre: "Orthographe d'Usage", regle: "Le mot est mal écrit.", special: "Cherche dans le dictionnaire ou Usito et recopie 5 fois.", exemple: "une maizon (X) -> une maison (V)" },
+            "U2": { titre: "Trait d'union", regle: "Il manque un trait d'union ou il y en a un de trop.", exemple: "pense t'il (X) -> pense-t-il (V)" },
+            "U3": { titre: "Apostrophe / Élision", regle: "Apostrophe marquant l'élision (l', d', s', etc.).", exemple: "le ami (X) -> l'ami (V)" },
+            "U4": { titre: "Majuscule", regle: "Majuscule dans le nom propre ou début de phrase.", exemple: "en france (X) -> en France (V)" },
+            "U5": { titre: "Coupure de mot", regle: "Coupure de mot incorrecte en fin de ligne.", exemple: "pom- me (X) -> pom- me (V)" },
+            "U6": { titre: "Chiffres et Symboles", regle: "L'emploi d'un chiffre (0 à 9 = en lettres).", exemple: "il a 3 chiens (X) -> il a trois chiens (V)" },
+            "S1": { titre: "Construction de phrase", regle: "Manque un groupe essentiel (GNs ou GV).", exemple: "Le chat la souris (X) -> Le chat mange la souris (V)" },
+            "S2": { titre: "Négation", regle: "Absence du 'n' dans la négation.", exemple: "il aime pas (X) -> il n'aime pas (V)" },
+            "S3": { titre: "Manque un mot", regle: "Il manque un mot dans la phrase (autre que GNs/GV).", exemple: "Je vais école (X) -> Je vais à l'école (V)" },
+            "S4": { titre: "Préposition", regle: "Mauvaise utilisation de la préposition.", exemple: "J'attends sur un feu rouge (X) -> J'attends à un feu rouge (V)" },
+            "S5": { titre: "Coordination", regle: "Ne pas commencer une phrase par un coordonnant (Mais, Car, Et...).", exemple: "Mais il est gentil (X) -> Cependant, il est gentil (V)" },
+            "P1": { titre: "Virgule (Énumération)", regle: "Isoler les éléments d'une énumération.", exemple: "Un gâteau chocolaté, moelleux et savoureux." },
+            "P2": { titre: "Virgule (GN détaché)", regle: "Isoler le GN détaché (apposition).", exemple: "Le Nil, le fleuve égyptien, est long de 6500 km." },
+            "P3": { titre: "Virgule (CP déplacé)", regle: "Isoler le complément de phrase (CP) déplacé en début ou milieu de phrase.", exemple: "Quand je serai parti, ma mère trouvera la maison vide." },
+            "P4": { titre: "Virgule (Organisateur)", regle: "Isoler un organisateur textuel ou marqueur de relation en début de phrase.", exemple: "D'abord, se mammifère..." },
+            "P5": { titre: "Virgule (Coordonnant)", regle: "À gauche des coordonnants : mais/car/or/donc/...", exemple: "Je mange, car j'ai faim." },
+            "P6": { titre: "Virgule (Incise/Incident)", regle: "Isoler la phrase incise ou un groupe incident.", exemple: "« Ce sentier... », lit-on sur les affiches. / Il est, tout le monde le dit, un candidat sérieux." },
+            "P7": { titre: "Virgule (Apostrophe)", regle: "Isoler un mot mis en apostrophe (à qui l'on parle).", exemple: "Monsieur, est-ce à vous ce joli chapeau ?" },
+            "P8": { titre: "Virgule (Effacement)", regle: "Marquer l'effacement d'un élément dans une phrase coordonnée.", exemple: "Karim joue au football et Manon, au tennis." },
+            "P9": { titre: "Le Point", regle: "Marque la fin d'une phrase déclarative.", exemple: "Il mange." },
+            "P10": { titre: "Point d'interrogation", regle: "Marque la fin d'une phrase interrogative.", exemple: "Qui est là ?" },
+            "P11": { titre: "Point d'exclamation", regle: "Marque la fin d'une phrase exclamative.", exemple: "Quel beau but !" },
+            "P17": { titre: "Deux points (Discours)", regle: "Introduire un discours direct ou une citation.", exemple: "Il a dit : « Bonjour »." },
+            "P18": { titre: "Deux points (Cause/Conséquence)", regle: "Établir un rapport de cause/conséquence (juxtaposition).", exemple: "Jasmin souffre d'une maladie grave : son comportement est affecté." },
+            "P19": { titre: "Deux points (Explication)", regle: "Introduire une explication ou une définition (juxtaposition).", exemple: "Il ne mange pas de dessert : il est diabétique." },
+            "P20": { titre: "Parenthèses", regle: "Encadrer une information accessoire (explication, réflexion, commentaire).", exemple: "Ce garçon (le frère de Julie) est gentil." },
+            "P22": { titre: "Guillemets (Discours)", regle: "Encadrer un discours direct.", exemple: "Il a dit : « Bonjour »." },
+            "P23": { titre: "Guillemets (Mot isolé)", regle: "Encadrer un mot ou une expression que l'auteur désire isoler.", exemple: "Le mot « chien » est un nom." },
+            "P24": { titre: "Guillemets (Citation)", regle: "Respecter les règles de citation.", exemple: "Comme l'a dit l'auteur : « ... »." },
+        };
+
+        // === ARBRE DE DÉCISION ===
+        const genieGraph = {
+            'G_START': {
+                text: "Est-ce que tu confonds deux mots qui se prononcent pareil (homophones ex: a/à, son/sont) ?",
+                yes: { type: 'action', value: 'GH_SEARCH' },
+                no: { type: 'node', value: 'G_GV_CHECK' }
+            },
+            'G_GV_CHECK': {
+                text: "Est-ce une faute dans un GV (groupe du verbe) ?",
+                visual: {
+                    title: "Identifier le verbe",
+                    examples: [
+                        { text: "Temps simple : Les chats <strong>mangent</strong>. -> Les chats ne <strong>mangent</strong> pas.", valid: true },
+                        { text: "Temps composé : Les chats <strong>ont mangé</strong>. -> Les chats n'<strong>ont</strong> pas <strong>mangé</strong>.", valid: true }
+                    ],
+                    note: "Utilise l'encadrement par 'ne...pas' pour trouver le verbe."
+                },
+                yes: { type: 'node', value: 'G_GV_TYPE' },
+                no: { type: 'node', value: 'G_GN_CHECK' }
+            },
+            'G_GV_TYPE': {
+                text: "Est-ce un verbe à un temps simple (un seul mot) ?",
+                visual: {
+                    title: "Temps Simple",
+                    examples: [
+                        { text: "Je <strong>marche</strong>. (Présent)", valid: true },
+                        { text: "Je <strong>marchais</strong>. (Imparfait)", valid: true }
+                    ],
+                    note: "Il n'y a pas d'auxiliaire (être/avoir)."
+                },
+                yes: { type: 'result', value: 'GV1' },
+                no: { type: 'node', value: 'G_GV_COMPOSE' }
+            },
+            'G_GV_COMPOSE': {
+                text: "Est-ce un verbe à un temps composé (auxiliaire + participe passé) ?",
+                visual: {
+                    title: "Temps Composé",
+                    examples: [
+                        { text: "J'<strong>ai</strong> <strong>marché</strong>. (Passé composé)", valid: true },
+                        { text: "J'<strong>avais</strong> <strong>marché</strong>. (Plus-que-parfait)", valid: true }
+                    ],
+                    note: "Il y a deux mots : l'auxiliaire et le participe passé."
+                },
+                yes: { type: 'node', value: 'G_GV_AUX' },
+                no: { type: 'node', value: 'G_GN_CHECK' }
+            },
+            'G_GV_AUX': {
+                text: "Est-ce que la faute est dans le premier des deux mots (l'auxiliaire) ?",
+                yes: { type: 'result', value: 'GV1' },
+                no: { type: 'result', value: 'GV2' }
+            },
+            'G_GN_CHECK': {
+                text: "Est-ce une faute dans un GN (Groupe nominal) ?",
+                yes: { type: 'node', value: 'G_GN_NOM' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'G_GN_NOM': {
+                text: "La classe du mot erroné est-elle un NOM ?",
+                visual: {
+                    title: "Identifier le NOM",
+                    examples: [
+                        { text: "Le <strong>chat</strong>. (Nom commun - on peut mettre 'un' devant)", valid: true },
+                        { text: "<strong>Félix</strong>. (Nom propre)", valid: true }
+                    ],
+                    note: "Le nom est le noyau du groupe nominal."
+                },
+                yes: { type: 'result', value: 'GN1' },
+                no: { type: 'node', value: 'G_GN_DET' }
+            },
+            'G_GN_DET': {
+                text: "La classe du mot erroné est-elle un DÉTERMINANT ?",
+                visual: {
+                    title: "Identifier le DÉTERMINANT",
+                    examples: [{ text: "<strong>Le</strong> chat. <strong>Mon</strong> chat. <strong>Ce</strong> chat.", valid: true }],
+                    note: "Il est toujours placé avant le nom."
+                },
+                yes: { type: 'result', value: 'GN2' },
+                no: { type: 'node', value: 'G_GN_ADJ' }
+            },
+            'G_GN_ADJ': {
+                text: "La classe du mot erroné est-elle un ADJECTIF ?",
+                visual: {
+                    title: "Identifier l'ADJECTIF",
+                    examples: [
+                        { text: "Un <strong>petit</strong> chat. -> Un <strong>très</strong> <strong>petit</strong> chat.", valid: true },
+                        { text: "Le chat est <strong>noir</strong>. -> Le chat est <strong>très</strong> <strong>noir</strong>.", valid: true }
+                    ],
+                    note: "Il qualifie le nom. On peut souvent dire 'très' devant."
+                },
+                yes: { type: 'result', value: 'GN3' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'U_START': {
+                text: "Crois-tu que le mot aurait nécessité une majuscule (Nom propre ou début de phrase) ?",
+                yes: { type: 'result', value: 'U4' },
+                no: { type: 'node', value: 'U_CHIFFRE' }
+            },
+            'U_CHIFFRE': {
+                text: "As-tu écrit un chiffre de 0 à 9 en chiffres (ex: 3) plutôt qu'en lettres (ex: trois) ?",
+                yes: { type: 'result', value: 'U6' },
+                no: { type: 'node', value: 'U_APOSTROPHE' }
+            },
+            'U_APOSTROPHE': {
+                text: "Manque-t-il une apostrophe (ex: l'arbre) ou est-elle mal placée ?",
+                yes: { type: 'result', value: 'U3' },
+                no: { type: 'node', value: 'U_TRAIT' }
+            },
+            'U_TRAIT': {
+                text: "S'agit-il d'un problème de trait d'union (ex: 'pense-t-il', 'peut-être') ?",
+                yes: { type: 'result', value: 'U2' },
+                no: { type: 'node', value: 'U_COUPURE' }
+            },
+            'U_COUPURE': {
+                text: "As-tu coupé un mot à la fin de la ligne (avec un trait d'union) ?",
+                yes: { type: 'action', value: 'U5_CHECK' },
+                no: { type: 'node', value: 'U_ORTHO' }
+            },
+            'U_ORTHO': {
+                text: "Le mot est-il simplement mal écrit selon le dictionnaire ?",
+                yes: { type: 'result', value: 'U1' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'S_START': {
+                text: "As-tu commencé ta phrase par une conjonction (Ex : et, mais, car...) ?",
+                yes: { type: 'result', value: 'S5' },
+                no: { type: 'node', value: 'S_VERBE_MANQUANT' }
+            },
+            'S_VERBE_MANQUANT': {
+                text: "Manque-t-il un verbe conjugué dans ta phrase ?",
+                visual: {
+                    title: "Le moteur de la phrase",
+                    examples: [
+                        { text: "Phrase correcte : Le chien <strong>court</strong> vite.", valid: true },
+                        { text: "Phrase incorrecte : Le chien vite. (Pas de moteur !)", valid: false }
+                    ],
+                    note: "Si tu réponds OUI, c'est qu'il MANQUE un verbe (S1)."
+                },
+                yes: { type: 'result', value: 'S1' },
+                no: { type: 'node', value: 'S_NEGATION' }
+            },
+            'S_NEGATION': {
+                text: "Manque-t-il le 'ne' ou 'n'' dans une négation (ex: j'aime pas) ?",
+                yes: { type: 'result', value: 'S2' },
+                no: { type: 'node', value: 'S_MOT_MANQUANT' }
+            },
+            'S_MOT_MANQUANT': {
+                text: "Manque-t-il un petit mot (autre que le sujet ou le verbe) ?",
+                yes: { type: 'result', value: 'S3' },
+                no: { type: 'node', value: 'S_PREPOSITION' }
+            },
+            'S_PREPOSITION': {
+                text: "Est-ce une mauvaise utilisation de préposition (ex: sur/à) ?",
+                visual: {
+                    title: "Exemples fréquents",
+                    examples: [
+                        { text: "C'est la faute <strong>à</strong> Pierre (X) -> C'est la faute <strong>de</strong> Pierre (V)", valid: true },
+                        { text: "Je vais <strong>sur</strong> le téléphone (X) -> Je vais <strong>au</strong> téléphone (V)", valid: true }
+                    ]
+                },
+                yes: { type: 'result', value: 'S4' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_START': {
+                text: "Quelle est ton hypothèse sur la ponctuation ?",
+                type: 'choice',
+                options: [
+                    { label: "Virgule (,)", next: 'P_V_ENUM' },
+                    { label: "Point (.)", next: 'P_POINT_TYPE' },
+                    { label: "Point d'interrogation (?)", next: 'P_POINT_INT' },
+                    { label: "Point d'exclamation (!)", next: 'P_POINT_EXCL' },
+                    { label: "Deux points (:)", next: 'P_DP_DISCOURS' },
+                    { label: "Parenthèses ( )", next: 'P_PAR_INFO' },
+                    { label: "Guillemets « »", next: 'P_GUI_DISCOURS' },
+                ]
+            },
+            'P_V_ENUM': {
+                text: "Est-ce pour isoler les éléments d'une énumération (liste) ou séparer des phrases juxtaposées ?",
+                visual: {
+                    title: "Exemple P1",
+                    examples: [
+                        { text: "Un gâteau chocolaté, moelleux et savoureux.", valid: true },
+                        { text: "Josh a remporté tous les prix du concours, il le mérite bien.", valid: true }
+                    ],
+                    note: "Liste d'au moins 3 éléments ou phrases collées."
+                },
+                yes: { type: 'result', value: 'P1' },
+                no: { type: 'node', value: 'P_V_GN_DET' }
+            },
+            'P_V_GN_DET': {
+                text: "Est-ce pour isoler un GN détaché (apposition) ?",
+                visual: {
+                    title: "Exemple P2",
+                    examples: [{ text: "Le Nil, <strong>le fleuve égyptien</strong>, est long de 6500 km.", valid: true }],
+                    note: "Donne une précision sur le nom."
+                },
+                yes: { type: 'result', value: 'P2' },
+                no: { type: 'node', value: 'P_V_CP' }
+            },
+            'P_V_CP': {
+                text: "Est-ce pour isoler un Complément de Phrase (CP) déplacé en début ou milieu de phrase ?",
+                visual: {
+                    title: "Exemple P3",
+                    examples: [{ text: "<strong>Quand je serai parti</strong>, ma mère trouvera la maison vide.", valid: true }],
+                    note: "Indique le temps, le lieu, le but... et n'est pas à la fin."
+                },
+                yes: { type: 'result', value: 'P3' },
+                no: { type: 'node', value: 'P_V_ORG' }
+            },
+            'P_V_ORG': {
+                text: "Est-ce pour isoler un organisateur textuel ou marqueur de relation en début de phrase ?",
+                yes: { type: 'result', value: 'P4' },
+                no: { type: 'node', value: 'P_V_COORD' }
+            },
+            'P_V_COORD': {
+                text: "Est-ce à gauche des coordonnants : mais/car/or/donc/... ?",
+                yes: { type: 'result', value: 'P5' },
+                no: { type: 'node', value: 'P_V_INCISE' }
+            },
+            'P_V_INCISE': {
+                text: "Est-ce pour isoler la phrase incise ou un groupe incident ?",
+                visual: {
+                    title: "Exemple P6",
+                    examples: [
+                        { text: "« Ce sentier est réservé... », <strong>lit-on sur les affiches</strong>.", valid: true },
+                        { text: "Il est, <strong>tout le monde le dit</strong>, un candidat sérieux.", valid: true }
+                    ],
+                    note: ""
+                },
+                yes: { type: 'result', value: 'P6' },
+                no: { type: 'node', value: 'P_V_APOSTROPHE' }
+            },
+            'P_V_APOSTROPHE': {
+                text: "Est-ce pour isoler un mot mis en apostrophe (à qui l'on parle) ?",
+                visual: {
+                    title: "Exemple P7",
+                    examples: [{ text: "<strong>Monsieur</strong>, est-ce à vous ce joli chapeau ?", valid: true }],
+                    note: ""
+                },
+                yes: { type: 'result', value: 'P7' },
+                no: { type: 'node', value: 'P_V_EFFACEMENT' }
+            },
+            'P_V_EFFACEMENT': {
+                text: "Est-ce pour marquer l'effacement d'un élément (souvent le verbe) ?",
+                visual: {
+                    title: "Exemple P8",
+                    examples: [{ text: "Karim joue au football et Manon, <strong>[joue]</strong> au tennis.", valid: true }],
+                    note: "La virgule remplace le verbe."
+                },
+                yes: { type: 'result', value: 'P8' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_POINT_TYPE': {
+                text: "Marque-t-il la fin d'une phrase déclarative ?",
+                yes: { type: 'result', value: 'P9' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_POINT_INT': {
+                text: "Marque-t-il la fin d'une phrase interrogative ?",
+                yes: { type: 'result', value: 'P10' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_POINT_EXCL': {
+                text: "Marque-t-il la fin d'une phrase exclamative ?",
+                yes: { type: 'result', value: 'P11' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_DP_DISCOURS': {
+                text: "Est-ce pour introduire un discours direct ou une citation ?",
+                yes: { type: 'result', value: 'P17' },
+                no: { type: 'node', value: 'P_DP_CAUSE' }
+            },
+            'P_DP_CAUSE': {
+                text: "Est-ce pour établir un rapport de cause/conséquence (juxtaposition) ?",
+                visual: {
+                    title: "Exemple P18",
+                    examples: [{ text: "Jasmin souffre d'une maladie grave : son comportement est affecté.", valid: true }],
+                    note: "La 2e phrase est la conséquence de la 1re."
+                },
+                yes: { type: 'result', value: 'P18' },
+                no: { type: 'node', value: 'P_DP_EXPL' }
+            },
+            'P_DP_EXPL': {
+                text: "Est-ce pour introduire une explication ou une définition (juxtaposition) ?",
+                visual: {
+                    title: "Exemple P19",
+                    examples: [{ text: "Il ne mange pas de dessert : il est diabétique.", valid: true }],
+                    note: "La 2e phrase explique la 1re."
+                },
+                yes: { type: 'result', value: 'P19' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_PAR_INFO': {
+                text: "Est-ce pour encadrer une information accessoire (explication, réflexion, commentaire) ?",
+                yes: { type: 'result', value: 'P20' },
+                no: { type: 'action', value: 'TEACHER' }
+            },
+            'P_GUI_DISCOURS': {
+                text: "Est-ce pour encadrer un discours direct ?",
+                yes: { type: 'result', value: 'P22' },
+                no: { type: 'node', value: 'P_GUI_MOT' }
+            },
+            'P_GUI_MOT': {
+                text: "Est-ce pour encadrer un mot ou une expression que l'auteur désire isoler ?",
+                yes: { type: 'result', value: 'P23' },
+                no: { type: 'node', value: 'P_GUI_CITATION' }
+            },
+            'P_GUI_CITATION': {
+                text: "S'agit-il d'une règle de citation ?",
+                yes: { type: 'result', value: 'P24' },
+                no: { type: 'action', value: 'TEACHER' }
+            }
+        };
+
+        // === STATE ===
+        let currentNodeId = null;
+        let currentCategory = null;
+        let expandedHomophone = null;
+
+        // === NAVIGATION ===
+        function showScreen(screenId) {
+            const screens = ['homeScreen', 'categoryScreen', 'investigationScreen', 'homophoneScreen', 'u5Screen', 'teacherScreen', 'resultScreen'];
+            screens.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function goHome() {
+            currentNodeId = null;
+            currentCategory = null;
+            expandedHomophone = null;
+            showScreen('homeScreen');
+        }
+
+        function startGenie() {
+            showScreen('categoryScreen');
+        }
+
+        function resetToCategory() {
+            currentNodeId = null;
+            expandedHomophone = null;
+            showScreen('categoryScreen');
+        }
+
+        function selectCategory(id, name, color, startNode) {
+            currentCategory = { id, name, color, startNode };
+            currentNodeId = startNode;
+            showInvestigation();
+        }
+
+        function backFromHomophones() {
+            currentNodeId = 'G_START';
+            showInvestigation();
+        }
+
+        function backFromU5() {
+            currentNodeId = 'U_ORTHO';
+            showInvestigation();
+        }
+
+        // === INVESTIGATION ===
+        function showInvestigation() {
+            const node = genieGraph[currentNodeId];
+
+            if (node.type === 'choice') {
+                showChoiceScreen(node);
+            } else {
+                showQuestionScreen(node);
+            }
+        }
+
+        function showQuestionScreen(node) {
+            showScreen('investigationScreen');
+            
+            document.getElementById('questionText').textContent = node.text;
+            
+            // Visual box
+            const visualBox = document.getElementById('visualBox');
+            if (node.visual) {
+                visualBox.classList.remove('hidden');
+                visualBox.innerHTML = `
+                    <h4 class="visual-title">👁️ ${node.visual.title}</h4>
+                    ${node.visual.examples.map(ex => `
+                        <div class="visual-example">
+                            <div class="visual-bullet ${ex.valid ? 'bullet-valid' : 'bullet-invalid'}"></div>
+                            <span>${ex.text}</span>
+                        </div>
+                    `).join('')}
+                    <p class="visual-note">ℹ️ ${node.visual.note}</p>
+                `;
+            } else {
+                visualBox.classList.add('hidden');
+            }
+
+            // Answer buttons
+            document.getElementById('answerButtons').innerHTML = `
+                <button class="answer-button btn-yes" onclick="handleAnswer('yes')">
+                    <span style="font-size: 28px;">✓</span>
+                    OUI
+                </button>
+                <button class="answer-button btn-no" onclick="handleAnswer('no')">
+                    <span style="font-size: 28px;">✗</span>
+                    NON
+                </button>
+            `;
+        }
+
+        function showChoiceScreen(node) {
+            showScreen('investigationScreen');
+            
+            document.getElementById('questionText').textContent = node.text;
+            document.getElementById('visualBox').classList.add('hidden');
+            
+            document.getElementById('answerButtons').innerHTML = '';
+            document.getElementById('answerButtons').style.display = 'grid';
+            document.getElementById('answerButtons').style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
+            document.getElementById('answerButtons').style.gap = '15px';
+            
+            node.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-button';
+                btn.textContent = opt.label;
+                btn.onclick = () => handleChoice(opt.next);
+                document.getElementById('answerButtons').appendChild(btn);
+            });
+        }
+
+        function handleChoice(nextNodeId) {
+            currentNodeId = nextNodeId;
+            showInvestigation();
+        }
+
+        function handleAnswer(answer) {
+            const node = genieGraph[currentNodeId];
+            const action = answer === 'yes' ? node.yes : node.no;
+
+            if (action.type === 'result') {
+                showResult(action.value);
+            } else if (action.type === 'node') {
+                currentNodeId = action.value;
+                showInvestigation();
+            } else if (action.type === 'action') {
+                if (action.value === 'GH_SEARCH') {
+                    showHomophoneList();
+                } else if (action.value === 'U5_CHECK') {
+                    showU5Verification();
+                } else if (action.value === 'TEACHER') {
+                    showTeacher();
+                }
+            }
+        }
+
+        // === HOMOPHONE LIST ===
+        function showHomophoneList() {
+            showScreen('homophoneScreen');
+            const list = document.getElementById('homophoneList');
+            list.innerHTML = '';
+
+            homophonesDB.forEach((family, idx) => {
+                const div = document.createElement('div');
+                div.className = 'homophone-family';
+                div.id = `homophone-${idx}`;
+                
+                div.innerHTML = `
+                    <div class="homophone-header" onclick="toggleHomophone(${idx})">
+                        ${family.label}
+                        <span id="chevron-${idx}">▼</span>
+                    </div>
+                    <div id="content-${idx}" class="homophone-content hidden">
+                        <div class="homophone-items">
+                            ${family.items.map(item => `
+                                <div class="homophone-item">
+                                    <div class="homophone-word">${item.word}</div>
+                                    <div class="homophone-class">${item.classe}</div>
+                                    <div class="homophone-explanation">
+                                        💡 ${item.explication}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="homophone-action">
+                            <div class="homophone-action-text">
+                                <strong>Consigne GH :</strong> Écris l'homophone erroné (et son truc) puis le bon (et son truc).
+                            </div>
+                            <button class="homophone-action-button" onclick="showResult('GH')">
+                                C'est mon erreur !
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        function toggleHomophone(idx) {
+            const wasExpanded = expandedHomophone === idx;
+            
+            // Close all
+            for (let i = 0; i < homophonesDB.length; i++) {
+                const fam = document.getElementById(`homophone-${i}`);
+                const content = document.getElementById(`content-${i}`);
+                const chevron = document.getElementById(`chevron-${i}`);
+                
+                fam.classList.remove('expanded');
+                content.classList.add('hidden');
+                chevron.textContent = '▼';
+            }
+            
+            // Open selected if wasn't already open
+            if (!wasExpanded) {
+                const fam = document.getElementById(`homophone-${idx}`);
+                const content = document.getElementById(`content-${idx}`);
+                const chevron = document.getElementById(`chevron-${idx}`);
+                
+                fam.classList.add('expanded');
+                content.classList.remove('hidden');
+                chevron.textContent = '▲';
+                expandedHomophone = idx;
+            } else {
+                expandedHomophone = null;
+            }
+        }
+
+        // === U5 VERIFICATION ===
+        function showU5Verification() {
+            showScreen('u5Screen');
+        }
+
+        function confirmU5(confirmed) {
+            if (confirmed) {
+                showResult('U5');
+            } else {
+                currentNodeId = 'U_ORTHO';
+                showInvestigation();
+            }
+        }
+
+        // === TEACHER ===
+        function showTeacher() {
+            showScreen('teacherScreen');
+        }
+
+        // === RESULT ===
+        function showResult(code) {
+            showScreen('resultScreen');
+            
+            const rule = rulesDB[code] || { titre: code, regle: "Consulte ton guide." };
+            
+            document.getElementById('resultCode').textContent = code;
+            document.getElementById('resultRuleTitle').textContent = rule.titre;
+            document.getElementById('resultRuleText').textContent = rule.regle;
+            
+            if (rule.special) {
+                document.getElementById('resultSpecial').classList.remove('hidden');
+                document.getElementById('resultSpecialText').textContent = rule.special;
+            } else {
+                document.getElementById('resultSpecial').classList.add('hidden');
+            }
+            
+            if (rule.exemple) {
+                document.getElementById('resultExample').classList.remove('hidden');
+                document.getElementById('resultExampleText').textContent = rule.exemple;
+            } else {
+                document.getElementById('resultExample').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
