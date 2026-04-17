@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogging d'écriture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome JS+SVG version (no webfont needed = no empty squares) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pulse-red { animation: pulse-red 1s infinite; }
+        @keyframes pulse-red {
+            0% { transform: scale(1); color: #ef4444; }
+            50% { transform: scale(1.1); color: #dc2626; }
+            100% { transform: scale(1); color: #ef4444; }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .tip-box {
+            transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            max-height: 0; opacity: 0; overflow: hidden; padding-top: 0; padding-bottom: 0;
+        }
+        .tip-box.open { max-height: 600px; opacity: 1; padding-top: 1rem; padding-bottom: 1rem; }
+
+        .warning-toast { animation: slideIn 0.4s ease-out, fadeOut 0.5s ease 6s forwards; }
+        @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-5px); } }
+
+        .badge-used { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .badge-unused { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+
+        .hint-pulse { animation: hintPulse 2s infinite; }
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+        }
+
+        .stat-card { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Fullscreen overrides */
+        :fullscreen body, :-webkit-full-screen body { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        :fullscreen .main-container, :-webkit-full-screen .main-container {
+            max-width: 800px; margin: auto; border-radius: 1.5rem;
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .main-container { box-shadow: none !important; max-width: 100% !important; }
+            .no-print { display: none !important; }
+            #screen-end { height: auto !important; }
+            #final-sentences-list { max-height: none !important; overflow: visible !important; height: auto !important; }
+        }
+
+        /* Login screen animation */
+        .login-float { animation: loginFloat 3s ease-in-out infinite; }
+        @keyframes loginFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+
+    <!-- Floating buttons: fullscreen + print -->
+    <div class="fixed top-4 right-4 flex gap-2 z-50 no-print">
+        <button onclick="toggleFullscreen()" id="btn-fullscreen" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all" title="Plein écran">
+            <i class="fas fa-expand"></i>
+        </button>
+        <button onclick="printResults()" id="btn-print" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Imprimer en PDF">
+            <i class="fas fa-print"></i>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden relative main-container">
+        
+        <!-- Progress Bar -->
+        <div id="progress-container" class="w-full h-2 bg-slate-100 hidden">
+            <div id="progress-bar" class="h-full bg-orange-500 transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+        </div>
+
+        <div class="p-8 sm:p-10">
+
+            <!-- ================= LOGIN SCREEN ================= -->
+            <div id="screen-login" class="text-center space-y-6">
+                <div class="login-float inline-block p-5 bg-orange-100 rounded-full mb-2 text-orange-500">
+                    <i class="fas fa-pencil-alt text-5xl"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-slate-800">Jogging d'écriture</h1>
+                <p class="text-slate-500 text-lg">Prépare-toi à écrire le plus vite possible !</p>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner space-y-4">
+                    <div>
+                        <label for="student-name" class="block font-bold text-slate-700 mb-2">
+                            <i class="fas fa-user text-orange-500 mr-2"></i>Ton prénom et nom :
+                        </label>
+                        <input type="text" id="student-name" 
+                            class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg transition-all outline-none"
+                            placeholder="Ex: Marie Tremblay" autocomplete="off">
+                    </div>
+                    <div>
+                        <label for="student-group" class="block font-bold text-slate-700 mb-2">
+                            <i class="fas fa-users text-orange-500 mr-2"></i>Ton numéro de groupe :
+                        </label>
+                        <select id="student-group" 
+                            class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg transition-all outline-none bg-white cursor-pointer">
+                            <option value="" disabled selected>Choisis ton groupe…</option>
+                            <option value="101">Groupe 101</option>
+                            <option value="102">Groupe 102</option>
+                            <option value="103">Groupe 103</option>
+                            <option value="104">Groupe 104</option>
+                            <option value="105">Groupe 105</option>
+                            <option value="106">Groupe 106</option>
+                            <option value="107">Groupe 107</option>
+                            <option value="108">Groupe 108</option>
+                            <option value="109">Groupe 109</option>
+                            <option value="110">Groupe 110</option>
+                            <option value="111">Groupe 111</option>
+                            <option value="112">Groupe 112</option>
+                            <option value="113">Groupe 113</option>
+                            <option value="114">Groupe 114</option>
+                            <option value="115">Groupe 115</option>
+                            <option value="116">Groupe 116</option>
+                            <option value="117">Groupe 117</option>
+                        </select>
+                    </div>
+                    <div id="login-error" class="text-red-500 text-sm font-bold hidden">
+                        <i class="fas fa-exclamation-circle mr-1"></i> Remplis ton nom et choisis ton groupe avant de continuer.
+                    </div>
+                </div>
+
+                <button onclick="loginStudent()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    C'est parti ! <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                <div>
+                    <button onclick="showLeaderboard()" class="px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-base transition-all border border-amber-300">
+                        🏆 Voir le palmarès des groupes
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- ================= LEADERBOARD SCREEN ================= -->
+            <div id="screen-leaderboard" class="hidden text-center space-y-5">
+                <div class="flex items-center justify-between">
+                    <button onclick="switchScreen(lastScreenBeforeLeaderboard || 'login')" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 transition-all">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1 class="text-3xl font-extrabold text-slate-800">🏆 Palmarès</h1>
+                    <button onclick="showLeaderboard()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 transition-all" title="Rafraîchir">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <div id="leaderboard-loading" class="py-10 text-slate-400 text-lg font-bold">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Chargement du palmarès…
+                </div>
+
+                <div id="leaderboard-error" class="hidden py-8 text-red-500 font-bold">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Impossible de charger le palmarès. Vérifie ta connexion.
+                    <div class="mt-3">
+                        <button onclick="showLeaderboard()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-sm">Réessayer</button>
+                    </div>
+                </div>
+
+                <div id="leaderboard-content" class="hidden">
+                    <div id="leaderboard-podium" class="flex justify-center items-end gap-3 mb-6"></div>
+                    <div class="overflow-y-auto custom-scrollbar max-h-[350px] bg-slate-50 rounded-2xl border border-slate-200">
+                        <table class="w-full text-sm">
+                            <thead class="sticky top-0 bg-slate-100 text-slate-500 uppercase text-xs font-bold">
+                                <tr>
+                                    <th class="py-3 px-3 text-left">Rang</th>
+                                    <th class="py-3 px-3 text-left">Groupe</th>
+                                    <th class="py-3 px-2 text-center">A</th>
+                                    <th class="py-3 px-2 text-center">B</th>
+                                    <th class="py-3 px-2 text-center">C</th>
+                                    <th class="py-3 px-3 text-right font-extrabold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-3 italic">Dernière mise à jour : <span id="leaderboard-time"></span></p>
+                </div>
+            </div>
+
+
+            <!-- ================= START SCREEN ================= -->
+            <div id="screen-start" class="hidden text-center space-y-6">
+                <!-- Student badge -->
+                <div id="student-badge" class="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm font-bold text-slate-600 no-print">
+                    <i class="fas fa-user-circle text-orange-500"></i>
+                    <span id="badge-name"></span> — <span id="badge-group"></span>
+                </div>
+
+                <!-- Mode Selector -->
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button onclick="setMode('A')" id="btn-mode-A" class="px-6 py-2 rounded-full font-bold transition-colors bg-orange-500 text-white shadow-md">Jogging A</button>
+                    <button onclick="setMode('B')" id="btn-mode-B" class="px-6 py-2 rounded-full font-bold transition-colors bg-slate-200 text-slate-600 hover:bg-slate-300">Jogging B</button>
+                    <button onclick="setMode('C')" id="btn-mode-C" class="px-6 py-2 rounded-full font-bold transition-colors bg-slate-200 text-slate-600 hover:bg-slate-300">Jogging C</button>
+                </div>
+
+                <div class="inline-block p-4 bg-orange-100 rounded-full mb-4 text-orange-500">
+                    <i id="start-icon" class="fas fa-running text-5xl"></i>
+                </div>
+                <h1 id="start-title" class="text-4xl font-extrabold text-slate-800">Jogging d'écriture A</h1>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner">
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-bullseye text-orange-500 mr-2"></i>Mission :</h2>
+                    <p id="start-mission" class="text-slate-600 mb-4 text-lg"></p>
+                    
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-clipboard-list text-orange-500 mr-2"></i>Consigne stricte :</h2>
+                    <p id="start-consigne" class="text-slate-600 text-lg leading-relaxed"></p>
+                    <div class="mt-4 p-4 bg-orange-100 rounded-xl text-orange-800 font-medium leading-relaxed">
+                        <i class="fas fa-lightbulb text-orange-600 mr-2"></i>Exemple : <span id="start-exemple" class="inline-block mt-1"></span>
+                    </div>
+                </div>
+
+                <div id="start-tip-container"></div>
+
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    Prêt ? Commencer ! <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+
+            <!-- ================= GAME SCREEN ================= -->
+            <div id="screen-game" class="hidden flex flex-col h-[650px]">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-stopwatch text-3xl text-slate-400" id="timer-icon"></i>
+                        <span id="timer-display" class="text-4xl font-black text-slate-700 tracking-wider">03:00</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-skip-game" class="hidden flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold transition-all shadow-sm border border-indigo-200" title="Passer à la suite">
+                            <span class="hidden sm:inline text-sm" id="skip-text-game">Passer au B</span>
+                            <i class="fas fa-forward"></i>
+                        </button>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Phrases</div>
+                            <div id="score-display" class="text-4xl font-black text-orange-500">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 text-blue-800 p-3 rounded-xl mb-3 text-sm font-semibold flex items-center border border-blue-100 shadow-sm">
+                    <i class="fas fa-info-circle mr-3 text-blue-500 text-lg"></i>
+                    <span id="game-reminder"></span>
+                </div>
+
+                <div id="diversity-tracker" class="hidden mb-3">
+                    <div class="flex items-center gap-2 flex-wrap" id="diversity-badges"></div>
+                </div>
+
+                <div id="warning-area" class="mb-2 min-h-0"></div>
+
+                <div id="transform-container" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-3 shadow-sm relative">
+                    <div class="text-xs font-bold text-indigo-400 uppercase tracking-wide mb-1">Phrase à transformer :</div>
+                    <div id="transform-text" class="text-indigo-800 text-lg font-medium"></div>
+                    <div class="absolute right-3 top-3 text-indigo-300"><i class="fas fa-exchange-alt"></i></div>
+                </div>
+
+                <div class="relative mb-1">
+                    <input type="text" id="sentence-input"
+                        class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-2xl p-4 text-lg transition-all outline-none pr-28 shadow-inner"
+                        placeholder="Écris ta phrase ici et appuie sur Entrée…"
+                        autocomplete="off">
+                    <div class="absolute right-3 top-3 bottom-3 flex gap-2">
+                        <button id="btn-hint" onclick="giveHint()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-600 rounded-xl w-10 flex items-center justify-center transition-colors hint-pulse" title="Je bloque ! Donne-moi une idée">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                        <button onclick="submitSentence()" class="bg-orange-500 hover:bg-orange-600 text-white rounded-xl w-12 flex items-center justify-center transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="error-message" class="text-red-500 text-sm font-bold h-auto min-h-[24px] ml-2 transition-opacity opacity-0">
+                    Message d'erreur
+                </div>
+
+                <div class="flex justify-end mb-1 no-print">
+                    <button id="btn-game-tip" onclick="toggleGameTip()" class="text-xs text-indigo-500 hover:text-indigo-700 font-bold flex items-center gap-1 transition-colors">
+                        <i class="fas fa-graduation-cap"></i> <span id="game-tip-label">Voir les astuces</span>
+                    </button>
+                </div>
+                <div id="game-tip-box" class="tip-box bg-indigo-50 border border-indigo-200 rounded-xl px-4 text-sm text-indigo-800 leading-relaxed mb-2"></div>
+
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50 rounded-2xl p-4 border border-slate-200" id="sentences-list">
+                    <div class="text-center text-slate-400 mt-10 italic" id="empty-state">
+                        Tes phrases validées apparaîtront ici.
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ================= END SCREEN ================= -->
+            <div id="screen-end" class="hidden text-center flex flex-col h-[650px]">
+                <div class="flex-shrink-0">
+                    <!-- Print header (only visible when printing) -->
+                    <div class="hidden print:block text-left mb-4 pb-3 border-b-2 border-slate-300">
+                        <div class="text-2xl font-extrabold text-slate-800">Jogging d'écriture — Résultats</div>
+                        <div class="text-slate-600 mt-1">
+                            <span id="print-name"></span> | <span id="print-group"></span> | <span id="print-mode"></span> | <span id="print-date"></span>
+                        </div>
+                    </div>
+
+                    <h2 id="end-title" class="text-5xl font-black text-slate-800 mb-2">Temps écoulé !</h2>
+                    <p class="text-slate-500 text-lg mb-4">Excellent travail. Voici ton bilan :</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="stats-grid"></div>
+                </div>
+
+                <div class="text-left font-bold text-slate-700 mb-2">Ta production :</div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left mb-4" id="final-sentences-list"></div>
+
+                <div class="flex-shrink-0 w-full flex flex-col gap-3 no-print">
+                    <!-- Send results button -->
+                    <button id="btn-send-results" onclick="sendResults()" class="w-full px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full text-xl shadow-lg transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i> <span id="send-text">Envoyer mes résultats</span>
+                    </button>
+                    <div id="send-status" class="text-sm font-bold text-center hidden"></div>
+
+                    <button onclick="showLeaderboard()" class="w-full px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-lg transition-all border border-amber-300">
+                        🏆 Voir le palmarès des groupes
+                    </button>
+
+                    <button id="btn-next-level" onclick="startNextLevel()" class="hidden w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full text-xl shadow-lg transition-all">
+                        <span id="next-level-text">Passer au niveau suivant</span> <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                    <button onclick="resetGame()" class="w-full px-8 py-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-full text-xl shadow-lg transition-all">
+                        <i class="fas fa-redo-alt mr-2"></i> Menu principal
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        // ══════════════════════════════════════════════════════════════
+        // ▶ CONFIGURATION : Collez ici l'URL de votre Google Apps Script
+        // ══════════════════════════════════════════════════════════════
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgbqJ8nrfEL196QS0ayh4qgKmyzEoD3ihek61uSLx1T2itB4Ky69QGzzzcb8IGUonc6g/exec';
+        // ══════════════════════════════════════════════════════════════
+
+
+        // ===================== STATE =====================
+        const TOTAL_TIME = 180;
+        let timeLeft = TOTAL_TIME;
+        let timerInterval = null;
+        let score = 0;
+        let writtenSentences = [];
+        let pendingTransformations = [];
+        let currentMode = 'A';
+        let studentName = '';
+        let studentGroup = '';
+
+        // Tracking for diversity
+        let usedVerbs = [];
+        let usedVerbForms = [];
+        let usedNegForms = [];
+        let usedCPTypes = [];
+        let usedSubjects = [];
+        let gameTipOpen = false;
+
+        // Track totals across all modes for final submission
+        let totalPhrasesA = 0;
+        let totalPhrasesB = 0;
+        let totalPhrasesC = 0;
+        let totalVerbsA = 0;
+        let totalCPTypes = 0;
+        let totalNegForms = 0;
+
+        // ===================== VOCABULARY =====================
+        const verbBlacklist = ['est','était','sera','serait','sont','étaient','seront','seraient','a','avait','aura','aurait','ont','avaient','auront','auraient','suis','es','sommes','êtes','as','avons','avez','vais','vas','va','allons','allez','vont','fais','fait','faisons','faites','font','joue','jouent','mange','mangent','court','courent','aime','aiment','veut','veulent','peut','peuvent','doit','doivent','dit','disent','voit','voient','sait','savent','prend','prennent','met','mettent','semble','semblent','devient','deviennent','reste','restent','adore','adorent','déteste','détestent','préfère','préfèrent','marche','marchent','pleure','pleurent','parle','parlent','regarde','regardent','écoute','écoutent','saute','sautent','tombe','tombent','dort','dorment','finit','finissent','pense','pensent','donne','donnent','trouve','trouvent','cherche','cherchent','lit','lisent','écrit','écrivent','pars','part','partent','sort','sortent'];
+        const adverbList = ['bien','beaucoup','trop','peu','assez','souvent','toujours','parfois','vite','mal','pas','plus','jamais'];
+
+        const verbToInfinitive = {
+            'est':'être','était':'être','sera':'être','serait':'être','sont':'être','étaient':'être','seront':'être','seraient':'être','suis':'être','es':'être','sommes':'être','êtes':'être',
+            'a':'avoir','avait':'avoir','aura':'avoir','aurait':'avoir','ont':'avoir','avaient':'avoir','auront':'avoir','auraient':'avoir','as':'avoir','avons':'avoir','avez':'avoir',
+            'vais':'aller','vas':'aller','va':'aller','allons':'aller','allez':'aller','vont':'aller',
+            'fais':'faire','fait':'faire','faisons':'faire','faites':'faire','font':'faire',
+            'joue':'jouer','jouent':'jouer','mange':'manger','mangent':'manger',
+            'court':'courir','courent':'courir','aime':'aimer','aiment':'aimer',
+            'veut':'vouloir','veulent':'vouloir','peut':'pouvoir','peuvent':'pouvoir',
+            'doit':'devoir','doivent':'devoir','dit':'dire','disent':'dire',
+            'voit':'voir','voient':'voir','sait':'savoir','savent':'savoir',
+            'prend':'prendre','prennent':'prendre','met':'mettre','mettent':'mettre',
+            'semble':'sembler','semblent':'sembler','devient':'devenir','deviennent':'devenir',
+            'reste':'rester','restent':'rester','adore':'adorer','adorent':'adorer',
+            'déteste':'détester','détestent':'détester','préfère':'préférer','préfèrent':'préférer',
+            'marche':'marcher','marchent':'marcher','pleure':'pleurer','pleurent':'pleurer',
+            'parle':'parler','parlent':'parler','regarde':'regarder','regardent':'regarder',
+            'écoute':'écouter','écoutent':'écouter','saute':'sauter','sautent':'sauter',
+            'tombe':'tomber','tombent':'tomber','dort':'dormir','dorment':'dormir',
+            'finit':'finir','finissent':'finir','pense':'penser','pensent':'penser',
+            'donne':'donner','donnent':'donner','trouve':'trouver','trouvent':'trouver',
+            'cherche':'chercher','cherchent':'chercher','lit':'lire','lisent':'lire',
+            'écrit':'écrire','écrivent':'écrire','pars':'partir','part':'partir','partent':'partir',
+            'sort':'sortir','sortent':'sortir'
+        };
+
+        function isVerb(word) {
+            if (!word) return false;
+            const c = word.toLowerCase().replace(/^(j'|m'|t'|s'|l'|qu'|n'|c'|ç')/i,'').replace(/[^\wÀ-ÿ]/g,'');
+            return verbBlacklist.includes(c) || c.endsWith('aient') ||
+                   (c.endsWith('ait') && !['lait','trait','parfait','satisfait','portrait','souhait','attrait','fait','plait'].includes(c));
+        }
+
+        function getInfinitive(word) {
+            const c = word.toLowerCase().replace(/^(j'|m'|t'|s'|l'|qu'|n'|c'|ç')/i,'').replace(/[^\wÀ-ÿ]/g,'');
+            if (verbToInfinitive[c]) return verbToInfinitive[c];
+            if (c.endsWith('aient')||c.endsWith('ait')||c.endsWith('ais')) { const s=c.replace(/(aient|ait|ais)$/,''); if(s.length>=2) return s+'er'; }
+            if (c.endsWith('ent')&&c.length>4) { const s=c.replace(/ent$/,''); if(s.length>=2) return s+'er'; }
+            return c;
+        }
+
+        function findMainVerb(words) {
+            for (const w of words) {
+                const c = w.toLowerCase().replace(/^(j'|m'|t'|s'|l'|qu'|n'|c'|ç')/i,'').replace(/[^\wÀ-ÿ]/g,'');
+                if (isVerb(w) || verbBlacklist.includes(c)) return w;
+            }
+            for (const w of words) {
+                const c = w.toLowerCase().replace(/^(j'|m'|t'|s'|l'|qu'|n'|c'|ç')/i,'').replace(/[^\wÀ-ÿ]/g,'');
+                if (c.endsWith('ais')||c.endsWith('ait')||c.endsWith('aient')||c.endsWith('ons')||c.endsWith('ez')||c.endsWith('ont')||(c.endsWith('ent')&&c.length>4)||(c.endsWith('er')&&c.length>3)||c.endsWith('ira')||c.endsWith('iront')) return w;
+            }
+            return null;
+        }
+
+        // ===================== NEGATION FORMS =====================
+        const NEG_FORMS = {
+            'pas':      { label:'ne… pas',      example:'Je ne mange pas de pommes.' },
+            'plus':     { label:'ne… plus',      example:'Il ne court plus le matin.' },
+            'jamais':   { label:'ne… jamais',    example:'Elle ne ment jamais.' },
+            'rien':     { label:'ne… rien',      example:'Nous ne voyons rien.' },
+            'personne': { label:'ne… personne',  example:'Tu ne connais personne ici.' },
+            'aucun':    { label:'ne… aucun(e)',   example:"Je n'ai aucune idée." },
+            'guère':    { label:'ne… guère',     example:'Il ne travaille guère.' },
+            'nulle part':{ label:'ne… nulle part', example:'On ne va nulle part.' }
+        };
+
+        function detectNegForm(text) {
+            const l = text.toLowerCase();
+            if (/\bnulle\s+part\b/.test(l)) return 'nulle part';
+            if (/\b(aucun|aucune)\b/.test(l)) return 'aucun';
+            for (const nw of ['personne','rien','guère','jamais','plus','pas']) {
+                if (new RegExp('\\b'+nw+'\\b','i').test(l)) return nw;
+            }
+            return null;
+        }
+
+        // ===================== CP TYPES =====================
+        const CP_TYPES = {
+            'temps':   { label:'⏰ Temps (quand ?)', starters:['hier','demain','ce matin','ce soir','la semaine dernière',"l'an dernier",'chaque jour','pendant','durant','avant','après','lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche','en janvier','au mois de','à midi','tôt','tard','bientôt','autrefois','jadis','soudain',"aujourd'hui",'maintenant','longtemps','toujours','souvent','parfois','en été','en hiver','en automne','au printemps','la nuit','le matin',"l'après-midi",'depuis','dès','quand','lorsque'], examples:['"Chaque matin, je promène mon chien."','"La semaine dernière, nous avons visité le musée."'] },
+            'lieu':    { label:'📍 Lieu (où ?)', starters:['dans','à','au','aux','chez','sur','sous','devant','derrière','entre','près de','près du','loin de','en face de','au milieu de','en','là-bas','ici','ailleurs','partout','dehors'], examples:['"Dans la cour d\'école, les élèves jouent au ballon."','"Chez ma grand-mère, nous mangeons de la tarte."'] },
+            'manière': { label:'🎨 Manière (comment ?)', starters:['avec','sans','grâce à','en souriant','en courant','en chantant','doucement','lentement','rapidement','silencieusement','joyeusement','prudemment','fièrement','courageusement','délicatement','brusquement','soudainement','en silence','à toute vitesse','avec soin','en riant'], examples:['"Avec beaucoup de courage, le chevalier affronte le dragon."','"En silence, les élèves écoutent l\'histoire."'] },
+            'but':     { label:'🎯 But (pourquoi ?)', starters:['pour','afin de',"afin d'",'dans le but de',"dans l'espoir de"], examples:['"Pour réussir son examen, Léa étudie chaque soir."','"Afin de se réchauffer, le chat se couche près du feu."'] },
+            'cause':   { label:'🔍 Cause (pourquoi ?)', starters:['à cause de','à cause du',"à cause d'",'en raison de','grâce à',"puisqu'","parce qu'"], examples:['"À cause de la pluie, le match est annulé."','"Grâce à son talent, Marie remporte le concours."'] }
+        };
+
+        function detectCPType(cpText) {
+            const l = cpText.toLowerCase().trim();
+            for (const [type, data] of Object.entries(CP_TYPES)) {
+                for (const s of data.starters) { if (l.startsWith(s)||l===s) return type; }
+            }
+            if (/^(hier|demain|aujourd|maintenant|bientôt|autrefois|jadis|soudain|longtemps|tôt|tard|souvent|parfois|toujours|finalement|récemment)/.test(l)) return 'temps';
+            return null;
+        }
+
+        function detectSubject(words) {
+            if (!words.length) return null;
+            const f = words[0].toLowerCase().replace(/[^\wÀ-ÿ']/g,'');
+            if (f==="j'"||f==="j"||f==="je") return "je";
+            if (['il','elle','on','nous','vous','ils','elles','tu'].includes(f)) return f;
+            return f;
+        }
+
+        // ===================== HINT SYSTEM =====================
+        const HINT_VERBS = ['observait','dévorait','construisait','dessinait','découvrait','escaladait','inventait','rêvait','préparait','réparait','photographiait','sculptait','explorait','traversait','ramassait','plantait','cuisinait','décorait','nettoyait','transportait','organisait','composait','creusait','protégeait','nourrissait'];
+        const HINT_SUBJECTS = ['le chat','ma sœur','mon ami',"l'enseignante",'les enfants','un vieux monsieur','la directrice','mon voisin','une petite fille','le boulanger','mon grand-père',"l'astronaute",'le pompier','la docteure','un étudiant'];
+        const HINT_CPS = {
+            temps: ['Ce matin','Hier soir','La semaine dernière','Chaque dimanche','Pendant les vacances','Au mois de décembre','Depuis trois jours','Avant le souper'],
+            lieu: ['Dans le parc',"À l'école",'Au centre commercial','Chez mon ami','Sur le trottoir','Devant la bibliothèque','Dans la forêt','Au bord du lac'],
+            manière: ['Avec enthousiasme','En silence','Avec beaucoup de soin','En courant','Doucement','Prudemment','Avec fierté','En souriant'],
+            but: ['Pour se réchauffer','Afin de gagner','Pour impressionner ses amis','Dans le but de réussir'],
+            cause: ['À cause de la tempête','Grâce à son courage','En raison du froid','À cause du bruit']
+        };
+
+        function giveHint() {
+            let hint = '';
+            if (currentMode === 'A') {
+                const allTypes = Object.keys(CP_TYPES);
+                const unused = allTypes.filter(t => !usedCPTypes.includes(t));
+                let cpSuggestion = '';
+                if (unused.length > 0) {
+                    const type = unused[Math.floor(Math.random()*unused.length)];
+                    const pool = HINT_CPS[type];
+                    cpSuggestion = pool[Math.floor(Math.random()*pool.length)];
+                    hint = `💡 Essaie un CP de <strong>${CP_TYPES[type].label}</strong> ! Par exemple : « ${cpSuggestion}, … »`;
+                } else {
+                    cpSuggestion = HINT_CPS.temps[Math.floor(Math.random()*HINT_CPS.temps.length)];
+                    hint = `💡 Continue ! Essaie : « ${cpSuggestion}, … »`;
+                }
+                const unusedV = HINT_VERBS.filter(v => !usedVerbs.includes(getInfinitive(v)) && !usedVerbForms.includes(v.toLowerCase()));
+                if (unusedV.length > 0) {
+                    const verb = unusedV[Math.floor(Math.random()*unusedV.length)];
+                    const subj = HINT_SUBJECTS[Math.floor(Math.random()*HINT_SUBJECTS.length)];
+                    hint += `<br>🔤 Verbe à essayer : <strong>${verb}</strong> (ex: « ${cpSuggestion}, ${subj} ${verb}… »)`;
+                }
+            } else if (currentMode === 'B') {
+                const allForms = Object.keys(NEG_FORMS);
+                const unused = allForms.filter(f => !usedNegForms.includes(f));
+                if (unused.length > 0) {
+                    const form = unused[Math.floor(Math.random()*unused.length)];
+                    hint = `💡 Tu n'as pas encore utilisé <strong>${NEG_FORMS[form].label}</strong>.<br>📝 Exemple : « ${NEG_FORMS[form].example} »`;
+                } else {
+                    hint = `💡 Tu as utilisé toutes les formes de négation, bravo ! Continue avec des verbes différents.`;
+                }
+            } else {
+                hint = `💡 Pense à changer : le déterminant (le → les), le nom (+s/+x), l'adjectif (+s/+x), et le verbe (mange → mangent).<br>🔤 Commence par le sujet au pluriel et accorde tout le reste !`;
+            }
+            showWarning(hint, 'indigo');
+        }
+
+        // ===================== MODE CONFIG =====================
+        const MODES = {
+            'A': {
+                title: "Jogging d'écriture A",
+                mission: "Écrire <strong>le plus de phrases possibles</strong> en 3 minutes.<br><span class='text-sm text-slate-500'>⚡ Défi : utilise un <u>verbe différent</u> à chaque phrase et <u>varie</u> tes compléments !</span>",
+                consigne: "Le complément de phrase (CP) est un groupe de mots qui peut <strong>s'effacer</strong> et se <strong>déplacer</strong>.<br>Pour ce jogging, chaque phrase doit <u>obligatoirement</u> être une <strong>phrase déclarative</strong> (point à la fin) et commencer par un <strong>CP</strong> séparé par une <strong>virgule</strong>, suivi du sujet et du prédicat.",
+                exemple: '"Hier matin, je déjeunais des œufs et du bacon."',
+                rappel: "<strong>Rappel :</strong> CP (effaçable/déplaçable) + Virgule + Sujet + Prédicat + Point (.).",
+                icon: "fa-running"
+            },
+            'B': {
+                title: "Jogging d'écriture B",
+                mission: "Écrire <strong>le plus de phrases négatives possibles</strong> en 3 minutes.<br><span class='text-sm text-slate-500'>⚡ Défi : utilise une <u>forme de négation différente</u> à chaque phrase !</span>",
+                consigne: "La forme négative sert à nier quelque chose. On utilise des mots de négation (les « lunettes ») comme <em>ne… pas, n'… jamais, ne… plus</em>.<br>Pour ce jogging, tu dois <u>obligatoirement</u> <strong>transformer</strong> tes phrases du Jogging A en phrases négatives.",
+                exemple: '<div class="text-sm text-slate-500 mb-1 mt-1">Phrase du Jogging A : "Hier matin, je déjeunais des œufs et du bacon."</div><div class="text-orange-800"><i class="fas fa-arrow-right text-orange-500 mr-2"></i>"Hier matin, je <strong>ne</strong> déjeunais <strong>pas</strong> des œufs et du bacon."</div>',
+                rappel: "<strong>Rappel :</strong> Majuscule + Mots de négation (les « lunettes ») + Point.",
+                icon: "fa-ban"
+            },
+            'C': {
+                title: "Jogging d'écriture C",
+                mission: "Écrire <strong>le plus de phrases au pluriel possibles</strong> en 3 minutes.",
+                consigne: "Le pluriel indique qu'il y a plusieurs personnes ou objets. Attention aux accords (déterminants, noms, adjectifs et verbes).<br>Pour ce jogging, tu dois <u>obligatoirement</u> <strong>transformer</strong> tes phrases du Jogging B en les mettant au <strong>pluriel</strong>.",
+                exemple: '<div class="text-sm text-slate-500 mb-1 mt-1">Phrase du Jogging B : "Hier matin, l\'élève n\'a pas mangé son œuf."</div><div class="text-orange-800"><i class="fas fa-arrow-right text-orange-500 mr-2"></i>"Hier matin, <strong>les</strong> élève<strong>s</strong> n\'<strong>ont</strong> pas mangé <strong>leurs</strong> œuf<strong>s</strong>."</div>',
+                rappel: "<strong>Rappel :</strong> Majuscule + Groupes de mots au pluriel (accords) + Point.",
+                icon: "fa-layer-group"
+            }
+        };
+
+        // ===================== TIP BOX HTML =====================
+        function getTipHTML(mode) {
+            if (mode === 'A') {
+                let rows = '';
+                for (const [type, data] of Object.entries(CP_TYPES)) {
+                    rows += `<tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap align-top">${data.label}</td><td class="py-2 text-indigo-700">${data.examples.map(e=>`<div>${e}</div>`).join('')}</td></tr>`;
+                }
+                return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — Les types de compléments de phrase</div><p class="text-indigo-700">Un complément de phrase (CP) peut exprimer différentes choses. Essaie de varier !</p><table class="w-full text-sm">${rows}</table></div>`;
+            }
+            if (mode === 'B') {
+                let rows = '';
+                for (const [key, data] of Object.entries(NEG_FORMS)) {
+                    rows += `<tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap">${data.label}</td><td class="py-2 text-indigo-700">${data.example}</td></tr>`;
+                }
+                return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — Les formes de négation</div><p class="text-indigo-700">En français, il existe plusieurs façons de nier. Les « lunettes de négation » sont toujours en deux parties :</p><table class="w-full text-sm">${rows}</table><p class="text-xs text-indigo-500 mt-1">💡 Le premier mot est toujours <strong>ne</strong> (ou <strong>n'</strong> devant une voyelle). Le deuxième mot change selon ce que tu veux nier !</p></div>`;
+            }
+            if (mode === 'C') {
+                return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — Accords au pluriel</div><p class="text-indigo-700">Pour mettre une phrase au pluriel, il faut accorder <strong>4 éléments</strong> :</p><table class="w-full text-sm"><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">1. Déterminant</td><td class="py-2 text-indigo-700">le → <strong>les</strong>, un → <strong>des</strong>, mon → <strong>mes</strong>, son → <strong>ses</strong>…</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">2. Nom</td><td class="py-2 text-indigo-700">chat → chat<strong>s</strong>, animal → anima<strong>ux</strong></td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">3. Adjectif</td><td class="py-2 text-indigo-700">petit → petit<strong>s</strong>, beau → bea<strong>ux</strong></td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">4. Verbe</td><td class="py-2 text-indigo-700">mange → mange<strong>nt</strong>, finit → finisse<strong>nt</strong></td></tr></table><p class="text-xs text-indigo-500 mt-1">💡 Lis ta phrase à voix haute au pluriel pour vérifier que tout « sonne » bien !</p></div>`;
+            }
+            return '';
+        }
+
+        // ===================== DOM =====================
+        const screens = { login: document.getElementById('screen-login'), start: document.getElementById('screen-start'), game: document.getElementById('screen-game'), end: document.getElementById('screen-end'), leaderboard: document.getElementById('screen-leaderboard') };
+        let lastScreenBeforeLeaderboard = 'login';
+        const timerDisplay = document.getElementById('timer-display');
+        const timerIcon = document.getElementById('timer-icon');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const sentenceInput = document.getElementById('sentence-input');
+        const sentencesList = document.getElementById('sentences-list');
+        const emptyState = document.getElementById('empty-state');
+        const errorMessage = document.getElementById('error-message');
+        const finalSentencesList = document.getElementById('final-sentences-list');
+        const endTitle = document.getElementById('end-title');
+        const btnSkipGame = document.getElementById('btn-skip-game');
+        const skipTextGame = document.getElementById('skip-text-game');
+        const transformContainer = document.getElementById('transform-container');
+        const transformText = document.getElementById('transform-text');
+        const btnNextLevel = document.getElementById('btn-next-level');
+        const nextLevelText = document.getElementById('next-level-text');
+        const startTitle = document.getElementById('start-title');
+        const startMission = document.getElementById('start-mission');
+        const startConsigne = document.getElementById('start-consigne');
+        const startExemple = document.getElementById('start-exemple');
+        const startIcon = document.getElementById('start-icon');
+        const gameReminder = document.getElementById('game-reminder');
+        const startTipContainer = document.getElementById('start-tip-container');
+        const diversityTracker = document.getElementById('diversity-tracker');
+        const diversityBadges = document.getElementById('diversity-badges');
+        const warningArea = document.getElementById('warning-area');
+        const gameTipBox = document.getElementById('game-tip-box');
+        const gameTipLabel = document.getElementById('game-tip-label');
+        const statsGrid = document.getElementById('stats-grid');
+        const btnPrint = document.getElementById('btn-print');
+
+        sentenceInput.addEventListener('keypress', e => { if (e.key === 'Enter') submitSentence(); });
+
+        // ===================== SCREEN SWITCH =====================
+        function switchScreen(name) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[name].classList.remove('hidden');
+            // Show print button only on end screen
+            btnPrint.classList.toggle('hidden', name !== 'end');
+        }
+
+        function formatTime(s) {
+            return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0');
+        }
+
+        // ===================== LOGIN =====================
+        function loginStudent() {
+            const nameInput = document.getElementById('student-name');
+            const groupInput = document.getElementById('student-group');
+            const loginError = document.getElementById('login-error');
+            
+            studentName = nameInput.value.trim();
+            studentGroup = groupInput.value;
+
+            if (!studentName || !studentGroup) {
+                loginError.classList.remove('hidden');
+                return;
+            }
+            loginError.classList.add('hidden');
+
+            document.getElementById('badge-name').textContent = studentName;
+            document.getElementById('badge-group').textContent = 'Groupe ' + studentGroup;
+
+            setMode('A');
+            switchScreen('start');
+        }
+
+        // ===================== FULLSCREEN =====================
+        function toggleFullscreen() {
+            const btn = document.getElementById('btn-fullscreen');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    btn.innerHTML = '<i class="fas fa-compress"></i>';
+                    btn.title = 'Quitter le plein écran';
+                }).catch(() => {});
+            } else {
+                document.exitFullscreen().then(() => {
+                    btn.innerHTML = '<i class="fas fa-expand"></i>';
+                    btn.title = 'Plein écran';
+                }).catch(() => {});
+            }
+        }
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.getElementById('btn-fullscreen');
+            if (!document.fullscreenElement) {
+                btn.innerHTML = '<i class="fas fa-expand"></i>';
+                btn.title = 'Plein écran';
+            }
+        });
+
+        // ===================== PRINT =====================
+        function printResults() {
+            // Fill print header
+            document.getElementById('print-name').textContent = studentName;
+            document.getElementById('print-group').textContent = 'Groupe ' + studentGroup;
+            document.getElementById('print-mode').textContent = 'Jogging ' + currentMode;
+            document.getElementById('print-date').textContent = new Date().toLocaleDateString('fr-CA');
+            window.print();
+        }
+
+        // ===================== TIP TOGGLE =====================
+        function toggleGameTip() {
+            gameTipOpen = !gameTipOpen;
+            gameTipBox.classList.toggle('open', gameTipOpen);
+            gameTipLabel.textContent = gameTipOpen ? 'Masquer les astuces' : 'Voir les astuces';
+        }
+
+        function showWarning(msg, color='amber') {
+            const colors = { amber:'bg-amber-50 border-amber-200 text-amber-800', indigo:'bg-indigo-50 border-indigo-200 text-indigo-800', green:'bg-green-50 border-green-200 text-green-800' };
+            const el = document.createElement('div');
+            el.className = `warning-toast p-3 rounded-xl text-sm font-semibold border ${colors[color]||colors.amber} flex items-start gap-2 mb-1`;
+            el.innerHTML = `<span class="flex-shrink-0 mt-0.5">⚠️</span><span>${msg}</span>`;
+            warningArea.appendChild(el);
+            setTimeout(() => el.remove(), 7000);
+        }
+
+        // ===================== DIVERSITY BADGES =====================
+        function updateDiversityBadges() {
+            diversityBadges.innerHTML = '';
+            if (currentMode === 'A') {
+                diversityTracker.classList.remove('hidden');
+                for (const [type, data] of Object.entries(CP_TYPES)) {
+                    const used = usedCPTypes.includes(type);
+                    const b = document.createElement('span');
+                    b.className = `inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${used?'badge-used':'badge-unused'}`;
+                    b.innerHTML = `${used?'✅ ':''} ${data.label.split('(')[0].trim()}`;
+                    diversityBadges.appendChild(b);
+                }
+            } else if (currentMode === 'B') {
+                diversityTracker.classList.remove('hidden');
+                for (const [key, data] of Object.entries(NEG_FORMS)) {
+                    if (key==='nulle part') continue;
+                    const used = usedNegForms.includes(key);
+                    const b = document.createElement('span');
+                    b.className = `inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${used?'badge-used':'badge-unused'}`;
+                    b.innerHTML = `${used?'✅ ':''}${data.label}`;
+                    diversityBadges.appendChild(b);
+                }
+            } else {
+                diversityTracker.classList.add('hidden');
+            }
+        }
+
+        // ===================== MODE SETUP =====================
+        function setMode(mode) {
+            currentMode = mode;
+            const config = MODES[mode];
+            startTitle.textContent = config.title;
+            startMission.innerHTML = config.mission;
+            startConsigne.innerHTML = config.consigne;
+            startExemple.innerHTML = config.exemple;
+            gameReminder.innerHTML = config.rappel;
+            startIcon.className = `fas ${config.icon} text-5xl`;
+
+            ['A','B','C'].forEach(m => {
+                const btn = document.getElementById(`btn-mode-${m}`);
+                if (m===mode) { btn.classList.remove('bg-slate-200','text-slate-600','hover:bg-slate-300'); btn.classList.add('bg-orange-500','text-white','shadow-md'); }
+                else { btn.classList.add('bg-slate-200','text-slate-600','hover:bg-slate-300'); btn.classList.remove('bg-orange-500','text-white','shadow-md'); }
+            });
+
+            startTipContainer.innerHTML = `
+                <button onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.tip-label').textContent = this.nextElementSibling.classList.contains('open') ? 'Masquer les astuces' : 'Voir les astuces'; this.querySelector('.chevron').classList.toggle('fa-chevron-down'); this.querySelector('.chevron').classList.toggle('fa-chevron-up');"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold transition-all border border-indigo-200">
+                    <i class="fas fa-graduation-cap"></i> <span class="tip-label">Voir les astuces</span> <i class="fas fa-chevron-down text-sm chevron"></i>
+                </button>
+                <div class="tip-box bg-indigo-50 border border-indigo-200 rounded-2xl px-5 text-left text-sm text-indigo-800 leading-relaxed mt-2">${getTipHTML(mode)}</div>`;
+        }
+
+        // ===================== GAME FLOW =====================
+        function startNextLevel() {
+            // Save totals before switching
+            saveModeStats();
+            pendingTransformations = [...writtenSentences];
+            if (currentMode==='A') setMode('B');
+            else if (currentMode==='B') setMode('C');
+            startGame();
+        }
+
+        function saveModeStats() {
+            if (currentMode==='A') { totalPhrasesA = score; totalVerbsA = usedVerbs.length; totalCPTypes = usedCPTypes.length; }
+            else if (currentMode==='B') { totalPhrasesB = score; totalNegForms = usedNegForms.length; }
+            else if (currentMode==='C') { totalPhrasesC = score; }
+        }
+
+        function skipToNextMode() {
+            if (score===0) { showError("Tu dois réussir au moins une phrase pour passer à la suite !"); return; }
+            clearInterval(timerInterval);
+            endGame();
+        }
+
+        function startGame() {
+            timeLeft = TOTAL_TIME;
+            score = 0;
+            writtenSentences = [];
+            usedVerbs = []; usedVerbForms = []; usedNegForms = []; usedCPTypes = []; usedSubjects = [];
+            gameTipOpen = false;
+            gameTipBox.classList.remove('open');
+            gameTipLabel.textContent = 'Voir les astuces';
+            gameTipBox.innerHTML = getTipHTML(currentMode);
+
+            if (pendingTransformations.length > 0) { transformContainer.classList.remove('hidden'); transformText.textContent = pendingTransformations[0]; }
+            else { transformContainer.classList.add('hidden'); }
+
+            scoreDisplay.textContent = '0';
+            timerDisplay.textContent = formatTime(timeLeft);
+            timerDisplay.classList.remove('pulse-red');
+            timerIcon.classList.remove('text-red-500');
+            progressBar.style.width = '100%';
+            progressBar.className = "h-full bg-orange-500 transition-all duration-1000 ease-linear";
+            progressContainer.classList.remove('hidden');
+            sentencesList.innerHTML = '';
+            sentencesList.appendChild(emptyState);
+            emptyState.style.display = 'block';
+            sentenceInput.value = '';
+            warningArea.innerHTML = '';
+
+            if (currentMode==='A') { btnSkipGame.classList.remove('hidden'); skipTextGame.textContent="Passer au B"; btnSkipGame.onclick=skipToNextMode; }
+            else if (currentMode==='B') { btnSkipGame.classList.remove('hidden'); skipTextGame.textContent="Passer au C"; btnSkipGame.onclick=skipToNextMode; }
+            else { btnSkipGame.classList.remove('hidden'); skipTextGame.textContent="Terminer"; btnSkipGame.onclick=endGame; }
+
+            updateDiversityBadges();
+            switchScreen('game');
+            sentenceInput.focus();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+            const pct = (timeLeft/TOTAL_TIME)*100;
+            progressBar.style.width = pct+'%';
+            if (timeLeft<=30) progressBar.classList.replace('bg-orange-500','bg-red-500');
+            if (timeLeft<=10) { timerDisplay.classList.add('pulse-red'); timerIcon.classList.add('text-red-500'); }
+            if (timeLeft<=0) endGame();
+        }
+
+        // ===================== ERROR =====================
+        let errorTimeout1=null, errorTimeout2=null;
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorMessage.classList.remove('opacity-0');
+            sentenceInput.classList.add('shake','border-red-500');
+            sentenceInput.classList.remove('focus:border-orange-500');
+            if(errorTimeout1) clearTimeout(errorTimeout1);
+            if(errorTimeout2) clearTimeout(errorTimeout2);
+            errorTimeout1 = setTimeout(()=>sentenceInput.classList.remove('shake'), 500);
+            errorTimeout2 = setTimeout(()=>{ errorMessage.classList.add('opacity-0'); sentenceInput.classList.remove('border-red-500'); sentenceInput.classList.add('focus:border-orange-500'); }, 8000);
+        }
+
+        // ===================== VALIDATION =====================
+        function validateRule(text) {
+            const trimmed = text.trim();
+            if (!trimmed.length) return {valid:false, msg:""};
+
+            const firstChar = trimmed.charAt(0);
+            if (firstChar!==firstChar.toUpperCase()||!/[A-ZÀÂÄÇÉÈÊËÎÏÔÖÙÛÜ]/.test(firstChar)) return {valid:false, msg:"N'oublie pas la majuscule au début de ta phrase !"};
+
+            // Virgule après verbe
+            const commaParts = trimmed.split(',');
+            for (let i=0;i<commaParts.length-1;i++) {
+                const part = commaParts[i].trim();
+                const words = part.split(/\s+/).filter(w=>w.length>0);
+                if (words.length>0) {
+                    const last = words[words.length-1];
+                    const prev = words.length>1?words[words.length-2]:'';
+                    const cleanLast = last.toLowerCase().replace(/^(j'|m'|t'|s'|l'|qu'|n'|c'|ç')/i,'').replace(/[^\wÀ-ÿ]/g,'');
+                    let bad=false, matched='';
+                    if (isVerb(last)) {bad=true;matched=last;}
+                    else if (adverbList.includes(cleanLast)&&isVerb(prev)) {bad=true;matched=prev+' '+last;}
+                    if (bad) return {valid:false, msg:`Attention, on ne sépare pas le verbe ("${matched}") de son complément avec une virgule !`};
+                }
+            }
+
+            if (currentMode==='A') {
+                if (trimmed.charAt(trimmed.length-1)!=='.') return {valid:false, msg:"Une phrase déclarative doit se terminer par un point (.) !"};
+                const ci = trimmed.indexOf(',');
+                if (ci===-1) return {valid:false, msg:"Il manque la virgule après ton complément de phrase au début !"};
+                const cpPart = trimmed.substring(0,ci).trim().toLowerCase();
+                const mainPart = trimmed.substring(ci+1).trim();
+                const mainWords = mainPart.split(/\s+/).filter(w=>w.length>0);
+                if (mainWords.length<2) return {valid:false, msg:"Ta phrase semble incomplète après la virgule."};
+                const cpWords = cpPart.split(/\s+/).filter(w=>w.length>0);
+                if (!cpWords.length) return {valid:false, msg:"Il manque un complément de phrase au DÉBUT de ta phrase."};
+
+                const firstMainRaw = mainWords[0];
+                const mainMatch = firstMainRaw.match(/^[a-zA-ZÀ-ÿ0-9]+/);
+                const firstMain = mainMatch?mainMatch[0].toLowerCase():'';
+
+                const cpHasVerb = cpWords.some(w=>isVerb(w));
+                const mainHasVerb = mainWords.some(w=>isVerb(w));
+                const subStarters = ['quand','lorsque','si','comme','pendant','puisque','parce','afin','dès','depuis'];
+                if (cpHasVerb&&!mainHasVerb) {
+                    const cpFirst = cpWords[0].match(/^[a-zA-ZÀ-ÿ]+/);
+                    const cpF = cpFirst?cpFirst[0].toLowerCase():'';
+                    if (!subStarters.includes(cpF)) return {valid:false,msg:"As-tu mis ton complément de phrase à la fin ? Ton verbe principal semble être AVANT la virgule."};
+                }
+                if (cpHasVerb&&subStarters.includes(firstMain)) return {valid:false,msg:`"${firstMain}" sert souvent à commencer un CP. Il semble que tu l'as placé à la fin !`};
+
+                for (const marker of [' parce qu',' puisqu',' quand ',' lorsque ',' afin d',' afin qu',' pendant qu',' pour ']) {
+                    if (mainPart.includes(marker)) return {valid:false,msg:`Évite d'ajouter un autre complément à la fin ("${marker.trim()}…"). Un SEUL CP au début !`};
+                }
+
+                if (isVerb(firstMainRaw)) return {valid:false,msg:`On ne sépare pas le sujet et le prédicat par une virgule ! "${firstMainRaw}" est un verbe.`};
+
+                const validStarters = ['je','j','tu','il','elle','on','nous','vous','ils','elles','ce','c','ça','cela','le','la','l','les','un','une','des','de','d','mon','ton','son','ma','ta','sa','mes','tes','ses','notre','votre','leur','nos','vos','leurs','chaque','plusieurs','quelques','aucun','aucune','tout','toute','tous','toutes','maman','papa','grand-maman','grand-papa','papy','mamie','monsieur','madame','beaucoup','peu','trop','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','soudain','tout','bien','mal','souvent','parfois','toujours','hier','demain','aujourd','bientôt','ensuite','puis','alors','là','ici','personne','rien','quelqu','chacun','chacune','certains','certaines'];
+                const startUpper = firstMainRaw.charAt(0)!==firstMainRaw.charAt(0).toLowerCase();
+                if (!validStarters.includes(firstMain)&&!startUpper&&isNaN(firstMain)) return {valid:false,msg:`Ta phrase après la virgule ("${firstMainRaw}…") semble commencer par un verbe ou il y manque un déterminant.`};
+
+                const blacklist = ["oui","non","bonjour","salut","allô","moi","toi","lui","elle","nous","vous","eux","elles","et","ou","mais","donc","car","or","ni","cependant","pourtant","néanmoins","alors","ensuite","puis","bref","enfin"];
+                const validSingle = ["hier","demain","aujourd'hui","soudain","bientôt","autrefois","jadis","souvent","parfois","toujours","maintenant","longtemps","ailleurs","ici","là-bas","tôt","tard","brusquement","soudainement","finalement"];
+                if (cpWords.length===1) {
+                    const w = cpWords[0].replace(/[^\wÀ-ÿ]/g,'');
+                    if (blacklist.includes(w)) return {valid:false,msg:`"${w}" n'est pas un CP car il ne précise pas le temps/lieu et ne se déplace pas à la fin !`};
+                    if (!validSingle.includes(w)) return {valid:false,msg:`"${w}" n'est pas reconnu comme un CP seul. Utilise un groupe de mots (ex: "Dans le parc,") ou un adverbe (ex: "Hier,").`};
+                } else {
+                    if (blacklist.includes(cpWords[0])) return {valid:false,msg:`"${cpWords[0]}" n'est généralement pas un complément de phrase.`};
+                }
+
+                // Verb repetition → REFUSE
+                const verb = findMainVerb(mainWords);
+                if (verb) {
+                    const inf = getInfinitive(verb).replace(' (?)','');
+                    if (usedVerbs.includes(inf)) return {valid:false,msg:`Tu as déjà utilisé le verbe « ${inf} ». Trouve un verbe différent ! 🔤`};
+                }
+            }
+
+            else if (currentMode==='B') {
+                const last = trimmed.charAt(trimmed.length-1);
+                if (!['.','!','?'].includes(last)) return {valid:false,msg:"N'oublie pas ton point à la fin de la phrase !"};
+                const hasNe = /\b(ne)\b/i.test(trimmed)||/n'/i.test(trimmed);
+                const hasNeg = /\b(pas|plus|jamais|rien|personne|aucun|aucune|guère)\b/i.test(trimmed)||/nulle\s+part/i.test(trimmed);
+                if (!hasNe||!hasNeg) return {valid:false,msg:"Ta phrase n'est pas à la forme négative ! N'oublie pas les lunettes de négation (ne… pas, n'… jamais…)."};
+                
+                const wordsB = trimmed.split(/\s+/).filter(w=>w.length>0);
+                const verbB = findMainVerb(wordsB);
+                if (verbB) {
+                    const inf = getInfinitive(verbB).replace(' (?)','');
+                    if (usedVerbs.includes(inf)) return {valid:false,msg:`Tu as déjà utilisé le verbe « ${inf} ». Trouve un verbe différent ! 🔤`};
+                }
+            }
+
+            else if (currentMode==='C') {
+                const last = trimmed.charAt(trimmed.length-1);
+                if (!['.','!','?'].includes(last)) return {valid:false,msg:"N'oublie pas ton point à la fin de la phrase !"};
+                if (trimmed.length<10) return {valid:false,msg:"Ta phrase semble un peu trop courte."};
+                const hasDet = /(les|des|mes|tes|ses|nos|vos|leurs|ces|quelques|plusieurs|beaucoup)\s/i.test(trimmed);
+                const hasVerb = /\b\w+(ent|ons|ez)\b/i.test(trimmed)||/\b(sont|ont|vont|font|peuvent|doivent|veulent|savent|voient|disent|prennent|mettent|deviennent|finissent)\b/i.test(trimmed);
+                const hasNoun = trimmed.split(/\s+/).some(w=>{const c=w.replace(/[.,!?;:]/g,'');return (c.endsWith('s')||c.endsWith('x'))&&c.length>2;});
+                if (!hasDet) return {valid:false,msg:"Es-tu sûr que ta phrase est au pluriel ? N'oublie pas les déterminants pluriels (les, des, mes, ses…)."};
+                if (!hasNoun&&!hasVerb) return {valid:false,msg:"Vérifie les accords : tes noms et verbes doivent aussi être au pluriel !"};
+
+                const wordsC = trimmed.split(/\s+/).filter(w=>w.length>0);
+                const verbC = findMainVerb(wordsC);
+                if (verbC) {
+                    const inf = getInfinitive(verbC).replace(' (?)','');
+                    if (usedVerbs.includes(inf)) return {valid:false,msg:`Tu as déjà utilisé le verbe « ${inf} ». Trouve un verbe différent ! 🔤`};
+                }
+            }
+
+            return {valid:true};
+        }
+
+        // ===================== SUBMIT =====================
+        function submitSentence() {
+            const text = sentenceInput.value;
+            const validation = validateRule(text);
+            if (!validation.valid) { if(validation.msg) showError(validation.msg); return; }
+
+            const trimmed = text.trim();
+            let detectedVerb = null;
+
+            if (currentMode==='A') {
+                const ci = trimmed.indexOf(',');
+                const mainPart = trimmed.substring(ci+1).trim();
+                const mainWords = mainPart.split(/\s+/).filter(w=>w.length>0);
+                detectedVerb = findMainVerb(mainWords);
+                const cpPart = trimmed.substring(0,ci).trim();
+                const cpType = detectCPType(cpPart);
+                if (cpType&&!usedCPTypes.includes(cpType)) usedCPTypes.push(cpType);
+                const subj = detectSubject(mainWords);
+                if (subj) usedSubjects.push(subj);
+            } else {
+                const words = trimmed.split(/\s+/).filter(w=>w.length>0);
+                detectedVerb = findMainVerb(words);
+            }
+
+            if (detectedVerb) {
+                const inf = getInfinitive(detectedVerb).replace(' (?)','');
+                if (!usedVerbs.includes(inf)) usedVerbs.push(inf);
+                const form = detectedVerb.toLowerCase().replace(/[^\wÀ-ÿ]/g,'');
+                if (!usedVerbForms.includes(form)) usedVerbForms.push(form);
+            }
+
+            if (currentMode==='B') {
+                const nf = detectNegForm(trimmed);
+                if (nf&&!usedNegForms.includes(nf)) usedNegForms.push(nf);
+            }
+
+            // Warnings
+            if (currentMode==='B') {
+                const nf = detectNegForm(trimmed);
+                if (nf) {
+                    const count = writtenSentences.filter(s=>detectNegForm(s)===nf).length;
+                    if (count>=1) {
+                        const unused = Object.keys(NEG_FORMS).filter(f=>!usedNegForms.includes(f));
+                        if (unused.length>0) {
+                            const s = unused[0];
+                            showWarning(`Tu as déjà utilisé <strong>${NEG_FORMS[nf].label}</strong> — c'est accepté, mais essaie <strong>${NEG_FORMS[s].label}</strong> ! Ex: « ${NEG_FORMS[s].example} »`, 'amber');
+                        }
+                    }
+                }
+            }
+            if (currentMode==='A') {
+                const jeCount = usedSubjects.filter(s=>s==='je').length;
+                if (jeCount>=3&&usedSubjects[usedSubjects.length-1]==='je') showWarning(`Tu commences souvent par « je ». Essaie un autre sujet : <strong>mon ami, les élèves, le chat, ma sœur…</strong>`, 'amber');
+
+                const cpPart = trimmed.substring(0,trimmed.indexOf(',')).trim();
+                const cpType = detectCPType(cpPart);
+                if (cpType) {
+                    const cpCount = writtenSentences.filter(s=>{const c=s.indexOf(',');if(c===-1)return false;return detectCPType(s.substring(0,c).trim())===cpType;}).length;
+                    if (cpCount>=2) {
+                        const unused = Object.keys(CP_TYPES).filter(t=>!usedCPTypes.includes(t));
+                        if (unused.length>0) {
+                            const s = unused[0];
+                            showWarning(`Tu as déjà ${cpCount+1} CP de ${CP_TYPES[cpType].label.split('(')[0].trim()}. Essaie <strong>${CP_TYPES[s].label}</strong> !<br>Ex: ${CP_TYPES[s].examples[0]}`, 'amber');
+                        }
+                    }
+                }
+            }
+
+            writtenSentences.push(trimmed);
+            score++;
+            scoreDisplay.textContent = score;
+
+            if (pendingTransformations.length>0) {
+                pendingTransformations.shift();
+                if (pendingTransformations.length>0) transformText.textContent=pendingTransformations[0];
+                else { transformText.innerHTML="<em>Génial ! Tu as tout transformé. Invente tes propres phrases !</em>"; setTimeout(()=>transformContainer.classList.add('hidden'),3000); }
+            }
+
+            updateDiversityBadges();
+
+            emptyState.style.display = 'none';
+            const el = document.createElement('div');
+            el.className = 'bg-white p-3 rounded-xl mb-2 shadow-sm border border-slate-100 text-slate-700 animate-[fadeIn_0.3s_ease-out] flex gap-3';
+
+            let tags = '';
+            if (detectedVerb) { const inf=getInfinitive(detectedVerb).replace(' (?)',''); tags+=`<span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-bold">${inf}</span>`; }
+            if (currentMode==='B') { const nf=detectNegForm(trimmed); if(nf&&NEG_FORMS[nf]) tags+=` <span class="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full font-bold">${NEG_FORMS[nf].label}</span>`; }
+            if (currentMode==='A') { const ci=trimmed.indexOf(','); if(ci!==-1){const ct=detectCPType(trimmed.substring(0,ci).trim()); if(ct&&CP_TYPES[ct]) tags+=` <span class="inline-block bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full font-bold">${CP_TYPES[ct].label.split('(')[0].trim()}</span>`;} }
+
+            el.innerHTML = `<span class="text-green-500 font-bold flex-shrink-0">✅</span> <div><span>${trimmed}</span>${tags?'<div class="mt-1">'+tags+'</div>':''}</div>`;
+            sentencesList.insertBefore(el, sentencesList.firstChild);
+
+            sentenceInput.value = '';
+            sentenceInput.focus();
+        }
+
+        // ===================== END GAME =====================
+        function endGame() {
+            clearInterval(timerInterval);
+            progressContainer.classList.remove('hidden');
+            progressContainer.classList.add('hidden');
+            saveModeStats();
+            endTitle.textContent = timeLeft>0?"Étape terminée !":"Temps écoulé !";
+
+            statsGrid.innerHTML = '';
+            addStatCard('📝', writtenSentences.length, `phrase${writtenSentences.length>1?'s':''} valide${writtenSentences.length>1?'s':''}`, 'orange');
+            addStatCard('🔤', usedVerbs.length, `verbe${usedVerbs.length>1?'s':''} différent${usedVerbs.length>1?'s':''}`, 'blue');
+            if (currentMode==='A') {
+                addStatCard('🎯', usedCPTypes.length+'/'+Object.keys(CP_TYPES).length, 'types de CP', 'emerald');
+                const us = [...new Set(usedSubjects)].length;
+                addStatCard('👤', us, `sujet${us>1?'s':''} différent${us>1?'s':''}`, 'purple');
+            } else if (currentMode==='B') {
+                addStatCard('🚫', usedNegForms.length+'/'+Object.keys(NEG_FORMS).length, 'formes de négation', 'purple');
+            }
+
+            finalSentencesList.innerHTML = '';
+            if (!writtenSentences.length) {
+                finalSentencesList.innerHTML = '<div class="text-slate-400 italic text-center p-4">Aucune phrase valide. Tu feras mieux la prochaine fois !</div>';
+            } else {
+                writtenSentences.forEach((s,i)=>{
+                    const el=document.createElement('div');
+                    el.className='p-2 border-b border-slate-100 text-slate-700 last:border-0';
+                    el.innerHTML=`<span class="text-orange-400 font-bold mr-2">${i+1}.</span> ${s}`;
+                    finalSentencesList.appendChild(el);
+                });
+            }
+
+            // Show/hide send button based on config
+            const sendBtn = document.getElementById('btn-send-results');
+            const sendStatus = document.getElementById('send-status');
+            const sendTextEl = document.getElementById('send-text');
+            sendBtn.classList.toggle('hidden', !GOOGLE_SCRIPT_URL);
+            sendStatus.classList.add('hidden');
+            
+            // Vérifier si déjà envoyé (localStorage)
+            const localKey = `jogging_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;
+            if (localStorage.getItem(localKey)) {
+                sendBtn.disabled = true;
+                sendTextEl.textContent = 'Déjà envoyé ✓';
+                sendBtn.classList.remove('bg-green-600','hover:bg-green-700');
+                sendBtn.classList.add('bg-green-800','hover:bg-green-800');
+                sendStatus.classList.remove('hidden');
+                sendStatus.className = 'text-sm font-bold text-center text-slate-500';
+                sendStatus.textContent = 'Tes résultats pour le Jogging ' + currentMode + ' ont déjà été envoyés.';
+            } else {
+                sendBtn.disabled = false;
+                sendTextEl.textContent = 'Envoyer mes résultats';
+                sendBtn.classList.remove('bg-green-800','hover:bg-green-800');
+                sendBtn.classList.add('bg-green-600','hover:bg-green-700');
+            }
+
+            if (score>0) {
+                if (currentMode==='A') { btnNextLevel.classList.remove('hidden'); nextLevelText.textContent="Passer au Jogging B (Négatives)"; }
+                else if (currentMode==='B') { btnNextLevel.classList.remove('hidden'); nextLevelText.textContent="Passer au Jogging C (Pluriel)"; }
+                else { btnNextLevel.classList.add('hidden'); }
+            } else { btnNextLevel.classList.add('hidden'); }
+
+            switchScreen('end');
+        }
+
+        function addStatCard(icon, value, label, color) {
+            const colors = {orange:'bg-orange-50 text-orange-600',blue:'bg-blue-50 text-blue-600',emerald:'bg-emerald-50 text-emerald-600',purple:'bg-purple-50 text-purple-600'};
+            const el = document.createElement('div');
+            el.className = `stat-card ${colors[color]||colors.orange} rounded-2xl p-3 text-center`;
+            el.innerHTML = `<div class="text-2xl mb-1">${icon}</div><div class="text-2xl font-black">${value}</div><div class="text-xs font-bold opacity-80">${label}</div>`;
+            statsGrid.appendChild(el);
+        }
+
+        // ===================== GOOGLE SHEETS =====================
+        // Vérification des doublons via JSONP (communication avec Google Apps Script)
+        function checkDuplicate(nom, groupe, mode) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'dupCheck_' + Date.now();
+                const timeout = setTimeout(() => {
+                    // Si le serveur ne répond pas en 8s, on laisse passer (bénéfice du doute)
+                    delete window[callbackName];
+                    resolve({ duplicate: false });
+                }, 8000);
+                
+                window[callbackName] = function(data) {
+                    clearTimeout(timeout);
+                    delete window[callbackName];
+                    resolve(data);
+                };
+                
+                const script = document.createElement('script');
+                script.src = GOOGLE_SCRIPT_URL 
+                    + '?callback=' + callbackName 
+                    + '&nom=' + encodeURIComponent(nom) 
+                    + '&groupe=' + encodeURIComponent(groupe) 
+                    + '&mode=' + encodeURIComponent(mode);
+                script.onerror = () => { clearTimeout(timeout); resolve({ duplicate: false }); };
+                document.body.appendChild(script);
+                setTimeout(() => { try { document.body.removeChild(script); } catch(e){} }, 10000);
+            });
+        }
+
+        async function sendResults() {
+            if (!GOOGLE_SCRIPT_URL) { alert("L'URL du Google Apps Script n'a pas été configurée."); return; }
+            
+            const btn = document.getElementById('btn-send-results');
+            const statusEl = document.getElementById('send-status');
+            const sendText = document.getElementById('send-text');
+            
+            // Vérification locale rapide (localStorage)
+            const localKey = `jogging_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;
+            if (localStorage.getItem(localKey)) {
+                statusEl.classList.remove('hidden');
+                statusEl.className = 'text-sm font-bold text-center text-red-500';
+                statusEl.textContent = '🚫 Tu as déjà envoyé tes résultats pour ce jogging !';
+                btn.disabled = true;
+                sendText.textContent = 'Déjà envoyé';
+                return;
+            }
+
+            btn.disabled = true;
+            sendText.textContent = 'Vérification…';
+
+            // Vérification serveur (Google Sheet) via JSONP
+            try {
+                const dupResult = await checkDuplicate(studentName, studentGroup, currentMode);
+                if (dupResult.duplicate) {
+                    statusEl.classList.remove('hidden');
+                    statusEl.className = 'text-sm font-bold text-center text-red-500';
+                    statusEl.textContent = '🚫 Tu as déjà envoyé tes résultats pour le Jogging ' + currentMode + ' ! Impossible d\'envoyer deux fois.';
+                    sendText.textContent = 'Déjà envoyé';
+                    localStorage.setItem(localKey, 'true');
+                    return;
+                }
+            } catch(e) { /* En cas d'erreur réseau, on laisse passer */ }
+
+            sendText.textContent = 'Envoi en cours…';
+
+            const data = {
+                nom: studentName,
+                groupe: studentGroup,
+                mode: currentMode,
+                phrases: score
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                // Marquer comme envoyé localement
+                localStorage.setItem(localKey, 'true');
+                
+                statusEl.classList.remove('hidden');
+                statusEl.className = 'text-sm font-bold text-center text-green-600';
+                statusEl.textContent = '✅ Résultats envoyés avec succès !';
+                sendText.textContent = 'Résultats envoyés ✓';
+                btn.classList.replace('bg-green-600','bg-green-800');
+                btn.classList.replace('hover:bg-green-700','hover:bg-green-800');
+            } catch (err) {
+                statusEl.classList.remove('hidden');
+                statusEl.className = 'text-sm font-bold text-center text-red-500';
+                statusEl.textContent = '❌ Erreur lors de l\'envoi. Vérifie ta connexion internet.';
+                sendText.textContent = 'Réessayer';
+                btn.disabled = false;
+            }
+        }
+
+        // ===================== LEADERBOARD =====================
+        function showLeaderboard() {
+            // Remember which screen we came from
+            for (const [name, el] of Object.entries(screens)) {
+                if (!el.classList.contains('hidden') && name !== 'leaderboard') {
+                    lastScreenBeforeLeaderboard = name;
+                    break;
+                }
+            }
+            switchScreen('leaderboard');
+            fetchLeaderboard();
+        }
+
+        function fetchLeaderboard() {
+            const loading = document.getElementById('leaderboard-loading');
+            const error = document.getElementById('leaderboard-error');
+            const content = document.getElementById('leaderboard-content');
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            content.classList.add('hidden');
+
+            if (!GOOGLE_SCRIPT_URL) {
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+                error.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Le palmarès n\'est pas encore configuré.';
+                return;
+            }
+
+            const callbackName = 'lb_' + Date.now();
+            const timeout = setTimeout(() => {
+                delete window[callbackName];
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }, 10000);
+
+            window[callbackName] = function(data) {
+                clearTimeout(timeout);
+                delete window[callbackName];
+                loading.classList.add('hidden');
+                
+                if (data && data.groups) {
+                    renderLeaderboard(data.groups);
+                    content.classList.remove('hidden');
+                    document.getElementById('leaderboard-time').textContent = new Date().toLocaleTimeString('fr-CA');
+                } else {
+                    error.classList.remove('hidden');
+                }
+            };
+
+            const script = document.createElement('script');
+            script.src = GOOGLE_SCRIPT_URL + '?callback=' + callbackName + '&action=leaderboard';
+            script.onerror = () => { clearTimeout(timeout); loading.classList.add('hidden'); error.classList.remove('hidden'); };
+            document.body.appendChild(script);
+            setTimeout(() => { try { document.body.removeChild(script); } catch(e){} }, 12000);
+        }
+
+        function renderLeaderboard(groups) {
+            // Filter: only groups with at least 1 phrase
+            const active = groups.filter(g => g.total > 0);
+            active.sort((a, b) => b.total - a.total);
+
+            // Podium (top 3 active groups)
+            const podium = document.getElementById('leaderboard-podium');
+            podium.innerHTML = '';
+            const medals = ['🥇', '🥈', '🥉'];
+
+            if (active.length === 0) {
+                podium.innerHTML = '<div class="text-slate-400 italic py-8 text-lg">Aucun groupe n\'a encore envoyé de résultats.<br>Le palmarès apparaîtra ici dès le premier envoi !</div>';
+                document.getElementById('leaderboard-body').innerHTML = '';
+                return;
+            }
+
+            const podiumOrder = [1, 0, 2]; // display 2nd, 1st, 3rd
+            const podiumHeights = ['120px', '150px', '100px'];
+            const podiumColors = ['bg-slate-200', 'bg-amber-100', 'bg-orange-100'];
+
+            for (let pi = 0; pi < 3 && pi < active.length; pi++) {
+                const idx = podiumOrder[pi];
+                if (idx >= active.length) continue;
+                const g = active[idx];
+                const el = document.createElement('div');
+                el.className = `flex flex-col items-center`;
+                el.innerHTML = `
+                    <div class="text-3xl mb-1">${medals[idx]}</div>
+                    <div class="font-extrabold text-lg text-slate-800">${g.groupe}</div>
+                    <div class="${podiumColors[pi]} rounded-xl w-20 flex items-end justify-center font-black text-2xl text-slate-700 transition-all" style="height: ${podiumHeights[pi]}">
+                        ${g.total}
+                    </div>
+                `;
+                podium.appendChild(el);
+            }
+
+            // Table (only active groups)
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            active.forEach((g, i) => {
+                const rank = i + 1;
+                const medal = rank <= 3 ? medals[rank - 1] : rank;
+                const highlight = rank <= 3 ? 'bg-amber-50 font-bold' : (rank % 2 === 0 ? 'bg-white' : 'bg-slate-50');
+                const tr = document.createElement('tr');
+                tr.className = highlight + ' border-b border-slate-100 transition-colors hover:bg-orange-50';
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-left">${medal}</td>
+                    <td class="py-3 px-3 text-left font-bold text-slate-800">Groupe ${g.groupe}</td>
+                    <td class="py-3 px-2 text-center text-blue-600 font-bold">${g.a || 0}</td>
+                    <td class="py-3 px-2 text-center text-purple-600 font-bold">${g.b || 0}</td>
+                    <td class="py-3 px-2 text-center text-emerald-600 font-bold">${g.c || 0}</td>
+                    <td class="py-3 px-3 text-right font-extrabold text-orange-600 text-base">${g.total}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===================== RESET =====================
+        function resetGame() {
+            pendingTransformations = [];
+            totalPhrasesA=0; totalPhrasesB=0; totalPhrasesC=0;
+            switchScreen('start');
+        }
+
+        // Init
+        switchScreen('login');
+
+        tailwind.config = { theme: { extend: { keyframes: { fadeIn: { '0%':{opacity:'0',transform:'translateY(-10px)'}, '100%':{opacity:'1',transform:'translateY(0)'} } } } } }
+    </script>
+</body>
+</html>
