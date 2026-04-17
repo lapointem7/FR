@@ -173,6 +173,7 @@
                         <i class="fas fa-sync-alt"></i>
                     </button>
                 </div>
+                <p class="text-slate-400 text-xs font-bold -mt-2">Classement par moyenne de phrases par élève</p>
 
                 <div id="leaderboard-loading" class="py-10 text-slate-400 text-lg font-bold">
                     <i class="fas fa-spinner fa-spin mr-2"></i> Chargement du palmarès…
@@ -191,12 +192,13 @@
                         <table class="w-full text-sm">
                             <thead class="sticky top-0 bg-slate-100 text-slate-500 uppercase text-xs font-bold">
                                 <tr>
-                                    <th class="py-3 px-3 text-left">Rang</th>
-                                    <th class="py-3 px-3 text-left">Groupe</th>
-                                    <th class="py-3 px-2 text-center">A</th>
-                                    <th class="py-3 px-2 text-center">B</th>
-                                    <th class="py-3 px-2 text-center">C</th>
-                                    <th class="py-3 px-3 text-right font-extrabold">Total</th>
+                                    <th class="py-3 px-2 text-left">Rang</th>
+                                    <th class="py-3 px-2 text-left">Groupe</th>
+                                    <th class="py-3 px-1 text-center">Élèves</th>
+                                    <th class="py-3 px-1 text-center">A</th>
+                                    <th class="py-3 px-1 text-center">B</th>
+                                    <th class="py-3 px-1 text-center">C</th>
+                                    <th class="py-3 px-2 text-right font-extrabold">Moy.</th>
                                 </tr>
                             </thead>
                             <tbody id="leaderboard-body"></tbody>
@@ -1284,9 +1286,11 @@
         }
 
         function renderLeaderboard(groups) {
-            // Filter: only groups with at least 1 phrase
-            const active = groups.filter(g => g.total > 0);
-            active.sort((a, b) => b.total - a.total);
+            // Filter: only groups with at least 1 student
+            const active = groups.filter(g => g.students > 0);
+            // Sort by average descending
+            active.forEach(g => { g.avg = g.students > 0 ? Math.round((g.total / g.students) * 10) / 10 : 0; });
+            active.sort((a, b) => b.avg - a.avg);
 
             // Podium (top 3 active groups)
             const podium = document.getElementById('leaderboard-podium');
@@ -1312,8 +1316,9 @@
                 el.innerHTML = `
                     <div class="text-3xl mb-1">${medals[idx]}</div>
                     <div class="font-extrabold text-lg text-slate-800">${g.groupe}</div>
-                    <div class="${podiumColors[pi]} rounded-xl w-20 flex items-end justify-center font-black text-2xl text-slate-700 transition-all" style="height: ${podiumHeights[pi]}">
-                        ${g.total}
+                    <div class="${podiumColors[pi]} rounded-xl w-20 flex flex-col items-center justify-end pb-2 font-black text-slate-700 transition-all" style="height: ${podiumHeights[pi]}">
+                        <div class="text-2xl">${g.avg}</div>
+                        <div class="text-xs font-bold opacity-60">${g.students} élèves</div>
                     </div>
                 `;
                 podium.appendChild(el);
@@ -1329,12 +1334,13 @@
                 const tr = document.createElement('tr');
                 tr.className = highlight + ' border-b border-slate-100 transition-colors hover:bg-orange-50';
                 tr.innerHTML = `
-                    <td class="py-3 px-3 text-left">${medal}</td>
-                    <td class="py-3 px-3 text-left font-bold text-slate-800">Groupe ${g.groupe}</td>
-                    <td class="py-3 px-2 text-center text-blue-600 font-bold">${g.a || 0}</td>
-                    <td class="py-3 px-2 text-center text-purple-600 font-bold">${g.b || 0}</td>
-                    <td class="py-3 px-2 text-center text-emerald-600 font-bold">${g.c || 0}</td>
-                    <td class="py-3 px-3 text-right font-extrabold text-orange-600 text-base">${g.total}</td>
+                    <td class="py-3 px-2 text-left">${medal}</td>
+                    <td class="py-3 px-2 text-left font-bold text-slate-800">Gr. ${g.groupe}</td>
+                    <td class="py-3 px-1 text-center text-slate-500 font-bold">${g.students}</td>
+                    <td class="py-3 px-1 text-center text-blue-600 font-bold">${g.a || 0}</td>
+                    <td class="py-3 px-1 text-center text-purple-600 font-bold">${g.b || 0}</td>
+                    <td class="py-3 px-1 text-center text-emerald-600 font-bold">${g.c || 0}</td>
+                    <td class="py-3 px-2 text-right font-extrabold text-orange-600 text-base">${g.avg}</td>
                 `;
                 tbody.appendChild(tr);
             });
