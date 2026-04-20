@@ -513,20 +513,27 @@
         }
 
         // ===================== CP TYPES =====================
+        // IMPORTANT: cause and but are checked FIRST to avoid false positives with temps
         const CP_TYPES = {
-            'temps':   { label:'⏰ Temps (quand ?)', starters:['hier','demain','ce matin','ce soir','la semaine dernière',"l'an dernier",'chaque jour','pendant','durant','avant','après','lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche','en janvier','au mois de','à midi','tôt','tard','bientôt','autrefois','jadis','soudain',"aujourd'hui",'maintenant','longtemps','toujours','souvent','parfois','en été','en hiver','en automne','au printemps','la nuit','le matin',"l'après-midi",'depuis','dès','quand','lorsque'], examples:['"Chaque matin, je promène mon chien."','"La semaine dernière, nous avons visité le musée."'] },
-            'lieu':    { label:'📍 Lieu (où ?)', starters:['dans','à','au','aux','chez','sur','sous','devant','derrière','entre','près de','près du','loin de','en face de','au milieu de','en','là-bas','ici','ailleurs','partout','dehors'], examples:['"Dans la cour d\'école, les élèves jouent au ballon."','"Chez ma grand-mère, nous mangeons de la tarte."'] },
-            'manière': { label:'🎨 Manière (comment ?)', starters:['avec','sans','grâce à','en souriant','en courant','en chantant','doucement','lentement','rapidement','silencieusement','joyeusement','prudemment','fièrement','courageusement','délicatement','brusquement','soudainement','en silence','à toute vitesse','avec soin','en riant'], examples:['"Avec beaucoup de courage, le chevalier affronte le dragon."','"En silence, les élèves écoutent l\'histoire."'] },
-            'but':     { label:'🎯 But (pourquoi ?)', starters:['pour','afin de',"afin d'",'dans le but de',"dans l'espoir de"], examples:['"Pour réussir son examen, Léa étudie chaque soir."','"Afin de se réchauffer, le chat se couche près du feu."'] },
-            'cause':   { label:'🔍 Cause (pourquoi ?)', starters:['à cause de','à cause du',"à cause d'",'en raison de','grâce à',"puisqu'","parce qu'"], examples:['"À cause de la pluie, le match est annulé."','"Grâce à son talent, Marie remporte le concours."'] }
+            'cause':   { label:'🔍 Cause (pourquoi ?)', starters:['à cause de','à cause du',"à cause d'",'en raison de','en raison du','grâce à','grâce au','grâce aux',"parce qu'","parce que","puisqu'","puisque"], examples:['"À cause de la pluie, le match est annulé."','"Parce que je suis fatigué, je reste à la maison."'] },
+            'but':     { label:'🎯 But (pourquoi ?)', starters:['pour','afin de',"afin d'",'dans le but de',"dans l'espoir de",'dans le but d'], examples:['"Pour réussir son examen, Léa étudie chaque soir."','"Afin de se réchauffer, le chat se couche près du feu."'] },
+            'manière': { label:'🎨 Manière (comment ?)', starters:['avec','sans','en souriant','en courant','en chantant','en marchant','en criant','en pleurant','en riant','en silence','en douceur','à toute vitesse','avec soin','avec précaution','avec patience','avec courage','avec fierté','avec joie'], examples:['"Avec beaucoup de courage, le chevalier affronte le dragon."','"En silence, les élèves écoutent l\'histoire."'] },
+            'temps':   { label:'⏰ Temps (quand ?)', starters:['hier','demain','ce matin','ce soir','la semaine dernière',"l'an dernier",'chaque jour','chaque matin','chaque soir','pendant','durant','avant','après','lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche','en janvier','en février','en mars','en avril','en mai','en juin','en juillet','en août','en septembre','en octobre','en novembre','en décembre','au mois de','à midi','soudain',"aujourd'hui",'en été','en hiver','en automne','au printemps','la nuit','le matin','le soir',"l'après-midi",'depuis','dès','quand','lorsque','tôt','tard','bientôt','autrefois','jadis','maintenant','longtemps','toujours','souvent','parfois','récemment'], examples:['"Chaque matin, je promène mon chien."','"La semaine dernière, nous avons visité le musée."'] },
+            'lieu':    { label:'📍 Lieu (où ?)', starters:['dans','à','au','aux','chez','sur','sous','devant','derrière','entre','près de','près du','loin de','en face de','au milieu de','là-bas','dehors'], examples:['"Dans la cour d\'école, les élèves jouent au ballon."','"Chez ma grand-mère, nous mangeons de la tarte."'] }
         };
 
         function detectCPType(cpText) {
             const l = cpText.toLowerCase().trim();
+            // Check all starters, longest first within each type
             for (const [type, data] of Object.entries(CP_TYPES)) {
-                for (const s of data.starters) { if (l.startsWith(s)||l===s) return type; }
+                const sorted = [...data.starters].sort((a,b) => b.length - a.length);
+                for (const s of sorted) { if (l.startsWith(s) || l === s) return type; }
             }
-            if (/^(hier|demain|aujourd|maintenant|bientôt|autrefois|jadis|soudain|longtemps|tôt|tard|souvent|parfois|toujours|finalement|récemment)/.test(l)) return 'temps';
+            // Fallback: single-word adverbs of time
+            if (/^(hier|demain|aujourd|maintenant|bientôt|autrefois|jadis|longtemps|tôt|tard|souvent|parfois|toujours|finalement|récemment)/.test(l)) return 'temps';
+            // Fallback: single-word adverbs of manner (ending in -ment)
+            const words = l.split(/\s+/);
+            if (words.length === 1 && l.endsWith('ment') && l.length >= 7) return 'manière';
             return null;
         }
 
@@ -546,7 +553,7 @@
             lieu: ['Dans le parc',"À l'école",'Au centre commercial','Chez mon ami','Sur le trottoir','Devant la bibliothèque','Dans la forêt','Au bord du lac'],
             manière: ['Avec enthousiasme','En silence','Avec beaucoup de soin','En courant','Doucement','Prudemment','Avec fierté','En souriant'],
             but: ['Pour se réchauffer','Afin de gagner','Pour impressionner ses amis','Dans le but de réussir'],
-            cause: ['À cause de la tempête','Grâce à son courage','En raison du froid','À cause du bruit']
+            cause: ['À cause de la tempête','Grâce à son courage','En raison du froid','À cause du bruit','Parce que je suis fatigué','Puisque tu insistes']
         };
 
         function giveHint() {
@@ -617,7 +624,9 @@
         function getTipHTML(mode) {
             if (mode === 'A') {
                 let rows = '';
-                for (const [type, data] of Object.entries(CP_TYPES)) {
+                const displayOrder = ['temps','lieu','manière','but','cause'];
+                for (const type of displayOrder) {
+                    const data = CP_TYPES[type];
                     rows += `<tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap align-top">${data.label}</td><td class="py-2 text-indigo-700">${data.examples.map(e=>`<div>${e}</div>`).join('')}</td></tr>`;
                 }
                 return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — Les types de compléments de phrase</div><p class="text-indigo-700">Un complément de phrase (CP) peut exprimer différentes choses. Essaie de varier !</p><table class="w-full text-sm">${rows}</table></div>`;
@@ -891,7 +900,9 @@
             diversityBadges.innerHTML = '';
             if (currentMode === 'A') {
                 diversityTracker.classList.remove('hidden');
-                for (const [type, data] of Object.entries(CP_TYPES)) {
+                const displayOrder = ['temps','lieu','manière','but','cause'];
+                for (const type of displayOrder) {
+                    const data = CP_TYPES[type];
                     const used = usedCPTypes.includes(type);
                     const b = document.createElement('span');
                     b.className = `inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${used?'badge-used':'badge-unused'}`;
@@ -1079,11 +1090,12 @@
                 if (!validStarters.includes(firstMain)&&!startUpper&&isNaN(firstMain)) return {valid:false,msg:`Ta phrase après la virgule ("${firstMainRaw}…") semble commencer par un verbe ou il y manque un déterminant.`};
 
                 const blacklist = ["oui","non","bonjour","salut","allô","moi","toi","lui","elle","nous","vous","eux","elles","et","ou","mais","donc","car","or","ni","cependant","pourtant","néanmoins","alors","ensuite","puis","bref","enfin"];
-                const validSingle = ["hier","demain","aujourd'hui","soudain","bientôt","autrefois","jadis","souvent","parfois","toujours","maintenant","longtemps","ailleurs","ici","là-bas","tôt","tard","brusquement","soudainement","finalement"];
+                const validSingle = ["hier","demain","aujourd'hui","soudain","bientôt","autrefois","jadis","souvent","parfois","toujours","maintenant","longtemps","ailleurs","ici","là-bas","tôt","tard","brusquement","soudainement","finalement","récemment","lentement","doucement","rapidement","silencieusement","joyeusement","prudemment","fièrement","courageusement","délicatement","calmement","tranquillement","gentiment","poliment","violemment","patiemment","attentivement","énergiquement","timidement","secrètement","malheureusement","heureusement","dehors","partout","ensuite"];
                 if (cpWords.length===1) {
                     const w = cpWords[0].replace(/[^\wÀ-ÿ]/g,'');
                     if (blacklist.includes(w)) return {valid:false,msg:`"${w}" n'est pas un CP car il ne précise pas le temps/lieu et ne se déplace pas à la fin !`};
-                    if (!validSingle.includes(w)) return {valid:false,msg:`"${w}" n'est pas reconnu comme un CP seul. Utilise un groupe de mots (ex: "Dans le parc,") ou un adverbe (ex: "Hier,").`};
+                    // Accept any adverb ending in -ment (7+ chars to avoid "moment" etc.)
+                    if (!validSingle.includes(w) && !(w.endsWith('ment') && w.length >= 7)) return {valid:false,msg:`"${w}" n'est pas reconnu comme un CP seul. Utilise un groupe de mots (ex: "Dans le parc,") ou un adverbe (ex: "Lentement,").`};
                 } else {
                     if (blacklist.includes(cpWords[0])) return {valid:false,msg:`"${cpWords[0]}" n'est généralement pas un complément de phrase.`};
                 }
