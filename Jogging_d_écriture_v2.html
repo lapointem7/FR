@@ -70,7 +70,9 @@
             .main-container { box-shadow: none !important; max-width: 100% !important; }
             .no-print { display: none !important; }
             #screen-end { height: auto !important; }
+            #screen-printview { display: block !important; }
             #final-sentences-list { max-height: none !important; overflow: visible !important; height: auto !important; }
+            .tip-box, #progress-container { display: none !important; }
         }
 
         /* Login screen animation */
@@ -83,8 +85,11 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
 
-    <!-- Floating buttons: fullscreen + print -->
+    <!-- Floating buttons: new tab + fullscreen + print -->
     <div class="fixed top-4 right-4 flex gap-2 z-50 no-print">
+        <button onclick="openNewTab()" id="btn-newtab" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Ouvrir dans un nouvel onglet (pour plein écran)">
+            <i class="fas fa-external-link-alt"></i>
+        </button>
         <button onclick="toggleFullscreen()" id="btn-fullscreen" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all" title="Plein écran">
             <i class="fas fa-expand"></i>
         </button>
@@ -357,6 +362,36 @@
                 </div>
             </div>
 
+            <!-- ================= PRINT VIEW (standalone new tab) ================= -->
+            <div id="screen-printview" class="hidden">
+                <div class="text-center mb-6">
+                    <h1 class="text-3xl font-extrabold text-slate-800 mb-1">📄 Bilan complet</h1>
+                    <p class="text-slate-500"><span id="pv-name"></span> — <span id="pv-group"></span> — <span id="pv-date"></span></p>
+                </div>
+
+                <div id="pv-section-A" class="hidden mb-6">
+                    <h2 class="font-bold text-lg text-orange-600 mb-2 flex items-center gap-2"><i class="fas fa-running"></i> Jogging A — Complément de phrase <span id="pv-count-A" class="text-sm bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full"></span></h2>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4" id="pv-list-A"></div>
+                </div>
+
+                <div id="pv-section-B" class="hidden mb-6">
+                    <h2 class="font-bold text-lg text-purple-600 mb-2 flex items-center gap-2"><i class="fas fa-ban"></i> Jogging B — Phrases négatives <span id="pv-count-B" class="text-sm bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full"></span></h2>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4" id="pv-list-B"></div>
+                </div>
+
+                <div id="pv-section-C" class="hidden mb-6">
+                    <h2 class="font-bold text-lg text-emerald-600 mb-2 flex items-center gap-2"><i class="fas fa-layer-group"></i> Jogging C — Pluriel <span id="pv-count-C" class="text-sm bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"></span></h2>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4" id="pv-list-C"></div>
+                </div>
+
+                <div id="pv-empty" class="text-slate-400 italic text-center py-10 text-lg hidden">Aucune phrase n'a encore été écrite.</div>
+
+                <div class="flex gap-3 mt-4 no-print">
+                    <button onclick="window.print()" class="flex-1 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full text-lg shadow-lg transition-all"><i class="fas fa-print mr-2"></i> Imprimer en PDF</button>
+                    <button onclick="closePrintView()" class="px-6 py-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-full text-lg transition-all"><i class="fas fa-arrow-left mr-2"></i> Retour</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -395,6 +430,9 @@
         let totalVerbsA = 0;
         let totalCPTypes = 0;
         let totalNegForms = 0;
+
+        // Track ALL sentences across all modes (for print)
+        let allSentences = { A: [], B: [], C: [] };
 
         // ===================== VOCABULARY =====================
         const verbBlacklist = ['est','était','sera','serait','sont','étaient','seront','seraient','a','avait','aura','aurait','ont','avaient','auront','auraient','suis','es','sommes','êtes','as','avons','avez','vais','vas','va','allons','allez','vont','fais','fait','faisons','faites','font','joue','jouent','mange','mangent','court','courent','aime','aiment','veut','veulent','peut','peuvent','doit','doivent','dit','disent','voit','voient','sait','savent','prend','prennent','met','mettent','semble','semblent','devient','deviennent','reste','restent','adore','adorent','déteste','détestent','préfère','préfèrent','marche','marchent','pleure','pleurent','parle','parlent','regarde','regardent','écoute','écoutent','saute','sautent','tombe','tombent','dort','dorment','finit','finissent','pense','pensent','donne','donnent','trouve','trouvent','cherche','cherchent','lit','lisent','écrit','écrivent','pars','part','partent','sort','sortent'];
@@ -598,7 +636,7 @@
         }
 
         // ===================== DOM =====================
-        const screens = { login: document.getElementById('screen-login'), start: document.getElementById('screen-start'), game: document.getElementById('screen-game'), end: document.getElementById('screen-end'), leaderboard: document.getElementById('screen-leaderboard') };
+        const screens = { login: document.getElementById('screen-login'), start: document.getElementById('screen-start'), game: document.getElementById('screen-game'), end: document.getElementById('screen-end'), leaderboard: document.getElementById('screen-leaderboard'), printview: document.getElementById('screen-printview') };
         let lastScreenBeforeLeaderboard = 'login';
         const timerDisplay = document.getElementById('timer-display');
         const timerIcon = document.getElementById('timer-icon');
@@ -638,8 +676,12 @@
         function switchScreen(name) {
             Object.values(screens).forEach(s => s.classList.add('hidden'));
             screens[name].classList.remove('hidden');
-            // Show print button only on end screen
-            btnPrint.classList.toggle('hidden', name !== 'end');
+            // In standalone mode, print button is always visible; otherwise only on end/printview screens
+            if (isStandalone) {
+                btnPrint.classList.remove('hidden');
+            } else {
+                btnPrint.classList.toggle('hidden', name !== 'end' && name !== 'printview');
+            }
         }
 
         function formatTime(s) {
@@ -668,19 +710,150 @@
             switchScreen('start');
         }
 
-        // ===================== FULLSCREEN =====================
+        // ===================== FULLSCREEN / NEW TAB / PRINT =====================
+        const isInIframe = window.self !== window.top;
+        const isStandalone = new URLSearchParams(window.location.search).get('standalone') === '1';
+
+        // In iframe: show "new tab" button, hide fullscreen
+        // In standalone (new tab): show print-all button always, hide new tab button
+        if (isInIframe && !isStandalone) {
+            document.getElementById('btn-newtab').classList.remove('hidden');
+            document.getElementById('btn-fullscreen').classList.add('hidden');
+        }
+        if (isStandalone) {
+            document.getElementById('btn-newtab').classList.add('hidden');
+            document.getElementById('btn-fullscreen').classList.add('hidden');
+            // Show a permanent print-all button
+            document.getElementById('btn-print').classList.remove('hidden');
+            document.getElementById('btn-print').title = 'Imprimer tout le travail en PDF';
+            document.getElementById('btn-print').onclick = function() { showPrintView(); };
+        }
+
+        function openNewTab() {
+            // Save full state to localStorage
+            const state = {
+                studentName: studentName,
+                studentGroup: studentGroup,
+                currentMode: currentMode,
+                allSentences: allSentences,
+                writtenSentences: writtenSentences,
+                score: score,
+                timeLeft: timeLeft,
+                usedVerbs: usedVerbs,
+                usedVerbForms: usedVerbForms,
+                usedNegForms: usedNegForms,
+                usedCPTypes: usedCPTypes,
+                usedSubjects: usedSubjects,
+                totalPhrasesA: totalPhrasesA,
+                totalPhrasesB: totalPhrasesB,
+                totalPhrasesC: totalPhrasesC
+            };
+            localStorage.setItem('jogging_transfer_state', JSON.stringify(state));
+            // Open in new tab with standalone flag
+            const url = window.location.href.split('?')[0] + '?standalone=1';
+            window.open(url, '_blank');
+        }
+
+        function restoreFromTransfer() {
+            const raw = localStorage.getItem('jogging_transfer_state');
+            if (!raw) return false;
+            try {
+                const state = JSON.parse(raw);
+                localStorage.removeItem('jogging_transfer_state');
+                studentName = state.studentName || '';
+                studentGroup = state.studentGroup || '';
+                currentMode = state.currentMode || 'A';
+                allSentences = state.allSentences || { A: [], B: [], C: [] };
+                writtenSentences = state.writtenSentences || [];
+                score = state.score || 0;
+                usedVerbs = state.usedVerbs || [];
+                usedVerbForms = state.usedVerbForms || [];
+                usedNegForms = state.usedNegForms || [];
+                usedCPTypes = state.usedCPTypes || [];
+                usedSubjects = state.usedSubjects || [];
+                totalPhrasesA = state.totalPhrasesA || 0;
+                totalPhrasesB = state.totalPhrasesB || 0;
+                totalPhrasesC = state.totalPhrasesC || 0;
+
+                document.getElementById('badge-name').textContent = studentName;
+                document.getElementById('badge-group').textContent = 'Groupe ' + studentGroup;
+                setMode(currentMode);
+
+                // Show print view with all accumulated work
+                showPrintView();
+                return true;
+            } catch(e) { return false; }
+        }
+
+        function showPrintView() {
+            // Also include current mode's sentences if not already in allSentences
+            if (writtenSentences.length > 0) {
+                for (const s of writtenSentences) {
+                    if (!allSentences[currentMode].includes(s)) {
+                        allSentences[currentMode].push(s);
+                    }
+                }
+            }
+
+            document.getElementById('pv-name').textContent = studentName;
+            document.getElementById('pv-group').textContent = 'Groupe ' + studentGroup;
+            document.getElementById('pv-date').textContent = new Date().toLocaleDateString('fr-CA');
+
+            let hasAny = false;
+            ['A', 'B', 'C'].forEach(mode => {
+                const section = document.getElementById('pv-section-' + mode);
+                const list = document.getElementById('pv-list-' + mode);
+                const count = document.getElementById('pv-count-' + mode);
+                const sentences = allSentences[mode] || [];
+                if (sentences.length > 0) {
+                    hasAny = true;
+                    section.classList.remove('hidden');
+                    count.textContent = sentences.length + ' phrase' + (sentences.length > 1 ? 's' : '');
+                    list.innerHTML = '';
+                    sentences.forEach((s, i) => {
+                        const el = document.createElement('div');
+                        el.className = 'p-2 border-b border-slate-100 text-slate-700 last:border-0';
+                        el.innerHTML = `<span class="text-slate-400 font-bold mr-2">${i + 1}.</span> ${s}`;
+                        list.appendChild(el);
+                    });
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('pv-empty').classList.toggle('hidden', hasAny);
+            switchScreen('printview');
+        }
+
+        function closePrintView() {
+            // If we have a student logged in, go to start screen
+            if (studentName && studentGroup) {
+                document.getElementById('badge-name').textContent = studentName;
+                document.getElementById('badge-group').textContent = 'Groupe ' + studentGroup;
+                setMode(currentMode);
+                switchScreen('start');
+            } else {
+                switchScreen('login');
+            }
+        }
+
         function toggleFullscreen() {
             const btn = document.getElementById('btn-fullscreen');
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().then(() => {
-                    btn.innerHTML = '<i class="fas fa-compress"></i>';
-                    btn.title = 'Quitter le plein écran';
-                }).catch(() => {});
+            const el = document.documentElement;
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+                if (req) {
+                    req.call(el).then(() => {
+                        btn.innerHTML = '<i class="fas fa-compress"></i>';
+                        btn.title = 'Quitter le plein écran';
+                    }).catch(() => {
+                        document.getElementById('btn-newtab').classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    });
+                }
             } else {
-                document.exitFullscreen().then(() => {
-                    btn.innerHTML = '<i class="fas fa-expand"></i>';
-                    btn.title = 'Plein écran';
-                }).catch(() => {});
+                const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+                if (exit) exit.call(document).catch(() => {});
             }
         }
         document.addEventListener('fullscreenchange', () => {
@@ -693,12 +866,8 @@
 
         // ===================== PRINT =====================
         function printResults() {
-            // Fill print header
-            document.getElementById('print-name').textContent = studentName;
-            document.getElementById('print-group').textContent = 'Groupe ' + studentGroup;
-            document.getElementById('print-mode').textContent = 'Jogging ' + currentMode;
-            document.getElementById('print-date').textContent = new Date().toLocaleDateString('fr-CA');
-            window.print();
+            showPrintView();
+            setTimeout(() => window.print(), 300);
         }
 
         // ===================== TIP TOGGLE =====================
@@ -1032,6 +1201,7 @@
             }
 
             writtenSentences.push(trimmed);
+            allSentences[currentMode].push(trimmed);
             score++;
             scoreDisplay.textContent = score;
 
@@ -1350,11 +1520,16 @@
         function resetGame() {
             pendingTransformations = [];
             totalPhrasesA=0; totalPhrasesB=0; totalPhrasesC=0;
+            allSentences = { A: [], B: [], C: [] };
             switchScreen('start');
         }
 
         // Init
-        switchScreen('login');
+        if (isStandalone && restoreFromTransfer()) {
+            // State restored, print view shown
+        } else {
+            switchScreen('login');
+        }
 
         tailwind.config = { theme: { extend: { keyframes: { fadeIn: { '0%':{opacity:'0',transform:'translateY(-10px)'}, '100%':{opacity:'1',transform:'translateY(0)'} } } } } }
     </script>
