@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogging d'écriture — Élision</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%,90%{transform:translate3d(-1px,0,0)} 20%,80%{transform:translate3d(2px,0,0)} 30%,50%,70%{transform:translate3d(-4px,0,0)} 40%,60%{transform:translate3d(4px,0,0)} }
+        .custom-scrollbar::-webkit-scrollbar{width:8px} .custom-scrollbar::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px} .custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+        .tip-box{transition:max-height .4s ease,opacity .3s ease,padding .3s ease;max-height:0;opacity:0;overflow:hidden;padding-top:0;padding-bottom:0}
+        .tip-box.open{max-height:700px;opacity:1;padding-top:1rem;padding-bottom:1rem}
+        .stat-card{animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) both}
+        .stat-card:nth-child(1){animation-delay:.1s}.stat-card:nth-child(2){animation-delay:.2s}.stat-card:nth-child(3){animation-delay:.3s}.stat-card:nth-child(4){animation-delay:.4s}
+        @keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+        :fullscreen body{background:linear-gradient(135deg,#f6d365 0%,#fda085 100%)}
+        :fullscreen .main-container{max-width:800px;margin:auto;border-radius:1.5rem}
+        @media print{body{background:white!important;padding:0!important}.main-container{box-shadow:none!important;max-width:100%!important}.no-print{display:none!important}}
+        .login-float{animation:loginFloat 3s ease-in-out infinite}
+        @keyframes loginFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        .word-correct { background: #dcfce7; border-color: #86efac; }
+        .word-wrong { background: #fee2e2; border-color: #fca5a5; }
+        .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: #e2e8f0; transition: all 0.3s; }
+        .progress-dot.done-correct { background: #22c55e; }
+        .progress-dot.done-wrong { background: #ef4444; }
+        .progress-dot.current { background: #f97316; transform: scale(1.4); box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+    <div class="fixed top-4 right-4 flex gap-2 z-50 no-print">
+        <button onclick="openNewTab()" id="btn-newtab" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Nouvel onglet"><i class="fas fa-external-link-alt"></i></button>
+        <button onclick="toggleFullscreen()" id="btn-fullscreen" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all" title="Plein écran"><i class="fas fa-expand"></i></button>
+        <button onclick="window.print()" id="btn-print" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Imprimer"><i class="fas fa-print"></i></button>
+    </div>
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden relative main-container">
+        <div class="p-8 sm:p-10">
+            <div id="screen-login" class="text-center space-y-6">
+                <div class="login-float inline-block p-5 bg-orange-100 rounded-full mb-2 text-orange-500"><i class="fas fa-pen-fancy text-5xl"></i></div>
+                <h1 class="text-4xl font-extrabold text-slate-800">Jogging — Élision</h1>
+                <p class="text-slate-500 text-lg">Le H aspiré et le H muet</p>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner space-y-4">
+                    <div><label class="block font-bold text-slate-700 mb-2"><i class="fas fa-user text-orange-500 mr-2"></i>Ton prénom et nom :</label><input type="text" id="student-name" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg outline-none" placeholder="Ex: Marie Tremblay" autocomplete="off"></div>
+                    <div><label class="block font-bold text-slate-700 mb-2"><i class="fas fa-users text-orange-500 mr-2"></i>Ton numéro de groupe :</label>
+                        <select id="student-group" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg outline-none bg-white cursor-pointer">
+                            <option value="" disabled selected>Choisis ton groupe…</option>
+                            <option value="101">Groupe 101</option><option value="102">Groupe 102</option><option value="103">Groupe 103</option><option value="104">Groupe 104</option><option value="105">Groupe 105</option><option value="106">Groupe 106</option><option value="107">Groupe 107</option><option value="108">Groupe 108</option><option value="109">Groupe 109</option><option value="110">Groupe 110</option><option value="111">Groupe 111</option><option value="112">Groupe 112</option><option value="113">Groupe 113</option><option value="114">Groupe 114</option><option value="115">Groupe 115</option><option value="116">Groupe 116</option><option value="117">Groupe 117</option>
+                        </select>
+                    </div>
+                    <div id="login-error" class="text-red-500 text-sm font-bold hidden"><i class="fas fa-exclamation-circle mr-1"></i> Remplis ton nom et choisis ton groupe.</div>
+                </div>
+                <button onclick="loginStudent()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">C'est parti ! <i class="fas fa-arrow-right ml-2"></i></button>
+                <div><button onclick="showLeaderboard()" class="px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-base transition-all border border-amber-300">🏆 Voir le palmarès des groupes</button></div>
+            </div>
+
+            <div id="screen-leaderboard" class="hidden text-center space-y-5">
+                <div class="flex items-center justify-between"><button onclick="switchScreen(lastScreenBeforeLeaderboard||'login')" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"><i class="fas fa-arrow-left"></i></button><h1 class="text-3xl font-extrabold text-slate-800">🏆 Palmarès</h1><button onclick="showLeaderboard()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500" title="Rafraîchir"><i class="fas fa-sync-alt"></i></button></div>
+                <p class="text-slate-400 text-xs font-bold -mt-2">Classement par temps moyen le plus rapide (12/12 réussis)</p>
+                <div id="leaderboard-loading" class="py-10 text-slate-400 text-lg font-bold"><i class="fas fa-spinner fa-spin mr-2"></i> Chargement…</div>
+                <div id="leaderboard-error" class="hidden py-8 text-red-500 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Impossible de charger le palmarès.<div class="mt-3"><button onclick="showLeaderboard()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-sm">Réessayer</button></div></div>
+                <div id="leaderboard-content" class="hidden">
+                    <div id="leaderboard-podium" class="flex justify-center items-end gap-3 mb-6"></div>
+                    <div class="overflow-y-auto custom-scrollbar max-h-[350px] bg-slate-50 rounded-2xl border border-slate-200">
+                        <table class="w-full text-sm"><thead class="sticky top-0 bg-slate-100 text-slate-500 uppercase text-xs font-bold"><tr><th class="py-3 px-2 text-left">Rang</th><th class="py-3 px-2 text-left">Groupe</th><th class="py-3 px-1 text-center">Élèves</th><th class="py-3 px-2 text-right font-extrabold">Temps moy.</th></tr></thead><tbody id="leaderboard-body"></tbody></table>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-3 italic">Mise à jour : <span id="leaderboard-time"></span></p>
+                </div>
+            </div>
+
+            <div id="screen-start" class="hidden text-center space-y-6">
+                <div class="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm font-bold text-slate-600 no-print"><i class="fas fa-user-circle text-orange-500"></i><span id="badge-name"></span> — <span id="badge-group"></span></div>
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button onclick="setMode('A')" id="btn-mode-A" class="px-6 py-2 rounded-full font-bold transition-colors bg-orange-500 text-white shadow-md">Atelier A</button>
+                    <button onclick="setMode('B')" id="btn-mode-B" class="px-6 py-2 rounded-full font-bold transition-colors bg-slate-200 text-slate-600 hover:bg-slate-300">Atelier B</button>
+                </div>
+                <div class="inline-block p-4 bg-orange-100 rounded-full mb-4 text-orange-500"><i id="start-icon" class="fas fa-pen-fancy text-5xl"></i></div>
+                <h1 id="start-title" class="text-4xl font-extrabold text-slate-800"></h1>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner">
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-bullseye text-orange-500 mr-2"></i>Mission :</h2>
+                    <p id="start-mission" class="text-slate-600 mb-4 text-lg"></p>
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-clipboard-list text-orange-500 mr-2"></i>Consigne :</h2>
+                    <p id="start-consigne" class="text-slate-600 text-lg leading-relaxed"></p>
+                    <div class="mt-4 p-4 bg-orange-100 rounded-xl text-orange-800 font-medium leading-relaxed"><i class="fas fa-lightbulb text-orange-600 mr-2"></i><span id="start-exemple"></span></div>
+                </div>
+                <div id="start-tip-container"></div>
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">Commencer ! <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+
+            <div id="screen-game" class="hidden flex flex-col h-[650px]">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+                    <div class="flex items-center space-x-3"><i class="fas fa-stopwatch text-3xl text-orange-500"></i><span id="timer-display" class="text-4xl font-black text-slate-700 tracking-wider">00:00</span></div>
+                    <div class="text-right"><div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Mot</div><div class="text-2xl font-black text-orange-500"><span id="current-num">1</span>/12</div></div>
+                </div>
+                <div class="flex justify-center gap-1.5 mb-4" id="progress-dots"></div>
+                <div class="bg-blue-50 text-blue-800 p-3 rounded-xl mb-3 text-sm font-semibold flex items-center border border-blue-100"><i class="fas fa-info-circle mr-3 text-blue-500 text-lg"></i><span id="game-reminder"></span></div>
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 mb-3 text-center">
+                    <div class="text-sm text-slate-500 font-bold mb-1">Mot à compléter :</div>
+                    <div id="current-word" class="text-3xl font-extrabold text-slate-800 mb-3"></div>
+                    <input type="text" id="word-input" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-4 text-2xl text-center outline-none" placeholder="ex: mon hareng" autocomplete="off">
+                </div>
+                <div id="feedback-area" class="mb-3 min-h-[60px]"></div>
+                <div class="flex gap-3">
+                    <button id="btn-validate" onclick="validateWord()" class="flex-1 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-lg shadow-md">Valider <i class="fas fa-check ml-1"></i></button>
+                    <button id="btn-next" onclick="nextWord()" class="hidden flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-lg shadow-md">Suivant <i class="fas fa-arrow-right ml-1"></i></button>
+                </div>
+                <div class="flex justify-end mt-3 no-print"><button onclick="toggleGameTip()" class="text-xs text-indigo-500 hover:text-indigo-700 font-bold flex items-center gap-1"><i class="fas fa-graduation-cap"></i> <span id="game-tip-label">Voir l'astuce</span></button></div>
+                <div id="game-tip-box" class="tip-box bg-indigo-50 border border-indigo-200 rounded-xl px-4 text-sm text-indigo-800 leading-relaxed mt-1"></div>
+            </div>
+
+            <div id="screen-end" class="hidden text-center flex flex-col">
+                <h2 id="end-title" class="text-5xl font-black text-slate-800 mb-2">Bravo !</h2>
+                <p class="text-slate-500 text-lg mb-4">Voici ton bilan :</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="stats-grid"></div>
+                <div class="text-left font-bold text-slate-700 mb-2">Tes réponses :</div>
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left mb-4 max-h-[300px] overflow-y-auto custom-scrollbar" id="final-list"></div>
+                <div class="w-full flex flex-col gap-3 no-print">
+                    <button id="btn-send-results" onclick="sendResults()" class="w-full px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full text-xl shadow-lg"><i class="fas fa-paper-plane mr-2"></i> <span id="send-text">Envoyer mes résultats</span></button>
+                    <div id="send-status" class="text-sm font-bold text-center hidden"></div>
+                    <button onclick="showLeaderboard()" class="w-full px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-lg border border-amber-300">🏆 Voir le palmarès</button>
+                    <button id="btn-next-level" onclick="startNextLevel()" class="hidden w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full text-xl shadow-lg"><span id="next-level-text">Passer au niveau suivant</span> <i class="fas fa-arrow-right ml-2"></i></button>
+                    <button onclick="resetGame()" class="w-full px-8 py-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-full text-xl shadow-lg"><i class="fas fa-redo-alt mr-2"></i> Menu principal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const GOOGLE_SCRIPT_URL = '';
+let currentMode='A', studentName='', studentGroup='', currentIdx=0, startTime=0, elapsedMs=0, totalCorrect=0, answers=[], timerInterval=null, gameTipOpen=false, lastScreenBeforeLeaderboard='login';
+
+const WORDS = [
+    { word:'habit', gender:'m', h_aspire:false },
+    { word:'harpe', gender:'f', h_aspire:true },
+    { word:'haine', gender:'f', h_aspire:true },
+    { word:'habitat', gender:'m', h_aspire:false },
+    { word:'histoire', gender:'f', h_aspire:false },
+    { word:'hamburger', gender:'m', h_aspire:true },
+    { word:'homard', gender:'m', h_aspire:true },
+    { word:'humain', gender:'m', h_aspire:false },
+    { word:'hutte', gender:'f', h_aspire:true },
+    { word:'hélicoptère', gender:'m', h_aspire:false },
+    { word:'hareng', gender:'m', h_aspire:true },
+    { word:'hôtel', gender:'m', h_aspire:false }
+];
+
+function expectedA(w) {
+    if (!w.h_aspire) return ['mon '+w.word,'ton '+w.word,'son '+w.word,'notre '+w.word,'votre '+w.word,'leur '+w.word];
+    if (w.gender==='f') return ['ma '+w.word,'ta '+w.word,'sa '+w.word,'notre '+w.word,'votre '+w.word,'leur '+w.word];
+    return ['mon '+w.word,'ton '+w.word,'son '+w.word,'notre '+w.word,'votre '+w.word,'leur '+w.word];
+}
+function expectedB(w) {
+    if (!w.h_aspire) return ["l'"+w.word];
+    return [(w.gender==='f'?'la ':'le ')+w.word];
+}
+function getExpected(w) { return currentMode==='A' ? expectedA(w) : expectedB(w); }
+function getMainExpected(w) { return getExpected(w)[0]; }
+
+function getExplanation(w) {
+    if (currentMode==='A') {
+        if (!w.h_aspire) {
+            if (w.gender==='f') return `Le H est <strong>muet</strong> dans « ${w.word} ». Devant une voyelle, le déterminant <em>ma/ta/sa</em> devient <strong>mon/ton/son</strong> pour faciliter la prononciation. On dit donc « <strong>mon ${w.word}</strong> » même si c'est féminin !`;
+            return `Le H est <strong>muet</strong> dans « ${w.word} ». On utilise le possessif masculin habituel : « <strong>mon ${w.word}</strong> ».`;
+        }
+        if (w.gender==='f') return `Le H est <strong>aspiré</strong> dans « ${w.word} ». On utilise <em>ma</em> normalement : « <strong>ma ${w.word}</strong> ».`;
+        return `Le H est <strong>aspiré</strong> dans « ${w.word} ». On utilise <em>mon</em> normalement : « <strong>mon ${w.word}</strong> ».`;
+    }
+    if (!w.h_aspire) return `Le H est <strong>muet</strong> dans « ${w.word} ». Le déterminant <em>le/la</em> s'élide en <strong>l'</strong> devant la voyelle. On écrit « <strong>l'${w.word}</strong> ».`;
+    if (w.gender==='f') return `Le H est <strong>aspiré</strong> dans « ${w.word} ». Pas d'élision ! On garde « <strong>la ${w.word}</strong> ».`;
+    return `Le H est <strong>aspiré</strong> dans « ${w.word} ». Pas d'élision ! On garde « <strong>le ${w.word}</strong> ».`;
+}
+
+const MODES = {
+    'A':{ title:"Atelier A — Déterminant possessif", mission:"Ajoute un <strong>déterminant possessif</strong> (mon, ma, ton, ta, son, sa…) devant chaque mot.<br><span class='text-sm text-slate-500'>⚡ Défi : être le plus rapide possible !</span>", consigne:"Pour chaque mot commençant par <strong>H</strong>, tu dois ajouter le bon déterminant possessif.<br>Attention : le H peut être <strong>muet</strong> (élision possible) ou <strong>aspiré</strong> (pas d'élision).", exemple:'Exemple : <strong>habit</strong> → <strong>mon habit</strong> &nbsp;/&nbsp; <strong>harpe</strong> → <strong>ma harpe</strong>', rappel:"<strong>Rappel :</strong> Tape le déterminant ET le mot (ex: « mon habit »).", icon:"fa-pen-fancy" },
+    'B':{ title:"Atelier B — Déterminant défini singulier", mission:"Remplace le déterminant par un <strong>défini singulier</strong> : <em>le, la, l'</em>.<br><span class='text-sm text-slate-500'>⚡ Défi : être le plus rapide possible !</span>", consigne:"Pour chaque mot, tu dois ajouter <strong>le</strong>, <strong>la</strong> ou <strong>l'</strong>.<br>Si le H est <strong>muet</strong>, élision en <strong>l'</strong>. Si le H est <strong>aspiré</strong>, pas d'élision.", exemple:'Exemple : <strong>habit</strong> → <strong>l\'habit</strong> &nbsp;/&nbsp; <strong>harpe</strong> → <strong>la harpe</strong>', rappel:"<strong>Rappel :</strong> Tape le déterminant ET le mot (ex: « l'habit »).", icon:"fa-pen-nib" }
+};
+
+function getTipHTML() {
+    return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — H aspiré et H muet</div><p class="text-indigo-700">En français, certains mots commencent par un H qui se comporte comme une voyelle (élision) ou comme une consonne (pas d'élision).</p><table class="w-full text-sm"><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap">H muet</td><td class="py-2 text-indigo-700"><strong>Élision possible</strong> : l'habit, l'hôtel, l'histoire, l'hélicoptère, l'humain, l'habitat</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap">H aspiré</td><td class="py-2 text-indigo-700"><strong>Pas d'élision</strong> : le hareng, la harpe, la haine, le homard, la hutte, le hamburger</td></tr></table><p class="text-xs text-indigo-500 mt-2">💡 <strong>Cas spécial :</strong> au féminin devant un H muet, <em>ma/ta/sa</em> devient <em>mon/ton/son</em> : <em>mon histoire</em> (pas <em>ma histoire</em>).</p><p class="text-xs text-indigo-500">💡 Il n'y a pas de règle simple : il faut <strong>retenir</strong> chaque mot.</p></div>`;
+}
+
+const screens={login:document.getElementById('screen-login'),start:document.getElementById('screen-start'),game:document.getElementById('screen-game'),end:document.getElementById('screen-end'),leaderboard:document.getElementById('screen-leaderboard')};
+const wordInput=document.getElementById('word-input');
+const btnPrint=document.getElementById('btn-print');
+wordInput.addEventListener('keypress',e=>{if(e.key==='Enter'){if(document.getElementById('btn-validate').classList.contains('hidden'))nextWord();else validateWord();}});
+function switchScreen(n){Object.values(screens).forEach(s=>s.classList.add('hidden'));screens[n].classList.remove('hidden');btnPrint.classList.toggle('hidden',n!=='end');}
+function formatTime(ms){const t=Math.floor(ms/1000);return Math.floor(t/60).toString().padStart(2,'0')+':'+(t%60).toString().padStart(2,'0');}
+
+function loginStudent(){studentName=document.getElementById('student-name').value.trim();studentGroup=document.getElementById('student-group').value;if(!studentName||!studentGroup){document.getElementById('login-error').classList.remove('hidden');return;}document.getElementById('login-error').classList.add('hidden');document.getElementById('badge-name').textContent=studentName;document.getElementById('badge-group').textContent='Groupe '+studentGroup;setMode('A');switchScreen('start');}
+
+const isInIframe=window.self!==window.top;
+if(isInIframe){document.getElementById('btn-newtab').classList.remove('hidden');document.getElementById('btn-fullscreen').classList.add('hidden');}
+function openNewTab(){window.open(window.location.href,'_blank');}
+function toggleFullscreen(){const b=document.getElementById('btn-fullscreen');if(!document.fullscreenElement)document.documentElement.requestFullscreen().then(()=>{b.innerHTML='<i class="fas fa-compress"></i>';}).catch(()=>{});else document.exitFullscreen().catch(()=>{});}
+document.addEventListener('fullscreenchange',()=>{const b=document.getElementById('btn-fullscreen');if(!document.fullscreenElement)b.innerHTML='<i class="fas fa-expand"></i>';});
+
+function toggleGameTip(){gameTipOpen=!gameTipOpen;document.getElementById('game-tip-box').classList.toggle('open',gameTipOpen);document.getElementById('game-tip-label').textContent=gameTipOpen?"Masquer l'astuce":"Voir l'astuce";}
+
+function setMode(mode){currentMode=mode;const c=MODES[mode];document.getElementById('start-title').textContent=c.title;document.getElementById('start-mission').innerHTML=c.mission;document.getElementById('start-consigne').innerHTML=c.consigne;document.getElementById('start-exemple').innerHTML=c.exemple;document.getElementById('game-reminder').innerHTML=c.rappel;document.getElementById('start-icon').className=`fas ${c.icon} text-5xl`;['A','B'].forEach(m=>{const b=document.getElementById('btn-mode-'+m);if(m===mode){b.classList.remove('bg-slate-200','text-slate-600','hover:bg-slate-300');b.classList.add('bg-orange-500','text-white','shadow-md');}else{b.classList.add('bg-slate-200','text-slate-600','hover:bg-slate-300');b.classList.remove('bg-orange-500','text-white','shadow-md');}});document.getElementById('start-tip-container').innerHTML=`<button onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.tl').textContent=this.nextElementSibling.classList.contains('open')?'Masquer les astuces':'Voir les astuces';" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold border border-indigo-200"><i class="fas fa-graduation-cap"></i> <span class="tl">Voir les astuces</span></button><div class="tip-box bg-indigo-50 border border-indigo-200 rounded-2xl px-5 text-left text-sm text-indigo-800 leading-relaxed mt-2">${getTipHTML()}</div>`;}
+
+function startGame(){currentIdx=0;totalCorrect=0;answers=[];elapsedMs=0;startTime=Date.now();document.getElementById('game-tip-box').innerHTML=getTipHTML();gameTipOpen=false;document.getElementById('game-tip-box').classList.remove('open');document.getElementById('game-tip-label').textContent="Voir l'astuce";const dc=document.getElementById('progress-dots');dc.innerHTML='';for(let i=0;i<WORDS.length;i++){const d=document.createElement('div');d.className='progress-dot';d.id='dot-'+i;dc.appendChild(d);}switchScreen('game');showCurrentWord();timerInterval=setInterval(updateTimer,100);wordInput.focus();}
+
+function showCurrentWord(){const w=WORDS[currentIdx];document.getElementById('current-num').textContent=(currentIdx+1);document.getElementById('current-word').textContent='____ '+w.word;wordInput.value='';wordInput.classList.remove('border-red-500','border-green-500');wordInput.disabled=false;document.getElementById('feedback-area').innerHTML='';document.getElementById('btn-validate').classList.remove('hidden');document.getElementById('btn-next').classList.add('hidden');document.querySelectorAll('.progress-dot').forEach((d,i)=>{d.classList.remove('current');if(i===currentIdx)d.classList.add('current');});wordInput.focus();}
+
+function updateTimer(){elapsedMs=Date.now()-startTime;document.getElementById('timer-display').textContent=formatTime(elapsedMs);}
+
+function normalizeAnswer(s){return s.toLowerCase().trim().replace(/[''']/g,"'").replace(/\s+/g,' ');}
+
+function validateWord(){const u=wordInput.value.trim();if(!u){wordInput.classList.add('shake');setTimeout(()=>wordInput.classList.remove('shake'),500);return;}const w=WORDS[currentIdx];const exp=getExpected(w).map(normalizeAnswer);const un=normalizeAnswer(u);const ok=exp.includes(un);answers.push({word:w.word,userAnswer:u,correct:ok,expected:getMainExpected(w)});if(ok)totalCorrect++;const dot=document.getElementById('dot-'+currentIdx);dot.classList.remove('current');dot.classList.add(ok?'done-correct':'done-wrong');const fb=document.getElementById('feedback-area');if(ok){fb.innerHTML=`<div class="word-correct p-4 rounded-xl border-2 text-green-800 font-bold text-center"><i class="fas fa-check-circle text-2xl mb-1"></i><div class="text-lg">Bravo ! ✅</div><div class="text-sm font-normal mt-1">${getExplanation(w)}</div></div>`;wordInput.classList.add('border-green-500');}else{fb.innerHTML=`<div class="word-wrong p-4 rounded-xl border-2 text-red-800"><div class="font-bold text-center"><i class="fas fa-times-circle text-2xl mb-1"></i><div class="text-lg">Oups ! La bonne réponse :</div><div class="text-2xl font-extrabold mt-1 text-green-700">${getMainExpected(w)}</div></div><div class="text-sm font-normal mt-2 text-slate-700">${getExplanation(w)}</div></div>`;wordInput.classList.add('border-red-500');}wordInput.disabled=true;document.getElementById('btn-validate').classList.add('hidden');document.getElementById('btn-next').classList.remove('hidden');document.getElementById('btn-next').focus();}
+
+function nextWord(){currentIdx++;if(currentIdx>=WORDS.length)endGame();else showCurrentWord();}
+
+function endGame(){clearInterval(timerInterval);elapsedMs=Date.now()-startTime;document.getElementById('end-title').textContent=totalCorrect===WORDS.length?'🎉 Parfait !':'Terminé !';const sg=document.getElementById('stats-grid');sg.innerHTML='';addStat('⏱️',formatTime(elapsedMs),'temps total','orange');addStat('✅',totalCorrect+'/'+WORDS.length,'bonnes réponses','green');const pct=Math.round(totalCorrect/WORDS.length*100);addStat('🎯',pct+'%','précision','blue');const avg=Math.round(elapsedMs/WORDS.length/1000*10)/10;addStat('⚡',avg+'s','moy. par mot','purple');const fl=document.getElementById('final-list');fl.innerHTML='';answers.forEach((a,i)=>{const el=document.createElement('div');el.className='p-2 border-b border-slate-100 last:border-0 flex items-center gap-2';const ic=a.correct?'<i class="fas fa-check-circle text-green-500"></i>':'<i class="fas fa-times-circle text-red-500"></i>';const ua=a.correct?`<span class="text-green-700 font-bold">${a.userAnswer}</span>`:`<span class="text-red-600 line-through">${a.userAnswer}</span> → <span class="text-green-700 font-bold">${a.expected}</span>`;el.innerHTML=`<span class="text-slate-400 font-bold w-6">${i+1}.</span> ${ic} <span class="text-slate-500">${a.word}</span> &nbsp; ${ua}`;fl.appendChild(el);});const sb=document.getElementById('btn-send-results');sb.classList.toggle('hidden',!GOOGLE_SCRIPT_URL);document.getElementById('send-status').classList.add('hidden');const lk=`elision_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;if(localStorage.getItem(lk)){sb.disabled=true;document.getElementById('send-text').textContent='Déjà envoyé ✓';}else{sb.disabled=false;document.getElementById('send-text').textContent='Envoyer mes résultats';}const nb=document.getElementById('btn-next-level');if(currentMode==='A'){nb.classList.remove('hidden');document.getElementById('next-level-text').textContent="Passer à l'Atelier B (Défini)";}else nb.classList.add('hidden');switchScreen('end');}
+
+function addStat(icon,value,label,color){const c={orange:'bg-orange-50 text-orange-600',green:'bg-green-50 text-green-600',blue:'bg-blue-50 text-blue-600',purple:'bg-purple-50 text-purple-600'};const el=document.createElement('div');el.className=`stat-card ${c[color]||c.orange} rounded-2xl p-3 text-center`;el.innerHTML=`<div class="text-2xl mb-1">${icon}</div><div class="text-xl font-black">${value}</div><div class="text-xs font-bold opacity-80">${label}</div>`;document.getElementById('stats-grid').appendChild(el);}
+
+function startNextLevel(){setMode('B');startGame();}
+function resetGame(){switchScreen('start');}
+
+async function sendResults(){if(!GOOGLE_SCRIPT_URL)return;const btn=document.getElementById('btn-send-results'),st=document.getElementById('send-status'),stxt=document.getElementById('send-text');const lk=`elision_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;if(localStorage.getItem(lk)){st.classList.remove('hidden');st.className='text-sm font-bold text-center text-red-500';st.textContent='🚫 Déjà envoyé !';btn.disabled=true;return;}btn.disabled=true;stxt.textContent='Envoi…';try{await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:studentName,groupe:studentGroup,mode:currentMode,correct:totalCorrect,total:WORDS.length,tempsMs:elapsedMs})});localStorage.setItem(lk,'true');st.classList.remove('hidden');st.className='text-sm font-bold text-center text-green-600';st.textContent='✅ Envoyé !';stxt.textContent='Envoyé ✓';}catch(e){st.classList.remove('hidden');st.className='text-sm font-bold text-center text-red-500';st.textContent='❌ Erreur réseau.';stxt.textContent='Réessayer';btn.disabled=false;}}
+
+function showLeaderboard(){for(const[n,e]of Object.entries(screens)){if(!e.classList.contains('hidden')&&n!=='leaderboard'){lastScreenBeforeLeaderboard=n;break;}}switchScreen('leaderboard');fetchLeaderboard();}
+
+function fetchLeaderboard(){const l=document.getElementById('leaderboard-loading'),er=document.getElementById('leaderboard-error'),c=document.getElementById('leaderboard-content');l.classList.remove('hidden');er.classList.add('hidden');c.classList.add('hidden');if(!GOOGLE_SCRIPT_URL){l.classList.add('hidden');er.classList.remove('hidden');er.innerHTML='<i class="fas fa-exclamation-triangle mr-2"></i> Le palmarès n\'est pas encore configuré.';return;}const cb='lb_'+Date.now();const to=setTimeout(()=>{delete window[cb];l.classList.add('hidden');er.classList.remove('hidden');},10000);window[cb]=function(d){clearTimeout(to);delete window[cb];l.classList.add('hidden');if(d&&d.groups){renderLeaderboard(d.groups);c.classList.remove('hidden');document.getElementById('leaderboard-time').textContent=new Date().toLocaleTimeString('fr-CA');}else er.classList.remove('hidden');};const s=document.createElement('script');s.src=GOOGLE_SCRIPT_URL+'?callback='+cb+'&action=leaderboard';s.onerror=()=>{clearTimeout(to);l.classList.add('hidden');er.classList.remove('hidden');};document.body.appendChild(s);setTimeout(()=>{try{document.body.removeChild(s);}catch(e){}},12000);}
+
+function renderLeaderboard(groups){const active=groups.filter(g=>g.students>0&&g.avgTimeMs>0);active.sort((a,b)=>a.avgTimeMs-b.avgTimeMs);const podium=document.getElementById('leaderboard-podium');podium.innerHTML='';const medals=['🥇','🥈','🥉'];if(active.length===0){podium.innerHTML='<div class="text-slate-400 italic py-8 text-lg">Aucun groupe n\'a complété l\'exercice (12/12).<br>Le palmarès apparaîtra dès le premier envoi !</div>';document.getElementById('leaderboard-body').innerHTML='';return;}const order=[1,0,2],heights=['120px','150px','100px'],colors=['bg-slate-200','bg-amber-100','bg-orange-100'];for(let pi=0;pi<3&&pi<active.length;pi++){const idx=order[pi];if(idx>=active.length)continue;const g=active[idx];const el=document.createElement('div');el.className='flex flex-col items-center';el.innerHTML=`<div class="text-3xl mb-1">${medals[idx]}</div><div class="font-extrabold text-lg text-slate-800">${g.groupe}</div><div class="${colors[pi]} rounded-xl w-24 flex flex-col items-center justify-end pb-2 font-black text-slate-700" style="height:${heights[pi]}"><div class="text-xl">${formatTime(g.avgTimeMs)}</div><div class="text-xs font-bold opacity-60">${g.students} él.</div></div>`;podium.appendChild(el);}const tb=document.getElementById('leaderboard-body');tb.innerHTML='';active.forEach((g,i)=>{const r=i+1,m=r<=3?medals[r-1]:r,hl=r<=3?'bg-amber-50 font-bold':(r%2===0?'bg-white':'bg-slate-50');const tr=document.createElement('tr');tr.className=hl+' border-b border-slate-100 hover:bg-orange-50';tr.innerHTML=`<td class="py-3 px-2 text-left">${m}</td><td class="py-3 px-2 text-left font-bold">Gr. ${g.groupe}</td><td class="py-3 px-1 text-center text-slate-500 font-bold">${g.students}</td><td class="py-3 px-2 text-right font-extrabold text-orange-600">${formatTime(g.avgTimeMs)}</td>`;tb.appendChild(tr);});}
+
+switchScreen('login');
+</script>
+</body>
+</html>

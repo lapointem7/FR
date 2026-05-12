@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogging d'écriture — Pluriel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%,90%{transform:translate3d(-1px,0,0)} 20%,80%{transform:translate3d(2px,0,0)} 30%,50%,70%{transform:translate3d(-4px,0,0)} 40%,60%{transform:translate3d(4px,0,0)} }
+        .pulse-red { animation: pulse-red 1s infinite; }
+        @keyframes pulse-red { 0%{transform:scale(1);color:#ef4444} 50%{transform:scale(1.1);color:#dc2626} 100%{transform:scale(1);color:#ef4444} }
+        .custom-scrollbar::-webkit-scrollbar{width:8px} .custom-scrollbar::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px} .custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+        .tip-box{transition:max-height .4s ease,opacity .3s ease,padding .3s ease;max-height:0;opacity:0;overflow:hidden;padding-top:0;padding-bottom:0}
+        .tip-box.open{max-height:700px;opacity:1;padding-top:1rem;padding-bottom:1rem}
+        .warning-toast{animation:slideIn .4s ease-out,fadeOut .5s ease 6s forwards}
+        @keyframes slideIn{from{transform:translateY(-10px);opacity:0}to{transform:translateY(0);opacity:1}}
+        @keyframes fadeOut{to{opacity:0;transform:translateY(-5px)}}
+        .stat-card{animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) both}
+        @keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+        :fullscreen body{background:linear-gradient(135deg,#f6d365 0%,#fda085 100%)}
+        :fullscreen .main-container{max-width:800px;margin:auto;border-radius:1.5rem}
+        @media print{body{background:white!important;padding:0!important}.main-container{box-shadow:none!important;max-width:100%!important}.no-print{display:none!important}#screen-end{height:auto!important}}
+        .login-float{animation:loginFloat 3s ease-in-out infinite}
+        @keyframes loginFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+    <div class="fixed top-4 right-4 flex gap-2 z-50 no-print">
+        <button onclick="openNewTab()" id="btn-newtab" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Nouvel onglet"><i class="fas fa-external-link-alt"></i></button>
+        <button onclick="toggleFullscreen()" id="btn-fullscreen" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all" title="Plein écran"><i class="fas fa-expand"></i></button>
+        <button onclick="window.print()" id="btn-print" class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-slate-800 transition-all hidden" title="Imprimer"><i class="fas fa-print"></i></button>
+    </div>
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden relative main-container">
+        <div id="progress-container" class="w-full h-2 bg-slate-100 hidden"><div id="progress-bar" class="h-full bg-orange-500 transition-all duration-1000 ease-linear" style="width:100%"></div></div>
+        <div class="p-8 sm:p-10">
+
+            <div id="screen-login" class="text-center space-y-6">
+                <div class="login-float inline-block p-5 bg-orange-100 rounded-full mb-2 text-orange-500"><i class="fas fa-layer-group text-5xl"></i></div>
+                <h1 class="text-4xl font-extrabold text-slate-800">Jogging — Pluriel</h1>
+                <p class="text-slate-500 text-lg">Construire et accorder des phrases au pluriel</p>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner space-y-4">
+                    <div><label class="block font-bold text-slate-700 mb-2"><i class="fas fa-user text-orange-500 mr-2"></i>Ton prénom et nom :</label><input type="text" id="student-name" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg outline-none" placeholder="Ex: Marie Tremblay" autocomplete="off"></div>
+                    <div><label class="block font-bold text-slate-700 mb-2"><i class="fas fa-users text-orange-500 mr-2"></i>Ton numéro de groupe :</label>
+                        <select id="student-group" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-xl p-3 text-lg outline-none bg-white cursor-pointer">
+                            <option value="" disabled selected>Choisis ton groupe…</option>
+                            <option value="101">Groupe 101</option><option value="102">Groupe 102</option><option value="103">Groupe 103</option><option value="104">Groupe 104</option><option value="105">Groupe 105</option><option value="106">Groupe 106</option><option value="107">Groupe 107</option><option value="108">Groupe 108</option><option value="109">Groupe 109</option><option value="110">Groupe 110</option><option value="111">Groupe 111</option><option value="112">Groupe 112</option><option value="113">Groupe 113</option><option value="114">Groupe 114</option><option value="115">Groupe 115</option><option value="116">Groupe 116</option><option value="117">Groupe 117</option>
+                        </select>
+                    </div>
+                    <div id="login-error" class="text-red-500 text-sm font-bold hidden"><i class="fas fa-exclamation-circle mr-1"></i> Remplis ton nom et choisis ton groupe.</div>
+                </div>
+                <button onclick="loginStudent()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">C'est parti ! <i class="fas fa-arrow-right ml-2"></i></button>
+                <div><button onclick="showLeaderboard()" class="px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-base transition-all border border-amber-300">🏆 Voir le palmarès</button></div>
+            </div>
+
+            <div id="screen-leaderboard" class="hidden text-center space-y-5">
+                <div class="flex items-center justify-between"><button onclick="switchScreen(lastScreenBeforeLeaderboard||'login')" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"><i class="fas fa-arrow-left"></i></button><h1 class="text-3xl font-extrabold text-slate-800">🏆 Palmarès</h1><button onclick="showLeaderboard()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500" title="Rafraîchir"><i class="fas fa-sync-alt"></i></button></div>
+                <p class="text-slate-400 text-xs font-bold -mt-2">Classement par moyenne de phrases par élève</p>
+                <div id="leaderboard-loading" class="py-10 text-slate-400 text-lg font-bold"><i class="fas fa-spinner fa-spin mr-2"></i> Chargement…</div>
+                <div id="leaderboard-error" class="hidden py-8 text-red-500 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Impossible de charger.<div class="mt-3"><button onclick="showLeaderboard()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-sm">Réessayer</button></div></div>
+                <div id="leaderboard-content" class="hidden">
+                    <div id="leaderboard-podium" class="flex justify-center items-end gap-3 mb-6"></div>
+                    <div class="overflow-y-auto custom-scrollbar max-h-[350px] bg-slate-50 rounded-2xl border border-slate-200">
+                        <table class="w-full text-sm"><thead class="sticky top-0 bg-slate-100 text-slate-500 uppercase text-xs font-bold"><tr><th class="py-3 px-2 text-left">Rang</th><th class="py-3 px-2 text-left">Groupe</th><th class="py-3 px-1 text-center">Élèves</th><th class="py-3 px-1 text-center">A</th><th class="py-3 px-1 text-center">B</th><th class="py-3 px-2 text-right font-extrabold">Moy.</th></tr></thead><tbody id="leaderboard-body"></tbody></table>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-3 italic">Mise à jour : <span id="leaderboard-time"></span></p>
+                </div>
+            </div>
+
+            <div id="screen-start" class="hidden text-center space-y-6">
+                <div class="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm font-bold text-slate-600 no-print"><i class="fas fa-user-circle text-orange-500"></i><span id="badge-name"></span> — <span id="badge-group"></span></div>
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button onclick="setMode('A')" id="btn-mode-A" class="px-6 py-2 rounded-full font-bold transition-colors bg-orange-500 text-white shadow-md">Atelier A</button>
+                    <button onclick="setMode('B')" id="btn-mode-B" class="px-6 py-2 rounded-full font-bold transition-colors bg-slate-200 text-slate-600 hover:bg-slate-300">Atelier B</button>
+                </div>
+                <div class="inline-block p-4 bg-orange-100 rounded-full mb-4 text-orange-500"><i id="start-icon" class="fas fa-pencil-alt text-5xl"></i></div>
+                <h1 id="start-title" class="text-4xl font-extrabold text-slate-800"></h1>
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left shadow-inner">
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-bullseye text-orange-500 mr-2"></i>Mission :</h2>
+                    <p id="start-mission" class="text-slate-600 mb-4 text-lg"></p>
+                    <h2 class="font-bold text-lg mb-2 text-slate-700"><i class="fas fa-clipboard-list text-orange-500 mr-2"></i>Consigne :</h2>
+                    <p id="start-consigne" class="text-slate-600 text-lg leading-relaxed"></p>
+                    <div class="mt-4 p-4 bg-orange-100 rounded-xl text-orange-800 font-medium leading-relaxed"><i class="fas fa-lightbulb text-orange-600 mr-2"></i><span id="start-exemple"></span></div>
+                </div>
+                <div id="start-tip-container"></div>
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-full text-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">Commencer ! <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+
+            <div id="screen-game" class="hidden flex flex-col h-[650px]">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+                    <div class="flex items-center space-x-3"><i class="fas fa-stopwatch text-3xl text-slate-400" id="timer-icon"></i><span id="timer-display" class="text-4xl font-black text-slate-700">03:00</span></div>
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-skip-game" class="hidden flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold border border-indigo-200"><span class="hidden sm:inline text-sm" id="skip-text-game">Passer au B</span><i class="fas fa-forward"></i></button>
+                        <div class="text-right"><div class="text-sm font-bold text-slate-400 uppercase">Phrases</div><div id="score-display" class="text-4xl font-black text-orange-500">0</div></div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 text-blue-800 p-3 rounded-xl mb-3 text-sm font-semibold flex items-center border border-blue-100"><i class="fas fa-info-circle mr-3 text-blue-500 text-lg"></i><span id="game-reminder"></span></div>
+                <div id="warning-area" class="mb-2 min-h-0"></div>
+                <div class="relative mb-1">
+                    <input type="text" id="sentence-input" class="w-full border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 rounded-2xl p-4 text-lg outline-none pr-16 shadow-inner" placeholder="Écris ta phrase ici…" autocomplete="off">
+                    <button onclick="submitSentence()" class="absolute right-3 top-3 bottom-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl w-12 flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div id="error-message" class="text-red-500 text-sm font-bold h-auto min-h-[24px] ml-2 transition-opacity opacity-0"></div>
+                <div class="flex justify-end mb-1 no-print"><button onclick="toggleGameTip()" class="text-xs text-indigo-500 hover:text-indigo-700 font-bold flex items-center gap-1"><i class="fas fa-graduation-cap"></i> <span id="game-tip-label">Voir les astuces</span></button></div>
+                <div id="game-tip-box" class="tip-box bg-indigo-50 border border-indigo-200 rounded-xl px-4 text-sm text-indigo-800 leading-relaxed mb-2"></div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50 rounded-2xl p-4 border border-slate-200" id="sentences-list">
+                    <div class="text-center text-slate-400 mt-10 italic" id="empty-state">Tes phrases validées apparaîtront ici.</div>
+                </div>
+            </div>
+
+            <div id="screen-end" class="hidden text-center flex flex-col h-[650px]">
+                <div class="flex-shrink-0">
+                    <h2 id="end-title" class="text-5xl font-black text-slate-800 mb-2">Temps écoulé !</h2>
+                    <p class="text-slate-500 text-lg mb-4">Voici ton bilan :</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="stats-grid"></div>
+                </div>
+                <div class="text-left font-bold text-slate-700 mb-2">Ta production :</div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left mb-4" id="final-sentences-list"></div>
+                <div class="flex-shrink-0 w-full flex flex-col gap-3 no-print">
+                    <button id="btn-send-results" onclick="sendResults()" class="w-full px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full text-xl shadow-lg"><i class="fas fa-paper-plane mr-2"></i> <span id="send-text">Envoyer mes résultats</span></button>
+                    <div id="send-status" class="text-sm font-bold text-center hidden"></div>
+                    <button onclick="showLeaderboard()" class="w-full px-6 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold rounded-full text-lg border border-amber-300">🏆 Voir le palmarès</button>
+                    <button id="btn-next-level" onclick="startNextLevel()" class="hidden w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full text-xl shadow-lg"><span id="next-level-text"></span> <i class="fas fa-arrow-right ml-2"></i></button>
+                    <button onclick="resetGame()" class="w-full px-8 py-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-full text-xl shadow-lg"><i class="fas fa-redo-alt mr-2"></i> Menu principal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const GOOGLE_SCRIPT_URL = '';
+const TOTAL_TIME = 180;
+let timeLeft, timerInterval, score, writtenSentences = [], currentMode = 'A', studentName = '', studentGroup = '';
+let pendingTransformations = [];
+let lastScreenBeforeLeaderboard = 'login';
+let gameTipOpen = false;
+
+// Singular determiners (subset)
+const SING_DET_M = ['le','un','ce','cet','mon','ton','son','notre','votre','leur'];
+const SING_DET_F = ['la','une','cette','ma','ta','sa','notre','votre','leur'];
+const SING_DET_ELIDED = ["l'","l'"];
+const PLUR_DET = ['les','des','ces','mes','tes','ses','nos','vos','leurs','quelques','plusieurs','certains','certaines','quelques-uns','quelques-unes'];
+
+const MODES = {
+    'A': {
+        title: "Atelier A — Phrases de base",
+        mission: "Compose le plus de <strong>phrases de base</strong> possibles en 3 minutes.",
+        consigne: "Chaque phrase doit suivre la construction : <strong>Sujet (Dét + N + Adj) + Prédicat (V + Dét + N)</strong>.<br>Tu dois écrire des phrases originales — ne réutilise pas le même sujet ni le même verbe !",
+        exemple: 'Exemple : <strong>Le pilote expérimenté regarde l\'océan.</strong>',
+        rappel: "<strong>Rappel :</strong> Dét + Nom + Adj &nbsp; / &nbsp; Verbe + Dét + Nom + <strong>.</strong>",
+        icon: "fa-pencil-alt"
+    },
+    'B': {
+        title: "Atelier B — Transformation au pluriel",
+        mission: "Transforme <strong>chaque phrase</strong> de l'Atelier A au pluriel en 3 minutes.",
+        consigne: "Tu dois mettre au pluriel <strong>tous les éléments</strong> : déterminants, noms, adjectifs et verbes. Garde la même structure !",
+        exemple: 'Exemple : "Le pilote expérimenté regarde l\'océan." → "<strong>Les pilotes expérimentés regardent les océans.</strong>"',
+        rappel: "<strong>Rappel :</strong> Tout doit être au pluriel : Dét + Nom + Adj / V + Dét + Nom + <strong>.</strong>",
+        icon: "fa-layer-group"
+    }
+};
+
+function getTipHTML(mode) {
+    if (mode === 'A') return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — La phrase de base</div><p class="text-indigo-700">La phrase de base a deux parties obligatoires :</p><table class="w-full text-sm"><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap">Sujet</td><td class="py-2 text-indigo-700"><strong>Dét + Nom + Adj</strong> &nbsp;→ Le pilote expérimenté</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold whitespace-nowrap">Prédicat</td><td class="py-2 text-indigo-700"><strong>Verbe + Dét + Nom</strong> &nbsp;→ regarde l'océan</td></tr></table><p class="text-xs text-indigo-500 mt-2">💡 Idées de structures : <em>La fillette curieuse observe les nuages. Mon ami fidèle aime ce film.</em></p></div>`;
+    return `<div class="space-y-2"><div class="font-bold text-indigo-900 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Boîte à astuces — Mettre au pluriel</div><p class="text-indigo-700">Pour transformer au pluriel, accorde <strong>4 éléments</strong> :</p><table class="w-full text-sm"><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">1. Déterminant</td><td class="py-2 text-indigo-700">le/la → <strong>les</strong>, un/une → <strong>des</strong>, mon/ma → <strong>mes</strong>…</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">2. Nom</td><td class="py-2 text-indigo-700">+ <strong>s</strong> (chat → chats) ou + <strong>x</strong> (animal → anima<strong>ux</strong>)</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">3. Adjectif</td><td class="py-2 text-indigo-700">+ <strong>s</strong> (petit → petits) ou + <strong>x</strong> (beau → bea<strong>ux</strong>)</td></tr><tr class="border-b border-indigo-100"><td class="py-2 pr-3 font-bold">4. Verbe</td><td class="py-2 text-indigo-700">3e pers. sing. → 3e pers. plur. : mange → mange<strong>nt</strong></td></tr></table></div>`;
+}
+
+const screens = { login: document.getElementById('screen-login'), start: document.getElementById('screen-start'), game: document.getElementById('screen-game'), end: document.getElementById('screen-end'), leaderboard: document.getElementById('screen-leaderboard') };
+const sentenceInput = document.getElementById('sentence-input');
+const btnPrint = document.getElementById('btn-print');
+sentenceInput.addEventListener('keypress', e => { if (e.key === 'Enter') submitSentence(); });
+
+function switchScreen(n) { Object.values(screens).forEach(s => s.classList.add('hidden')); screens[n].classList.remove('hidden'); btnPrint.classList.toggle('hidden', n !== 'end'); }
+function formatTime(s) { return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0'); }
+
+function loginStudent() {
+    studentName = document.getElementById('student-name').value.trim();
+    studentGroup = document.getElementById('student-group').value;
+    if (!studentName || !studentGroup) { document.getElementById('login-error').classList.remove('hidden'); return; }
+    document.getElementById('login-error').classList.add('hidden');
+    document.getElementById('badge-name').textContent = studentName;
+    document.getElementById('badge-group').textContent = 'Groupe ' + studentGroup;
+    setMode('A'); switchScreen('start');
+}
+
+const isInIframe = window.self !== window.top;
+if (isInIframe) { document.getElementById('btn-newtab').classList.remove('hidden'); document.getElementById('btn-fullscreen').classList.add('hidden'); }
+function openNewTab() { window.open(window.location.href, '_blank'); }
+function toggleFullscreen() {
+    const b = document.getElementById('btn-fullscreen');
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().then(() => { b.innerHTML = '<i class="fas fa-compress"></i>'; }).catch(() => {});
+    else document.exitFullscreen().catch(() => {});
+}
+document.addEventListener('fullscreenchange', () => { const b = document.getElementById('btn-fullscreen'); if (!document.fullscreenElement) b.innerHTML = '<i class="fas fa-expand"></i>'; });
+
+function toggleGameTip() { gameTipOpen = !gameTipOpen; document.getElementById('game-tip-box').classList.toggle('open', gameTipOpen); document.getElementById('game-tip-label').textContent = gameTipOpen ? 'Masquer les astuces' : 'Voir les astuces'; }
+
+function showWarning(msg, color='amber') {
+    const colors = { amber:'bg-amber-50 border-amber-200 text-amber-800', indigo:'bg-indigo-50 border-indigo-200 text-indigo-800' };
+    const el = document.createElement('div');
+    el.className = `warning-toast p-3 rounded-xl text-sm font-semibold border ${colors[color]||colors.amber} flex items-start gap-2 mb-1`;
+    el.innerHTML = `<span class="flex-shrink-0 mt-0.5">⚠️</span><span>${msg}</span>`;
+    document.getElementById('warning-area').appendChild(el);
+    setTimeout(() => el.remove(), 7000);
+}
+
+function setMode(mode) {
+    currentMode = mode;
+    const c = MODES[mode];
+    document.getElementById('start-title').textContent = c.title;
+    document.getElementById('start-mission').innerHTML = c.mission;
+    document.getElementById('start-consigne').innerHTML = c.consigne;
+    document.getElementById('start-exemple').innerHTML = c.exemple;
+    document.getElementById('game-reminder').innerHTML = c.rappel;
+    document.getElementById('start-icon').className = `fas ${c.icon} text-5xl`;
+    ['A','B'].forEach(m => {
+        const b = document.getElementById('btn-mode-'+m);
+        if (m === mode) { b.classList.remove('bg-slate-200','text-slate-600','hover:bg-slate-300'); b.classList.add('bg-orange-500','text-white','shadow-md'); }
+        else { b.classList.add('bg-slate-200','text-slate-600','hover:bg-slate-300'); b.classList.remove('bg-orange-500','text-white','shadow-md'); }
+    });
+    document.getElementById('start-tip-container').innerHTML = `<button onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.tl').textContent=this.nextElementSibling.classList.contains('open')?'Masquer les astuces':'Voir les astuces';" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-bold border border-indigo-200"><i class="fas fa-graduation-cap"></i> <span class="tl">Voir les astuces</span></button><div class="tip-box bg-indigo-50 border border-indigo-200 rounded-2xl px-5 text-left text-sm text-indigo-800 leading-relaxed mt-2">${getTipHTML(mode)}</div>`;
+}
+
+function startNextLevel() { pendingTransformations = [...writtenSentences]; setMode('B'); startGame(); }
+function skipToNextMode() { if (score === 0) { showError("Tu dois réussir au moins une phrase pour passer !"); return; } clearInterval(timerInterval); endGame(); }
+
+function startGame() {
+    timeLeft = TOTAL_TIME; score = 0; writtenSentences = [];
+    gameTipOpen = false;
+    document.getElementById('game-tip-box').classList.remove('open');
+    document.getElementById('game-tip-label').textContent = 'Voir les astuces';
+    document.getElementById('game-tip-box').innerHTML = getTipHTML(currentMode);
+    document.getElementById('score-display').textContent = '0';
+    document.getElementById('timer-display').textContent = formatTime(timeLeft);
+    document.getElementById('timer-display').classList.remove('pulse-red');
+    document.getElementById('timer-icon').classList.remove('text-red-500');
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('progress-bar').className = 'h-full bg-orange-500 transition-all duration-1000 ease-linear';
+    document.getElementById('progress-container').classList.remove('hidden');
+    document.getElementById('sentences-list').innerHTML = '';
+    document.getElementById('sentences-list').appendChild(document.getElementById('empty-state') || (() => { const e = document.createElement('div'); e.id = 'empty-state'; e.className = 'text-center text-slate-400 mt-10 italic'; e.textContent = 'Tes phrases validées apparaîtront ici.'; return e; })());
+    document.getElementById('empty-state').style.display = 'block';
+    sentenceInput.value = '';
+    document.getElementById('warning-area').innerHTML = '';
+
+    const skipBtn = document.getElementById('btn-skip-game');
+    if (currentMode === 'A') { skipBtn.classList.remove('hidden'); document.getElementById('skip-text-game').textContent = 'Passer au B'; skipBtn.onclick = skipToNextMode; }
+    else { skipBtn.classList.remove('hidden'); document.getElementById('skip-text-game').textContent = 'Terminer'; skipBtn.onclick = endGame; }
+
+    if (currentMode === 'B' && pendingTransformations.length > 0) {
+        // Show first sentence to transform inline as placeholder
+        sentenceInput.placeholder = 'À transformer : "' + pendingTransformations[0] + '"';
+    } else {
+        sentenceInput.placeholder = 'Écris ta phrase ici…';
+    }
+
+    switchScreen('game'); sentenceInput.focus();
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    timeLeft--;
+    document.getElementById('timer-display').textContent = formatTime(timeLeft);
+    const pct = (timeLeft/TOTAL_TIME)*100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    if (timeLeft <= 30) document.getElementById('progress-bar').classList.replace('bg-orange-500','bg-red-500');
+    if (timeLeft <= 10) { document.getElementById('timer-display').classList.add('pulse-red'); document.getElementById('timer-icon').classList.add('text-red-500'); }
+    if (timeLeft <= 0) endGame();
+}
+
+let et1 = null, et2 = null;
+function showError(msg) {
+    const errEl = document.getElementById('error-message');
+    errEl.textContent = msg; errEl.classList.remove('opacity-0');
+    sentenceInput.classList.add('shake','border-red-500');
+    sentenceInput.classList.remove('focus:border-orange-500');
+    if (et1) clearTimeout(et1); if (et2) clearTimeout(et2);
+    et1 = setTimeout(() => sentenceInput.classList.remove('shake'), 500);
+    et2 = setTimeout(() => { errEl.classList.add('opacity-0'); sentenceInput.classList.remove('border-red-500'); sentenceInput.classList.add('focus:border-orange-500'); }, 8000);
+}
+
+// Validation helpers
+function tokenize(s) { return s.trim().split(/\s+/).map(t => t.replace(/[.,!?;:]/g,'')).filter(t => t.length > 0); }
+function isVerbForm(w) {
+    const c = w.toLowerCase();
+    if (/^(est|sont|était|étaient|sera|seront|a|ont|avait|avaient|aura|auront|fait|font|faisait|faisaient|va|vont|allait|allaient|prend|prennent|met|mettent|dit|disent|voit|voient|sait|savent|peut|peuvent|veut|veulent|doit|doivent)$/.test(c)) return true;
+    return /(e|es|ent|ait|aient|ons|ez|ais|s|t|d)$/.test(c) && c.length >= 3;
+}
+function isPluralDet(w) { return PLUR_DET.includes(w.toLowerCase()); }
+function isSingularDet(w) {
+    const l = w.toLowerCase();
+    return SING_DET_M.includes(l) || SING_DET_F.includes(l) || l === "l'" || l.startsWith("l'");
+}
+function endsWithPluralVerb(w) { return /(ent|ont|ons|ez|nt)$/i.test(w); }
+function endsWithPluralNoun(w) { const c = w.toLowerCase(); return c.endsWith('s') || c.endsWith('x'); }
+
+function validateA(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return { valid: false, msg: '' };
+    if (!/^[A-ZÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒ]/.test(trimmed)) return { valid: false, msg: "Majuscule au début !" };
+    if (trimmed.charAt(trimmed.length-1) !== '.') return { valid: false, msg: "Termine ta phrase par un point (.) !" };
+    const tokens = tokenize(trimmed);
+    if (tokens.length < 5) return { valid: false, msg: "Ta phrase est trop courte. Il faut Dét + Nom + Adj + Verbe + Dét + Nom." };
+    // Check pattern: Det + N + Adj + V + Det + N
+    if (!isSingularDet(tokens[0])) return { valid: false, msg: `« ${tokens[0]} » n'est pas un déterminant singulier (le, la, l', un, une, mon, ma, ce, cette…).` };
+    if (isPluralDet(tokens[0])) return { valid: false, msg: "Pour l'Atelier A, on commence par un déterminant SINGULIER. Tu pourras mettre au pluriel à l'Atelier B." };
+    // Try to find a verb between position 2 and 4
+    let verbIdx = -1;
+    for (let i = 2; i <= 4 && i < tokens.length; i++) {
+        if (isVerbForm(tokens[i])) { verbIdx = i; break; }
+    }
+    if (verbIdx === -1) return { valid: false, msg: "Je ne trouve pas le verbe. Utilise un verbe simple (regarde, mange, observe…)." };
+    if (verbIdx + 2 >= tokens.length) return { valid: false, msg: "Il manque un complément après le verbe : Dét + Nom." };
+    if (!isSingularDet(tokens[verbIdx+1])) return { valid: false, msg: `Après le verbe, il manque un déterminant singulier (le, la, l', un, une…). « ${tokens[verbIdx+1]} » n'en est pas un.` };
+
+    // Check: verb not already used (extract approximate infinitive)
+    const verb = tokens[verbIdx].toLowerCase();
+    for (const prev of writtenSentences) {
+        const pt = tokenize(prev);
+        for (let i = 2; i <= 4 && i < pt.length; i++) {
+            if (isVerbForm(pt[i]) && pt[i].toLowerCase() === verb) {
+                return { valid: false, msg: `Tu as déjà utilisé le verbe « ${verb} ». Trouve-en un nouveau ! 🔤` };
+            }
+        }
+    }
+    return { valid: true };
+}
+
+function validateB(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return { valid: false, msg: '' };
+    if (!/^[A-ZÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒ]/.test(trimmed)) return { valid: false, msg: "Majuscule au début !" };
+    if (trimmed.charAt(trimmed.length-1) !== '.') return { valid: false, msg: "Termine ta phrase par un point (.) !" };
+    const tokens = tokenize(trimmed);
+    if (tokens.length < 5) return { valid: false, msg: "Ta phrase est trop courte." };
+    if (!isPluralDet(tokens[0])) return { valid: false, msg: `« ${tokens[0]} » n'est pas un déterminant pluriel ! (les, des, mes, ces, plusieurs…)` };
+    // Find plural noun + adj + plural verb + plural det + plural noun
+    if (!endsWithPluralNoun(tokens[1])) return { valid: false, msg: `Le nom « ${tokens[1]} » devrait être au pluriel (+s ou +x).` };
+    // Adjective at position 2 should be plural too
+    if (!endsWithPluralNoun(tokens[2])) return { valid: false, msg: `L'adjectif « ${tokens[2]} » devrait être au pluriel (+s ou +x).` };
+    // Find verb
+    let verbIdx = -1;
+    for (let i = 2; i <= 4 && i < tokens.length; i++) {
+        if (isVerbForm(tokens[i])) { verbIdx = i; break; }
+    }
+    if (verbIdx === -1) return { valid: false, msg: "Je ne trouve pas le verbe au pluriel." };
+    if (!endsWithPluralVerb(tokens[verbIdx])) return { valid: false, msg: `Le verbe « ${tokens[verbIdx]} » devrait être au pluriel (3e pers. plur. : -ent, -ont, etc.).` };
+    if (verbIdx + 2 >= tokens.length) return { valid: false, msg: "Il manque un complément après le verbe." };
+    if (!isPluralDet(tokens[verbIdx+1])) return { valid: false, msg: `Après le verbe, le déterminant « ${tokens[verbIdx+1]} » devrait être au pluriel.` };
+    if (!endsWithPluralNoun(tokens[verbIdx+2])) return { valid: false, msg: `Le nom « ${tokens[verbIdx+2]} » devrait être au pluriel.` };
+    return { valid: true };
+}
+
+function submitSentence() {
+    const text = sentenceInput.value;
+    const v = currentMode === 'A' ? validateA(text) : validateB(text);
+    if (!v.valid) { if (v.msg) showError(v.msg); return; }
+    const trimmed = text.trim();
+    writtenSentences.push(trimmed);
+    score++;
+    document.getElementById('score-display').textContent = score;
+
+    // Update placeholder for next transformation
+    if (currentMode === 'B' && pendingTransformations.length > 0) {
+        pendingTransformations.shift();
+        if (pendingTransformations.length > 0) sentenceInput.placeholder = 'À transformer : "' + pendingTransformations[0] + '"';
+        else sentenceInput.placeholder = 'Continue à inventer des phrases au pluriel !';
+    }
+
+    document.getElementById('empty-state').style.display = 'none';
+    const el = document.createElement('div');
+    el.className = 'bg-white p-3 rounded-xl mb-2 shadow-sm border border-slate-100 text-slate-700 flex gap-3';
+    el.innerHTML = `<span class="text-green-500 font-bold flex-shrink-0">✅</span><span>${trimmed}</span>`;
+    document.getElementById('sentences-list').insertBefore(el, document.getElementById('sentences-list').firstChild);
+    sentenceInput.value = ''; sentenceInput.focus();
+}
+
+function endGame() {
+    clearInterval(timerInterval);
+    document.getElementById('progress-container').classList.add('hidden');
+    document.getElementById('end-title').textContent = timeLeft > 0 ? 'Étape terminée !' : 'Temps écoulé !';
+    const sg = document.getElementById('stats-grid');
+    sg.innerHTML = '';
+    addStat('📝', writtenSentences.length, `phrase${writtenSentences.length > 1 ? 's' : ''}`, 'orange');
+    const avg = writtenSentences.length > 0 ? Math.round(180 / writtenSentences.length) : 0;
+    addStat('⚡', avg + 's', 'moy. par phrase', 'blue');
+    const fl = document.getElementById('final-sentences-list');
+    fl.innerHTML = '';
+    if (!writtenSentences.length) fl.innerHTML = '<div class="text-slate-400 italic text-center p-4">Aucune phrase. Tu feras mieux la prochaine fois !</div>';
+    else writtenSentences.forEach((s,i) => { const el = document.createElement('div'); el.className = 'p-2 border-b border-slate-100 text-slate-700'; el.innerHTML = `<span class="text-orange-400 font-bold mr-2">${i+1}.</span>${s}`; fl.appendChild(el); });
+
+    const sb = document.getElementById('btn-send-results');
+    sb.classList.toggle('hidden', !GOOGLE_SCRIPT_URL);
+    document.getElementById('send-status').classList.add('hidden');
+    const lk = `pluriel_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;
+    if (localStorage.getItem(lk)) { sb.disabled = true; document.getElementById('send-text').textContent = 'Déjà envoyé ✓'; }
+    else { sb.disabled = false; document.getElementById('send-text').textContent = 'Envoyer mes résultats'; }
+
+    const nb = document.getElementById('btn-next-level');
+    if (score > 0 && currentMode === 'A') { nb.classList.remove('hidden'); document.getElementById('next-level-text').textContent = "Passer à l'Atelier B (Pluriel)"; }
+    else nb.classList.add('hidden');
+    switchScreen('end');
+}
+
+function addStat(icon, value, label, color) {
+    const c = { orange:'bg-orange-50 text-orange-600', blue:'bg-blue-50 text-blue-600', emerald:'bg-emerald-50 text-emerald-600', purple:'bg-purple-50 text-purple-600' };
+    const el = document.createElement('div');
+    el.className = `stat-card ${c[color]||c.orange} rounded-2xl p-3 text-center`;
+    el.innerHTML = `<div class="text-2xl mb-1">${icon}</div><div class="text-2xl font-black">${value}</div><div class="text-xs font-bold opacity-80">${label}</div>`;
+    document.getElementById('stats-grid').appendChild(el);
+}
+
+async function sendResults() {
+    if (!GOOGLE_SCRIPT_URL) return;
+    const btn = document.getElementById('btn-send-results'), st = document.getElementById('send-status'), stxt = document.getElementById('send-text');
+    const lk = `pluriel_sent_${studentName.toLowerCase().trim()}_${studentGroup}_${currentMode}`;
+    if (localStorage.getItem(lk)) { st.classList.remove('hidden'); st.className = 'text-sm font-bold text-center text-red-500'; st.textContent = '🚫 Déjà envoyé !'; btn.disabled = true; return; }
+    btn.disabled = true; stxt.textContent = 'Envoi…';
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ nom: studentName, groupe: studentGroup, mode: currentMode, phrases: score }) });
+        localStorage.setItem(lk, 'true');
+        st.classList.remove('hidden'); st.className = 'text-sm font-bold text-center text-green-600'; st.textContent = '✅ Envoyé !';
+        stxt.textContent = 'Envoyé ✓';
+    } catch (e) { st.classList.remove('hidden'); st.className = 'text-sm font-bold text-center text-red-500'; st.textContent = '❌ Erreur réseau.'; stxt.textContent = 'Réessayer'; btn.disabled = false; }
+}
+
+function resetGame() { pendingTransformations = []; switchScreen('start'); }
+
+function showLeaderboard() { for (const [n,e] of Object.entries(screens)) { if (!e.classList.contains('hidden') && n !== 'leaderboard') { lastScreenBeforeLeaderboard = n; break; } } switchScreen('leaderboard'); fetchLeaderboard(); }
+
+function fetchLeaderboard() {
+    const l = document.getElementById('leaderboard-loading'), er = document.getElementById('leaderboard-error'), c = document.getElementById('leaderboard-content');
+    l.classList.remove('hidden'); er.classList.add('hidden'); c.classList.add('hidden');
+    if (!GOOGLE_SCRIPT_URL) { l.classList.add('hidden'); er.classList.remove('hidden'); er.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Le palmarès n\'est pas encore configuré.'; return; }
+    const cb = 'lb_' + Date.now();
+    const to = setTimeout(() => { delete window[cb]; l.classList.add('hidden'); er.classList.remove('hidden'); }, 10000);
+    window[cb] = function(d) { clearTimeout(to); delete window[cb]; l.classList.add('hidden'); if (d && d.groups) { renderLeaderboard(d.groups); c.classList.remove('hidden'); document.getElementById('leaderboard-time').textContent = new Date().toLocaleTimeString('fr-CA'); } else er.classList.remove('hidden'); };
+    const s = document.createElement('script');
+    s.src = GOOGLE_SCRIPT_URL + '?callback=' + cb + '&action=leaderboard';
+    s.onerror = () => { clearTimeout(to); l.classList.add('hidden'); er.classList.remove('hidden'); };
+    document.body.appendChild(s);
+    setTimeout(() => { try { document.body.removeChild(s); } catch(e){} }, 12000);
+}
+
+function renderLeaderboard(groups) {
+    const active = groups.filter(g => g.students > 0);
+    active.forEach(g => { g.avg = g.students > 0 ? Math.round((g.total / g.students) * 10) / 10 : 0; });
+    active.sort((a,b) => b.avg - a.avg);
+    const podium = document.getElementById('leaderboard-podium');
+    podium.innerHTML = '';
+    const medals = ['🥇','🥈','🥉'];
+    if (active.length === 0) { podium.innerHTML = '<div class="text-slate-400 italic py-8 text-lg">Aucun groupe n\'a encore envoyé.</div>'; document.getElementById('leaderboard-body').innerHTML = ''; return; }
+    const order = [1,0,2], heights = ['120px','150px','100px'], colors = ['bg-slate-200','bg-amber-100','bg-orange-100'];
+    for (let pi = 0; pi < 3 && pi < active.length; pi++) {
+        const idx = order[pi]; if (idx >= active.length) continue;
+        const g = active[idx];
+        const el = document.createElement('div');
+        el.className = 'flex flex-col items-center';
+        el.innerHTML = `<div class="text-3xl mb-1">${medals[idx]}</div><div class="font-extrabold text-lg text-slate-800">${g.groupe}</div><div class="${colors[pi]} rounded-xl w-20 flex flex-col items-center justify-end pb-2 font-black text-slate-700" style="height:${heights[pi]}"><div class="text-2xl">${g.avg}</div><div class="text-xs font-bold opacity-60">${g.students} él.</div></div>`;
+        podium.appendChild(el);
+    }
+    const tb = document.getElementById('leaderboard-body');
+    tb.innerHTML = '';
+    active.forEach((g,i) => {
+        const r = i+1, m = r <= 3 ? medals[r-1] : r, hl = r <= 3 ? 'bg-amber-50 font-bold' : (r % 2 === 0 ? 'bg-white' : 'bg-slate-50');
+        const tr = document.createElement('tr');
+        tr.className = hl + ' border-b border-slate-100 hover:bg-orange-50';
+        tr.innerHTML = `<td class="py-3 px-2 text-left">${m}</td><td class="py-3 px-2 text-left font-bold">Gr. ${g.groupe}</td><td class="py-3 px-1 text-center text-slate-500 font-bold">${g.students}</td><td class="py-3 px-1 text-center text-blue-600 font-bold">${g.a||0}</td><td class="py-3 px-1 text-center text-purple-600 font-bold">${g.b||0}</td><td class="py-3 px-2 text-right font-extrabold text-orange-600 text-base">${g.avg}</td>`;
+        tb.appendChild(tr);
+    });
+}
+
+switchScreen('login');
+</script>
+</body>
+</html>
